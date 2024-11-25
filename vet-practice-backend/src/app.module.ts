@@ -12,10 +12,15 @@ import { UserModule } from './user/user.module';
       host: 'localhost', // Your PostgreSQL host
       port: 5432, // Default PostgreSQL port
       username: 'vet_user', // Replace with your PostgreSQL username
-      password: 'yourpassword', // Replace with your PostgreSQL password
+      password: 'Passw0rd', // Replace with your PostgreSQL password
       database: 'vet_practice_db', // Replace with your database name
       entities: [__dirname + '/**/*.entity{.ts,.js}'], // Path to your entities
       synchronize: true, // Set to false in production
+      logging: true,
+      ssl: false,
+      extra: {
+        trustServerCertificate: true
+      }
     }),
     UserModule,
     AuthModule,
