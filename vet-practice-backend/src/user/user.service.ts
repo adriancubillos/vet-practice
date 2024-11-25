@@ -11,7 +11,7 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
-    private jwtService: JwtService,
+    private jwtService: JwtService
   ) {}
 
   async register(createUserDto: CreateUserDto): Promise<User> {
@@ -29,6 +29,7 @@ export class UserService {
   }
 
   async generateJwt(user: User): Promise<string> {
-    return this.jwtService.sign({ id: user.id, username: user.username });
+    const payload = { username: user.username, sub: user.id };
+    return this.jwtService.sign(payload);
   }
 }
