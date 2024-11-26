@@ -1,16 +1,17 @@
 import { Injectable } from '@angular/core';
-import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { of } from 'rxjs';
-import { map, catchError, exhaustMap, tap } from 'rxjs/operators';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { of } from 'rxjs';
+import { map, exhaustMap, catchError, tap } from 'rxjs/operators';
+
 import { AuthService } from '../services/auth.service';
 import * as AuthActions from './auth.actions';
 
 @Injectable()
 export class AuthEffects {
-  register$ = createEffect(() =>
-    this.actions$.pipe(
+  register$ = createEffect(() => {
+    return this.actions$.pipe(
       ofType(AuthActions.register),
       exhaustMap(({ request }) =>
         this.authService.register(request).pipe(
@@ -25,53 +26,61 @@ export class AuthEffects {
             return AuthActions.registerSuccess({ response });
           }),
           catchError(error => {
-            const message = error.error?.message || 'Registration failed';
-            this.snackBar.open(message, 'Close', {
+            console.error('Registration error:', error);
+            this.snackBar.open(error.error?.message || 'Registration failed!', 'Close', {
               duration: 3000,
               horizontalPosition: 'end',
               verticalPosition: 'top',
             });
-            return of(AuthActions.registerFailure({ error: message }));
+            return of(AuthActions.registerFailure({ error: error.message }));
           })
         )
       )
-    )
-  );
+    );
+  });
 
-  login$ = createEffect(() =>
-    this.actions$.pipe(
+  login$ = createEffect(() => {
+    return this.actions$.pipe(
       ofType(AuthActions.login),
       exhaustMap(({ request }) =>
         this.authService.login(request).pipe(
           map(response => {
             this.authService.setToken(response.accessToken);
-            this.router.navigate(['/dashboard']);
-            return AuthActions.loginSuccess({ response });
-          }),
-          catchError(error => {
-            const message = error.error?.message || 'Login failed';
-            this.snackBar.open(message, 'Close', {
+            this.snackBar.open('Login successful!', 'Close', {
               duration: 3000,
               horizontalPosition: 'end',
               verticalPosition: 'top',
             });
-            return of(AuthActions.loginFailure({ error: message }));
+            this.router.navigate(['/dashboard']);
+            return AuthActions.loginSuccess({ response });
+          }),
+          catchError(error => {
+            this.snackBar.open(error.error?.message || 'Login failed!', 'Close', {
+              duration: 3000,
+              horizontalPosition: 'end',
+              verticalPosition: 'top',
+            });
+            return of(AuthActions.loginFailure({ error: error.message }));
           })
         )
       )
-    )
-  );
+    );
+  });
 
-  logout$ = createEffect(() =>
-    this.actions$.pipe(
+  logout$ = createEffect(() => {
+    return this.actions$.pipe(
       ofType(AuthActions.logout),
       tap(() => {
-        this.authService.logout();
+        this.authService.removeToken();
+        this.snackBar.open('Logged out successfully', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'end',
+          verticalPosition: 'top',
+        });
         this.router.navigate(['/login']);
       })
-    ),
-    { dispatch: false }
-  );
+    );
+  }, { dispatch: false });
 
   constructor(
     private actions$: Actions,

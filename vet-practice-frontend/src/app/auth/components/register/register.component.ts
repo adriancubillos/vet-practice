@@ -1,10 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { register } from '../../store/auth.actions';
-import { AuthState } from '../../models/auth.interface';
 
 // Material Imports
 import { MatStepperModule } from '@angular/material/stepper';
@@ -14,6 +11,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
+
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-register',
@@ -36,16 +35,16 @@ export class RegisterComponent implements OnInit {
   accountFormGroup!: FormGroup;
   personalFormGroup!: FormGroup;
   contactFormGroup!: FormGroup;
+  hidePassword = true;
   loading$: Observable<boolean>;
   error$: Observable<string | null>;
-  hidePassword = true;
 
   constructor(
     private fb: FormBuilder,
-    private store: Store<{ auth: AuthState }>
+    private authService: AuthService
   ) {
-    this.loading$ = this.store.select(state => state.auth.loading);
-    this.error$ = this.store.select(state => state.auth.error);
+    this.loading$ = this.authService.loading$;
+    this.error$ = this.authService.error$;
   }
 
   ngOnInit() {
@@ -147,7 +146,11 @@ export class RegisterComponent implements OnInit {
       };
       delete registerData.confirmPassword;
       
-      this.store.dispatch(register({ request: registerData }));
+      this.authService.register(registerData).subscribe({
+        error: (error) => {
+          console.error('Registration error:', error);
+        }
+      });
     }
   }
 }
