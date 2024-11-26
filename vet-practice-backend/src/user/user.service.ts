@@ -5,17 +5,25 @@ import { User } from './user.entity';
 import { CreateUserDto } from './create-user.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
-    private jwtService: JwtService
+    private jwtService: JwtService,
+    // private authService: AuthService
   ) {}
 
   async register(createUserDto: CreateUserDto): Promise<User> {
     try {
+      // Validate user data first
+      // await this.authService.validateUserForRegistration(
+      //   createUserDto.email,
+      //   createUserDto.username
+      // );
+
       // Hash the password
       const salt = await bcrypt.genSalt();
       const hashedPassword = await bcrypt.hash(createUserDto.password, salt);
@@ -49,8 +57,12 @@ export class UserService {
     return this.usersRepository.findOne({ where: { username } });
   }
 
+  async findUserByEmail(email: string): Promise<User> {
+    return this.usersRepository.findOne({ where: { email } });
+  }
+
   async generateJwt(user: User): Promise<string> {
-    const payload = { username: user.username, sub: user.id };
+    const payload = { email: user.email, sub: user.id };
     return this.jwtService.sign(payload);
   }
 }
