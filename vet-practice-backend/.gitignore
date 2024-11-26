@@ -6,6 +6,9 @@
 # endpoints testing
 /requests
 
+#pets pictures
+/uploads
+
 # Logs
 logs
 *.log

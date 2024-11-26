@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseInterceptors, UploadedFile, Request, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, UseInterceptors, UploadedFile, Request, UseGuards, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { PetsService } from './pets.service';
 import { CreatePetDto } from './dto/create-pet.dto';
@@ -13,7 +13,16 @@ export class PetsController {
   @UseInterceptors(FileInterceptor('image'))
   async create(
     @Body() createPetDto: CreatePetDto,
-    @UploadedFile() file: Express.Multer.File | undefined,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }), // 5MB
+          new FileTypeValidator({ fileType: /(jpg|jpeg|png)$/ }),
+        ],
+        fileIsRequired: false,
+      }),
+    )
+    file: Express.Multer.File | undefined,
     @Request() req,
   ) {
     const imageUrl = file ? `/uploads/pets/${file.filename}` : null;
