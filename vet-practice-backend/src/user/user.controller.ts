@@ -1,5 +1,5 @@
 import { Body, Controller, Post, HttpCode, HttpStatus, UnauthorizedException, ConflictException } from '@nestjs/common';
-import { CreateUserDto } from './create-user.dto';
+import { CreateUserDto } from '../auth/dto/create-user.dto';
 
 import { User } from './user.entity';
 import { UserService } from './user.service';
