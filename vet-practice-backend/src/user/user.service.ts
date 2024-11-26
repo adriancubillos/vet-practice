@@ -5,60 +5,51 @@ import { User } from './user.entity';
 import { CreateUserDto } from '../auth/dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
-    private usersRepository: Repository<User>,
-    private jwtService: JwtService,
-    // private authService: AuthService
+    private readonly userRepository: Repository<User>,
+    private readonly jwtService: JwtService
   ) {}
 
   async register(createUserDto: CreateUserDto): Promise<User> {
+    const { email, username } = createUserDto;
+
+    // Check for existing user
+    const existingUserByEmail = await this.findUserByEmail(email);
+    if (existingUserByEmail) {
+      throw new ConflictException('Email already exists');
+    }
+
+    const existingUserByUsername = await this.findUserByUsername(username);
+    if (existingUserByUsername) {
+      throw new ConflictException('Username already exists');
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+
+    // Create new user
+    const user = this.userRepository.create({
+      ...createUserDto,
+      password: hashedPassword,
+    });
+
     try {
-      // Validate user data first
-      // await this.authService.validateUserForRegistration(
-      //   createUserDto.email,
-      //   createUserDto.username
-      // );
-
-      // Hash the password
-      const salt = await bcrypt.genSalt();
-      const hashedPassword = await bcrypt.hash(createUserDto.password, salt);
-
-      // Create the user with all fields
-      const user = this.usersRepository.create({
-        username: createUserDto.username,
-        email: createUserDto.email,
-        password: hashedPassword,
-        firstName: createUserDto.firstName,
-        lastName: createUserDto.lastName,
-        address: createUserDto.address,
-        phoneNumber: createUserDto.phoneNumber,
-      });
-
-      // Save the user
-      await this.usersRepository.save(user);
-
-      // Remove password from response
-      const { password, ...result } = user;
-      return result as User;
+      return await this.userRepository.save(user);
     } catch (error) {
-      if (error.code === '23505') { // Unique violation error code
-        throw new ConflictException('Username or email already exists');
-      }
-      throw new InternalServerErrorException('Error creating user');
+      throw new InternalServerErrorException('Failed to create user');
     }
   }
 
-  async findUserByUsername(username: string): Promise<User> {
-    return this.usersRepository.findOne({ where: { username } });
+  async findUserByEmail(email: string): Promise<User | undefined> {
+    return this.userRepository.findOne({ where: { email } });
   }
 
-  async findUserByEmail(email: string): Promise<User> {
-    return this.usersRepository.findOne({ where: { email } });
+  async findUserByUsername(username: string): Promise<User | undefined> {
+    return this.userRepository.findOne({ where: { username } });
   }
 
   async generateJwt(user: User): Promise<string> {
