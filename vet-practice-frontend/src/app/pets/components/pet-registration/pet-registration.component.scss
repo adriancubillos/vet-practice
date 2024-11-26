@@ -1,0 +1,32 @@
+.container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.form-row {
+  margin-bottom: 1rem;
+  
+  mat-form-field {
+    width: 100%;
+  }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+
+  button {
+    min-width: 120px;
+  }
+}
+
+mat-card {
+  padding: 2rem;
+}
+
+mat-card-header {
+  margin-bottom: 2rem;
+}

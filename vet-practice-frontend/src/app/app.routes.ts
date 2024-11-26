@@ -18,6 +18,15 @@ export const routes: Routes = [
       .then(m => m.RegisterComponent)
   },
   {
+    path: 'auth',
+    loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)
+  },
+  {
+    path: 'pets',
+    loadChildren: () => import('./pets/pets.module').then(m => m.PetsModule),
+    canActivate: [authGuard]
+  },
+  {
     path: 'dashboard',
     loadComponent: () => import('./dashboard/dashboard.component')
       .then(m => m.DashboardComponent),

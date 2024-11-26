@@ -6,7 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
-import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
+import { MatMenuModule } from '@angular/material/menu';
 import { AuthService } from '../../../auth/services/auth.service';
 
 @Component({
@@ -51,33 +51,39 @@ import { AuthService } from '../../../auth/services/auth.service';
             <mat-icon matListItemIcon>dashboard</mat-icon>
             <span matListItemTitle>Dashboard</span>
           </a>
+
+          <mat-divider></mat-divider>
+          
+          <!-- Pets Section -->
+          <h3 matSubheader>Pets</h3>
+          <a mat-list-item routerLink="/pets/register" routerLinkActive="active">
+            <mat-icon matListItemIcon>pets</mat-icon>
+            <span matListItemTitle>Register Pet</span>
+          </a>
+          <a mat-list-item routerLink="/pets" routerLinkActive="active">
+            <mat-icon matListItemIcon>list</mat-icon>
+            <span matListItemTitle>Pet List</span>
+          </a>
+
+          <mat-divider></mat-divider>
+
+          <!-- Appointments Section -->
+          <h3 matSubheader>Appointments</h3>
           <a mat-list-item routerLink="/appointments" routerLinkActive="active">
             <mat-icon matListItemIcon>event</mat-icon>
-            <span matListItemTitle>Appointments</span>
-          </a>
-          <a mat-list-item routerLink="/patients" routerLinkActive="active">
-            <mat-icon matListItemIcon>pets</mat-icon>
-            <span matListItemTitle>Patients</span>
-          </a>
-          <a mat-list-item routerLink="/profile" routerLinkActive="active">
-            <mat-icon matListItemIcon>person</mat-icon>
-            <span matListItemTitle>Profile</span>
+            <span matListItemTitle>Schedule</span>
           </a>
         </mat-nav-list>
       </mat-sidenav>
 
-      <mat-sidenav-content>
-        <ng-content></ng-content>
+      <mat-sidenav-content [style.margin-left.px]="sidenavOpened ? 200 : 0">
+        <div class="content">
+          <ng-content></ng-content>
+        </div>
       </mat-sidenav-content>
     </mat-sidenav-container>
   `,
   styles: [`
-    :host {
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-    }
-
     .toolbar {
       position: fixed;
       top: 0;
@@ -91,21 +97,36 @@ import { AuthService } from '../../../auth/services/auth.service';
     }
 
     .sidenav-container {
-      flex: 1;
-      margin-top: 64px;
+      position: absolute;
+      top: 64px;
+      bottom: 0;
+      left: 0;
+      right: 0;
     }
 
     mat-sidenav {
-      width: 250px;
-      padding-top: 0;
+      width: 200px;
+      background-color: #fafafa;
+    }
+
+    .content {
+      padding: 20px;
     }
 
     .active {
-      background: rgba(0, 0, 0, 0.04);
+      background-color: rgba(0, 0, 0, 0.04);
     }
 
-    mat-sidenav-content {
-      padding: 20px;
+    mat-divider {
+      margin: 8px 0;
+    }
+
+    h3[matSubheader] {
+      color: rgba(0, 0, 0, 0.54);
+      padding: 16px;
+      margin: 0;
+      font-size: 14px;
+      font-weight: 500;
     }
   `]
 })
