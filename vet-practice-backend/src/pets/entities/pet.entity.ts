@@ -8,8 +8,8 @@ export enum Gender {
 
 @Entity()
 export class Pet {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column()
   name: string;

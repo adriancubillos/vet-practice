@@ -1,5 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { Exclude } from 'class-transformer';
+import { Pet } from '../pets/entities/pet.entity';
 
 @Entity()
 export class User {
@@ -27,6 +28,9 @@ export class User {
 
   @Column({ nullable: true })
   phoneNumber: string;
+
+  @OneToMany(() => Pet, pet => pet.owner)
+  pets: Pet[];
 
   @CreateDateColumn()
   createdAt: Date;
