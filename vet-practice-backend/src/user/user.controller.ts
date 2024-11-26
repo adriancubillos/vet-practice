@@ -1,27 +1,46 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
+import { Body, Controller, Post, HttpCode, HttpStatus, UnauthorizedException, ConflictException } from '@nestjs/common';
 import { CreateUserDto } from './create-user.dto';
+import { LoginDto } from './login.dto';
 import { User } from './user.entity';
 import { UserService } from './user.service';
+import * as bcrypt from 'bcrypt';
 
 @Controller('auth')
 export class UserController {
-  constructor(private readonly userService: UserService, private jwtService: JwtService) {}
+  constructor(
+    private readonly userService: UserService,
+  ) {}
 
   @Post('register')
-  async register(@Body() createUserDto: CreateUserDto): Promise<User> {
-    return this.userService.register(createUserDto);
+  @HttpCode(HttpStatus.CREATED)
+  async register(@Body() createUserDto: CreateUserDto): Promise<Omit<User, 'password'>> {
+    try {
+      return await this.userService.register(createUserDto);
+    } catch (error) {
+      if (error instanceof ConflictException) {
+        throw error;
+      }
+      throw new ConflictException('Error creating user');
+    }
   }
 
   @Post('login')
-  async login(@Body() createUserDto: CreateUserDto): Promise<{ accessToken: string }> {
-    const user = await this.userService.findUserByUsername(createUserDto.username);
-    
-    if (!user || !(await bcrypt.compare(createUserDto.password, user.password))) {
-      throw new Error('Invalid credentials'); // Handle this better with custom exceptions
+  @HttpCode(HttpStatus.OK)
+  async login(@Body() loginDto: LoginDto): Promise<{ accessToken: string }> {
+    try {
+      const user = await this.userService.findUserByUsername(loginDto.username);
+      
+      if (!user || !(await bcrypt.compare(loginDto.password, user.password))) {
+        throw new UnauthorizedException('Invalid credentials');
+      }
+
+      const accessToken = await this.userService.generateJwt(user);
+      return { accessToken };
+    } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        throw error;
+      }
+      throw new UnauthorizedException('Invalid credentials');
     }
-    const accessToken = await this.userService.generateJwt(user);
-    return { accessToken };
   }
 }
