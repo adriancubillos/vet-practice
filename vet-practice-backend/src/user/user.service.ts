@@ -1,8 +1,9 @@
-import { Injectable, ConflictException, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, ConflictException, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import { RegisterUserDto } from '../auth/dto/register-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 
@@ -13,6 +14,53 @@ export class UserService {
     private readonly userRepository: Repository<User>,
     private readonly jwtService: JwtService
   ) {}
+
+  async findAll(): Promise<User[]> {
+    return this.userRepository.find();
+  }
+
+  async findOne(id: number): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new NotFoundException(`User with ID "${id}" not found`);
+    }
+    return user;
+  }
+
+  async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+    const user = await this.findOne(id);
+
+    // If email is being updated, check for uniqueness
+    if (updateUserDto.email && updateUserDto.email !== user.email) {
+      const existingUser = await this.findUserByEmail(updateUserDto.email);
+      if (existingUser) {
+        throw new ConflictException('Email already exists');
+      }
+    }
+
+    // If username is being updated, check for uniqueness
+    if (updateUserDto.username && updateUserDto.username !== user.username) {
+      const existingUser = await this.findUserByUsername(updateUserDto.username);
+      if (existingUser) {
+        throw new ConflictException('Username already exists');
+      }
+    }
+
+    // If password is being updated, hash it
+    if (updateUserDto.password) {
+      updateUserDto.password = await bcrypt.hash(updateUserDto.password, 10);
+    }
+
+    // Update user
+    Object.assign(user, updateUserDto);
+    return this.userRepository.save(user);
+  }
+
+  async remove(id: number): Promise<User> {
+    const user = await this.findOne(id);
+    await this.userRepository.delete(id);
+    return user;
+  }
 
   async register(registerUserDto: RegisterUserDto): Promise<User> {
     const { email, username } = registerUserDto;
