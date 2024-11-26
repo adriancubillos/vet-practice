@@ -39,14 +39,9 @@ export class AuthService {
     private router: Router,
     private snackBar: MatSnackBar
   ) {
-    // Check if token exists on startup
-    const token = this.getToken();
-    if (token) {
-      this.state.next({
-        ...initialState,
-        isAuthenticated: true
-      });
-    }
+    // Clear any existing token on service initialization
+    this.removeToken();
+    this.updateState(initialState);
   }
 
   // Auth Methods
