@@ -18,18 +18,18 @@ import { Observable, Subject, takeUntil } from 'rxjs';
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    MatCardModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    MatCardModule,
-    MatProgressBarModule,
-    MatIconModule
+    MatIconModule,
+    MatProgressBarModule
   ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit, OnDestroy {
-  loginForm: FormGroup;
+  loginForm!: FormGroup;
   hidePassword = true;
   loading$: Observable<boolean>;
   error$: Observable<string | null>;
@@ -42,6 +42,9 @@ export class LoginComponent implements OnInit, OnDestroy {
   ) {
     this.loading$ = this.authService.loading$;
     this.error$ = this.authService.error$;
+  }
+
+  ngOnInit(): void {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [
@@ -50,9 +53,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         Validators.maxLength(environment.passwordRequirements.maxLength)
       ]]
     });
-  }
 
-  ngOnInit(): void {
     // Check if already authenticated and redirect if needed
     this.authService.isAuthenticated$
       .pipe(takeUntil(this.destroy$))
@@ -79,10 +80,6 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
   }
 
-  navigateToRegister(): void {
-    this.router.navigate([environment.routes.auth.register]);
-  }
-
   getErrorMessage(controlName: string): string {
     const control = this.loginForm.get(controlName);
     if (!control) return '';
@@ -104,5 +101,9 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
 
     return '';
+  }
+
+  navigateToRegister(): void {
+    this.router.navigate([environment.routes.auth.register]);
   }
 }

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
 
 // Material Imports
 import { MatStepperModule } from '@angular/material/stepper';
@@ -41,7 +42,8 @@ export class RegisterComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {
     this.loading$ = this.authService.loading$;
     this.error$ = this.authService.error$;
@@ -147,10 +149,17 @@ export class RegisterComponent implements OnInit {
       delete registerData.confirmPassword;
       
       this.authService.register(registerData).subscribe({
+        next: () => {
+          this.router.navigate(['/login']);
+        },
         error: (error) => {
           console.error('Registration error:', error);
         }
       });
     }
+  }
+
+  navigateToLogin(): void {
+    this.router.navigate(['/login']);
   }
 }
