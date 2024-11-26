@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseInterceptors, UploadedFile, Request, UseGuards, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator } from '@nestjs/common';
+import { Controller, Post, Get, Body, UseInterceptors, UploadedFile, Request, UseGuards, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { PetsService } from './pets.service';
 import { CreatePetDto } from './dto/create-pet.dto';
@@ -27,5 +27,15 @@ export class PetsController {
   ) {
     const imageUrl = file ? `/uploads/pets/${file.filename}` : null;
     return this.petsService.create(createPetDto, imageUrl, req.user);
+  }
+
+  @Get()
+  async findAll(@Request() req) {
+    return this.petsService.findByOwner(req.user);
+  }
+
+  @Get('all')
+  async findAllPets() {
+    return this.petsService.findAll();
   }
 }
