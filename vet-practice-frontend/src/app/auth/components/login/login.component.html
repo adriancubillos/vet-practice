@@ -1,0 +1,48 @@
+<div class="login-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Login to Vet Practice</mat-card-title>
+      <mat-card-subtitle>Welcome back! Please enter your credentials.</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-progress-bar *ngIf="loading$ | async" mode="indeterminate"></mat-progress-bar>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <mat-card-content>
+        <div class="form-container">
+          <!-- Error Message -->
+          <div *ngIf="error$ | async as error" class="error-message">
+            {{ error }}
+          </div>
+
+          <!-- Email Field -->
+          <mat-form-field appearance="outline">
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="email" type="email" placeholder="Enter your email">
+            <mat-error>{{ getErrorMessage('email') }}</mat-error>
+          </mat-form-field>
+
+          <!-- Password Field -->
+          <mat-form-field appearance="outline">
+            <mat-label>Password</mat-label>
+            <input matInput formControlName="password" [type]="hidePassword ? 'password' : 'text'" 
+                   placeholder="Enter your password">
+            <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
+              <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+            <mat-error>{{ getErrorMessage('password') }}</mat-error>
+          </mat-form-field>
+        </div>
+      </mat-card-content>
+
+      <mat-card-actions>
+        <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid || (loading$ | async)">
+          Login
+        </button>
+        <button mat-button type="button" (click)="navigateToRegister()">
+          Need an account? Register
+        </button>
+      </mat-card-actions>
+    </form>
+  </mat-card>
+</div>
