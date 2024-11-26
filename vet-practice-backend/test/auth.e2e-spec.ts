@@ -1,14 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe, ClassSerializerInterceptor } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { User } from '../src/user/user.entity';
+import { Repository } from 'typeorm';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
 describe('AuthController (e2e)', () => {
   let app: INestApplication;
   let configService: ConfigService;
+  let userRepository: Repository<User>;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -36,10 +39,31 @@ describe('AuthController (e2e)', () => {
 
     app = moduleFixture.createNestApplication();
     configService = moduleFixture.get<ConfigService>(ConfigService);
+    userRepository = moduleFixture.get<Repository<User>>(getRepositoryToken(User));
+
+    // Enable validation pipe with same settings as main.ts
+    app.useGlobalPipes(new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      forbidNonWhitelisted: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
+    }));
+
+    // Enable class-transformer
+    app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get('Reflector')));
+
     await app.init();
   });
 
+  beforeEach(async () => {
+    // Clean up the users table before each test
+    await userRepository.clear();
+  });
+
   afterAll(async () => {
+    await userRepository.clear(); // Clean up after all tests
     await app.close();
   });
 
@@ -67,7 +91,13 @@ describe('AuthController (e2e)', () => {
         });
     });
 
-    it('should fail when registering with existing email', () => {
+    it('should fail when registering with existing email', async () => {
+      // First register a user
+      await request(app.getHttpServer())
+        .post('/auth/register')
+        .send(registerDto);
+
+      // Try to register again with same email
       return request(app.getHttpServer())
         .post('/auth/register')
         .send(registerDto)
@@ -78,23 +108,40 @@ describe('AuthController (e2e)', () => {
     });
 
     it('should fail when registering with invalid data', () => {
-      const newDTO = {
+      const invalidDto = {
         ...registerDto,
         email: 'invalid-email',
         password: '123', // Too short
-      }
+      };
       return request(app.getHttpServer())
         .post('/auth/register')
-        .send(newDTO)
+        .send(invalidDto)
         .expect(400);
     });
   });
 
   describe('/auth/login (POST)', () => {
+    const registerDto = {
+      username: 'testuser',
+      email: 'test@example.com',
+      password: 'Password123!',
+      firstName: 'Test',
+      lastName: 'User',
+      address: '123 Test St',
+      phoneNumber: '1234567890',
+    };
+
     const loginDto = {
       email: 'test@example.com',
       password: 'Password123!',
     };
+
+    beforeEach(async () => {
+      // Register a user before each login test
+      await request(app.getHttpServer())
+        .post('/auth/register')
+        .send(registerDto);
+    });
 
     it('should login successfully with valid credentials', () => {
       return request(app.getHttpServer())
