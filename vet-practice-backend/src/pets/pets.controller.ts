@@ -13,7 +13,7 @@ export class PetsController {
   @UseInterceptors(FileInterceptor('image'))
   async create(
     @Body() createPetDto: CreatePetDto,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() file: Express.Multer.File | undefined,
     @Request() req,
   ) {
     const imageUrl = file ? `/uploads/pets/${file.filename}` : null;
