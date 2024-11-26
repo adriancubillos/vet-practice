@@ -1,9 +1,10 @@
 import { Body, Controller, Post, HttpCode, HttpStatus, UnauthorizedException, ConflictException } from '@nestjs/common';
 import { CreateUserDto } from './create-user.dto';
-import { LoginDto } from './login.dto';
+
 import { User } from './user.entity';
 import { UserService } from './user.service';
 import * as bcrypt from 'bcrypt';
+import { LoginDto } from 'src/auth/dto/login.dto';
 
 @Controller('auth')
 export class UserController {
@@ -26,11 +27,11 @@ export class UserController {
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  async login(@Body() loginDto: LoginDto): Promise<{ accessToken: string }> {
+  async login(@Body() LoginDto: LoginDto): Promise<{ accessToken: string }> {
     try {
-      const user = await this.userService.findUserByUsername(loginDto.username);
+      const user = await this.userService.findUserByEmail(LoginDto.email);
       
-      if (!user || !(await bcrypt.compare(loginDto.password, user.password))) {
+      if (!user || !(await bcrypt.compare(LoginDto.password, user.password))) {
         throw new UnauthorizedException('Invalid credentials');
       }
 
