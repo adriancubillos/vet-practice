@@ -1,11 +1,16 @@
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { NavMenuComponent } from './shared/components/nav-menu/nav-menu.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css'],
   standalone: true,
-  imports: [RouterModule]
+  imports: [CommonModule, RouterModule, NavMenuComponent],
+  template: `
+    <app-nav-menu>
+      <router-outlet></router-outlet>
+    </app-nav-menu>
+  `
 })
 export class AppComponent {}

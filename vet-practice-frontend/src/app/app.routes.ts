@@ -1,17 +1,42 @@
 import { Routes } from '@angular/router';
-import { RegisterComponent } from './auth/components/register/register.component';
-import { LoginComponent } from './auth/components/login/login.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
 import { authGuard } from './auth/guards/auth.guard';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
-  { 
-    path: 'dashboard', 
-    component: DashboardComponent,
+  {
+    path: '',
+    redirectTo: 'dashboard',
+    pathMatch: 'full'
+  },
+  {
+    path: 'login',
+    loadComponent: () => import('./auth/components/login/login.component')
+      .then(m => m.LoginComponent)
+  },
+  {
+    path: 'register',
+    loadComponent: () => import('./auth/components/register/register.component')
+      .then(m => m.RegisterComponent)
+  },
+  {
+    path: 'dashboard',
+    loadComponent: () => import('./dashboard/dashboard.component')
+      .then(m => m.DashboardComponent),
     canActivate: [authGuard]
   },
-  { path: '**', redirectTo: 'login' } // Catch all route
+  {
+    path: 'appointments',
+    loadComponent: () => import('./appointments/appointments.component')
+      .then(m => m.AppointmentsComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'profile',
+    loadComponent: () => import('./profile/profile.component')
+      .then(m => m.ProfileComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: '**',
+    redirectTo: 'dashboard'
+  }
 ];
