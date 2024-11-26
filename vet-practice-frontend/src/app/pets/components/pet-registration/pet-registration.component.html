@@ -3,7 +3,7 @@
     <mat-card-header>
       <mat-card-title>Register New Pet</mat-card-title>
     </mat-card-header>
-    
+
     <mat-card-content>
       <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()">
         <div class="form-row">
@@ -14,6 +14,32 @@
               Name is required
             </mat-error>
           </mat-form-field>
+        </div>
+
+        <!-- Image Upload Section -->
+        <div class="form-row">
+          <mat-card class="upload-card" (click)="fileInput.click()">
+            <mat-card-content class="upload-content">
+              <!-- Image Preview -->
+              <div class="image-preview" *ngIf="imagePreview">
+                <img [src]="imagePreview" alt="Pet preview">
+                <button mat-mini-fab color="warn" class="remove-button" type="button"
+                  (click)="removeImage(); $event.stopPropagation()">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </div>
+
+              <!-- Upload Prompt -->
+              <div class="upload-prompt" *ngIf="!imagePreview">
+                <mat-icon class="upload-icon">add_photo_alternate</mat-icon>
+                <span class="upload-text">Upload Pet Photo</span>
+                <span class="upload-hint">Click to select an image</span>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Hidden file input -->
+          <input #fileInput type="file" accept="image/*" style="display: none" (change)="onFileSelected($event)">
         </div>
 
         <div class="form-row">

@@ -7,6 +7,7 @@ export interface Pet {
   gender: 'male' | 'female';
   ownerId: number;
   weight?: number;
+  imageUrl?: string;
   medicalHistory?: MedicalRecord[];
 }
 
@@ -28,6 +29,7 @@ export interface PetRegistrationRequest {
   dateOfBirth: Date;
   gender: 'male' | 'female';
   weight?: number;
+  image?: File;
 }
 
 export interface PetState {

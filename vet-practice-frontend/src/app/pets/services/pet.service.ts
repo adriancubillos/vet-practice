@@ -13,8 +13,8 @@ export class PetService {
   constructor(private http: HttpClient) {}
 
   // Pet CRUD operations
-  registerPet(request: PetRegistrationRequest): Observable<Pet> {
-    return this.http.post<Pet>(this.baseUrl, request);
+  registerPet(formData: FormData): Observable<Pet> {
+    return this.http.post<Pet>(this.baseUrl, formData);
   }
 
   getPets(): Observable<Pet[]> {

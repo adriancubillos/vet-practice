@@ -16,11 +16,10 @@ import { PetRegistrationComponent } from './components/pet-registration/pet-regi
 import { PetService } from './services/pet.service';
 
 @NgModule({
-  declarations: [
-    PetRegistrationComponent
-  ],
+  declarations: [],
   imports: [
     CommonModule,
+    PetRegistrationComponent,
     RouterModule.forChild([
       { path: 'register', component: PetRegistrationComponent }
     ]),

@@ -1,7 +1,17 @@
+@use '@angular/material' as mat;
+
 .container {
   max-width: 800px;
   margin: 2rem auto;
   padding: 0 1rem;
+}
+
+mat-card {
+  padding: 2rem;
+}
+
+mat-card-header {
+  margin-bottom: 2rem;
 }
 
 .form-row {
@@ -9,6 +19,71 @@
   
   mat-form-field {
     width: 100%;
+  }
+}
+
+.upload-card {
+  cursor: pointer;
+  margin-bottom: 1rem;
+  transition: all 0.2s ease;
+  border: 2px dashed rgba(0, 0, 0, 0.12);
+
+  &:hover {
+    border-color: rgba(0, 0, 0, 0.24);
+    background-color: rgba(0, 0, 0, 0.04);
+  }
+}
+
+.upload-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  padding: 1rem;
+}
+
+.image-preview {
+  width: 100%;
+  height: 200px;
+  position: relative;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+
+  .remove-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 1;
+  }
+}
+
+.upload-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.6);
+
+  .upload-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 1rem;
+  }
+
+  .upload-text {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .upload-hint {
+    font-size: 0.9rem;
+    color: rgba(0, 0, 0, 0.54);
   }
 }
 
@@ -20,13 +95,28 @@
 
   button {
     min-width: 120px;
+    
+    mat-icon {
+      margin-right: 8px;
+    }
   }
 }
 
-mat-card {
-  padding: 2rem;
-}
+// Responsive adjustments
+@media (max-width: 600px) {
+  .container {
+    margin: 1rem auto;
+  }
 
-mat-card-header {
-  margin-bottom: 2rem;
+  mat-card {
+    padding: 1rem;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    
+    button {
+      width: 100%;
+    }
+  }
 }
