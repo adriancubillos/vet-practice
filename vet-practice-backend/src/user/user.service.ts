@@ -2,7 +2,7 @@ import { Injectable, ConflictException, InternalServerErrorException } from '@ne
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
-import { CreateUserDto } from '../auth/dto/create-user.dto';
+import { RegisterUserDto } from '../auth/dto/register-user.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 
@@ -14,8 +14,8 @@ export class UserService {
     private readonly jwtService: JwtService
   ) {}
 
-  async register(createUserDto: CreateUserDto): Promise<User> {
-    const { email, username } = createUserDto;
+  async register(registerUserDto: RegisterUserDto): Promise<User> {
+    const { email, username } = registerUserDto;
 
     // Check for existing user
     const existingUserByEmail = await this.findUserByEmail(email);
@@ -29,11 +29,11 @@ export class UserService {
     }
 
     // Hash password
-    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+    const hashedPassword = await bcrypt.hash(registerUserDto.password, 10);
 
     // Create new user
     const user = this.userRepository.create({
-      ...createUserDto,
+      ...registerUserDto,
       password: hashedPassword,
     });
 
