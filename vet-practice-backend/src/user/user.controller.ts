@@ -12,7 +12,7 @@ import {
   ParseIntPipe
 } from '@nestjs/common';
 import { RegisterUserDto } from '../auth/dto/register-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserDto } from '../user/dto/update-user.dto';
 import { User } from './user.entity';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
