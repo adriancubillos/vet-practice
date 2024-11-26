@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ConflictException, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
@@ -15,13 +15,34 @@ export class UserService {
   ) {}
 
   async register(createUserDto: CreateUserDto): Promise<User> {
-    const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(createUserDto.password, salt);
-    const user = this.usersRepository.create({
-      username: createUserDto.username,
-      password: hashedPassword,
-    });
-    return this.usersRepository.save(user);
+    try {
+      // Hash the password
+      const salt = await bcrypt.genSalt();
+      const hashedPassword = await bcrypt.hash(createUserDto.password, salt);
+
+      // Create the user with all fields
+      const user = this.usersRepository.create({
+        username: createUserDto.username,
+        email: createUserDto.email,
+        password: hashedPassword,
+        firstName: createUserDto.firstName,
+        lastName: createUserDto.lastName,
+        address: createUserDto.address,
+        phoneNumber: createUserDto.phoneNumber,
+      });
+
+      // Save the user
+      await this.usersRepository.save(user);
+
+      // Remove password from response
+      const { password, ...result } = user;
+      return result as User;
+    } catch (error) {
+      if (error.code === '23505') { // Unique violation error code
+        throw new ConflictException('Username or email already exists');
+      }
+      throw new InternalServerErrorException('Error creating user');
+    }
   }
 
   async findUserByUsername(username: string): Promise<User> {
