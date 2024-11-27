@@ -13,7 +13,7 @@
   }
 
   .pet-image {
-    height: 300px;
+    height: 400px;
     width: 100%;
     object-fit: contain;
   }
@@ -22,7 +22,7 @@
     margin-bottom: 16px;
 
     .upload-card {
-      width: 100%;
+      width: auto;
       cursor: pointer;
       transition: background-color 0.2s;
 
