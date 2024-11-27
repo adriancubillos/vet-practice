@@ -4,6 +4,8 @@ import { PetService } from '../../services/pet.service';
 import { Pet } from '../../models/pet.interface';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { environment } from '../../../../environments/environment';
 
 @Component({
@@ -25,7 +27,8 @@ export class PetDetailsComponent implements OnInit {
     private router: Router,
     private petService: PetService,
     private fb: FormBuilder,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
   ) {
     this.petForm = this.fb.group({
       name: ['', Validators.required],
@@ -180,18 +183,32 @@ export class PetDetailsComponent implements OnInit {
   }
 
   deletePet(): void {
-    if (this.pet?.id && confirm('Are you sure you want to delete this pet?')) {
-      this.petService.deletePet(this.pet.id).subscribe({
-        next: () => {
-          this.snackBar.open('Pet deleted successfully', 'Close', { duration: 3000 });
-          this.router.navigate(['/pets']);
-        },
-        error: (error) => {
-          this.snackBar.open('Error deleting pet', 'Close', { duration: 3000 });
-          console.error('Error deleting pet:', error);
-        }
-      });
-    }
+    if (!this.pet?.id) return;
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      data: {
+        title: 'Delete Pet',
+        message: 'Are you sure you want to delete this pet? This action cannot be undone.',
+        confirmText: 'Delete',
+        cancelText: 'Keep'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && this.pet?.id) {
+        this.petService.deletePet(this.pet.id).subscribe({
+          next: () => {
+            this.snackBar.open('Pet deleted successfully', 'Close', { duration: 3000 });
+            this.router.navigate(['/pets']);
+          },
+          error: (error) => {
+            this.snackBar.open('Error deleting pet', 'Close', { duration: 3000 });
+            console.error('Error deleting pet:', error);
+          }
+        });
+      }
+    });
   }
 
   hasActualImage(): boolean {

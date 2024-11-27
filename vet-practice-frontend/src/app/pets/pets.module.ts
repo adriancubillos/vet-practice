@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
+import { SharedModule } from '../shared/shared.module';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -34,17 +35,18 @@ const routes: Routes = [
   imports: [
     CommonModule,
     RouterModule.forChild(routes),
+    ReactiveFormsModule,
+    SharedModule,
     MatCardModule,
     MatButtonModule,
-    MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatSnackBarModule,
-    MatProgressSpinnerModule,
     MatIconModule,
-    ReactiveFormsModule
+    MatSnackBarModule,
+    MatFormFieldModule,
+    MatProgressSpinnerModule
   ],
   providers: [PetService]
 })
