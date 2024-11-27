@@ -14,6 +14,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-pet-registration',
@@ -99,7 +100,7 @@ export class PetRegistrationComponent implements OnInit {
             horizontalPosition: 'end',
             verticalPosition: 'top',
           });
-          this.router.navigate(['/pets', response.id]);
+          this.router.navigate([environment.routes.pet, response.id]);
         },
         error: (error) => {
           this.loading = false;

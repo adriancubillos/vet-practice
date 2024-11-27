@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
-import { tap, catchError, map } from 'rxjs/operators';
+import { tap, catchError, map, finalize } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { environment } from '../../../environments/environment';
@@ -25,7 +25,7 @@ const initialState: AuthState = {
 })
 export class AuthService {
   private readonly TOKEN_KEY = environment.tokenKey;
-  private readonly baseUrl = environment.apiUrl;
+  private readonly authUrl = environment.authUrl;
   private state = new BehaviorSubject<AuthState>(initialState);
 
   // Public observables
@@ -39,107 +39,123 @@ export class AuthService {
     private router: Router,
     private snackBar: MatSnackBar
   ) {
-    // Clear any existing token on service initialization
-    this.removeToken();
-    this.updateState(initialState);
+    // Check for existing token on service initialization
+    const token = this.getToken();
+    if (token) {
+      this.updateState({
+        ...initialState,
+        isAuthenticated: true
+      });
+    } else {
+      this.updateState(initialState);
+    }
   }
 
   // Auth Methods
   register(credentials: any): Observable<any> {
     this.setLoading(true);
-    return this.http.post<any>(`${this.baseUrl}/register`, credentials).pipe(
+    return this.http.post<any>(`${this.authUrl}/register`, credentials).pipe(
       tap(response => {
-        this.setToken(response.accessToken);
-        this.updateState({
-          isAuthenticated: true,
-          user: response.user,
-          loading: false,
-          error: null
-        });
-        this.showSuccess('Registration successful!');
-        this.router.navigate([environment.routes.dashboard]);
+        console.log('Register response:', response); // Debug log
+        if (response.accessToken) {
+          this.setToken(response.accessToken);
+          this.updateState({
+            ...initialState,
+            isAuthenticated: true,
+            user: response.user
+          });
+          this.showSuccessMessage('Registration successful!');
+          this.router.navigate([environment.routes.dashboard]).then(
+            () => console.log('Navigation successful'),
+            error => console.error('Navigation failed:', error)
+          );
+        }
       }),
       catchError(error => {
-        this.handleError(error);
+        console.error('Register error:', error); // Debug log
+        const errorMessage = error.error?.message || 'Registration failed. Please try again.';
+        this.showErrorMessage(errorMessage);
+        this.updateState({ ...initialState, error: errorMessage });
         return throwError(() => error);
-      })
+      }),
+      finalize(() => this.setLoading(false))
     );
   }
 
   login(credentials: any): Observable<any> {
     this.setLoading(true);
-    return this.http.post<any>(`${this.baseUrl}/login`, credentials).pipe(
+    return this.http.post<any>(`${this.authUrl}/login`, credentials).pipe(
       tap(response => {
-        this.setToken(response.accessToken);
-        this.updateState({
-          isAuthenticated: true,
-          user: response.user,
-          loading: false,
-          error: null
-        });
-        this.showSuccess('Login successful!');
-        this.router.navigate([environment.routes.dashboard]);
+        console.log('Login response:', response); // Debug log
+        if (response.accessToken) {
+          this.setToken(response.accessToken);
+          this.updateState({
+            ...initialState,
+            isAuthenticated: true,
+            user: response.user
+          });
+          this.showSuccessMessage('Login successful!');
+          this.router.navigate([environment.routes.dashboard]).then(
+            () => console.log('Navigation successful'),
+            error => console.error('Navigation failed:', error)
+          );
+        }
       }),
       catchError(error => {
-        this.handleError(error);
+        console.error('Login error:', error); // Debug log
+        const errorMessage = error.error?.message || 'Login failed. Please try again.';
+        this.showErrorMessage(errorMessage);
+        this.updateState({ ...initialState, error: errorMessage });
         return throwError(() => error);
-      })
+      }),
+      finalize(() => this.setLoading(false))
     );
   }
 
   logout(): void {
     this.removeToken();
     this.updateState(initialState);
-    this.showSuccess('Logged out successfully');
     this.router.navigate([environment.routes.auth.login]);
+    this.showSuccessMessage('Logged out successfully!');
   }
 
-  // Token Management
+  // Token Methods
   getToken(): string | null {
     return localStorage.getItem(this.TOKEN_KEY);
   }
 
-  setToken(token: string): void {
+  private setToken(token: string): void {
     localStorage.setItem(this.TOKEN_KEY, token);
   }
 
-  removeToken(): void {
+  private removeToken(): void {
     localStorage.removeItem(this.TOKEN_KEY);
   }
 
-  // Private Helper Methods
-  private updateState(newState: Partial<AuthState>): void {
-    this.state.next({
-      ...this.state.value,
-      ...newState
-    });
+  // State Management
+  private updateState(state: Partial<AuthState>): void {
+    const currentState = this.state.value;
+    const newState = { ...currentState, ...state };
+    console.log('State updated:', newState); // Debug log
+    this.state.next(newState);
   }
 
   private setLoading(loading: boolean): void {
     this.updateState({ loading });
   }
 
-  private handleError(error: any): void {
-    this.updateState({
-      loading: false,
-      error: error.error?.message || 'An error occurred'
-    });
-    this.showError(error.error?.message || 'An error occurred');
-  }
-
-  private showSuccess(message: string): void {
+  // Notification Methods
+  private showSuccessMessage(message: string): void {
     this.snackBar.open(message, 'Close', {
       duration: environment.snackbarDuration,
-      horizontalPosition: 'end',
-      verticalPosition: 'top',
+      panelClass: ['success-snackbar']
     });
   }
 
-  private showError(message: string): void {
+  private showErrorMessage(message: string): void {
     this.snackBar.open(message, 'Close', {
       duration: environment.snackbarDuration,
-      horizontalPosition: 'end',
-      verticalPosition: 'top',
+      panelClass: ['error-snackbar']
     });
   }
 }

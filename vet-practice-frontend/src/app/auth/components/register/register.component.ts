@@ -13,6 +13,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { environment } from '../../../../environments/environment';
+
 import { AuthService } from '../../services/auth.service';
 
 @Component({
@@ -150,7 +152,7 @@ export class RegisterComponent implements OnInit {
       
       this.authService.register(registerData).subscribe({
         next: () => {
-          this.router.navigate(['/login']);
+          this.router.navigate([environment.routes.auth.login]);
         },
         error: (error) => {
           console.error('Registration error:', error);
@@ -160,6 +162,6 @@ export class RegisterComponent implements OnInit {
   }
 
   navigateToLogin(): void {
-    this.router.navigate(['/login']);
+    this.router.navigate([environment.routes.auth.login]);
   }
 }
