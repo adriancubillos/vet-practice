@@ -1,0 +1,55 @@
+<div class="appointments-container">
+  <div class="header">
+    <h1>Appointments</h1>
+    <button mat-raised-button color="primary" (click)="createAppointment()">
+      <mat-icon>add</mat-icon>
+      New Appointment
+    </button>
+  </div>
+
+  <mat-spinner *ngIf="loading" diameter="40" class="spinner"></mat-spinner>
+
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && !error" class="appointments-list">
+    <mat-card *ngFor="let appointment of appointments" class="appointment-card">
+      <mat-card-header>
+        <mat-card-title>
+          {{ appointment.reason }}
+        </mat-card-title>
+        <mat-card-subtitle>
+          <span [style.color]="getStatusColor(appointment.status)" class="status-badge">
+            {{ appointment.status }}
+          </span>
+          {{ appointment.dateTime | date:'medium' }}
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <p><strong>Duration:</strong> {{ appointment.duration }} minutes</p>
+        <p *ngIf="appointment.notes"><strong>Notes:</strong> {{ appointment.notes }}</p>
+      </mat-card-content>
+
+      <mat-card-actions align="end">
+        <button mat-button color="primary" (click)="viewAppointment(appointment.id!)">
+          <mat-icon>visibility</mat-icon>
+          View
+        </button>
+        <button mat-button color="accent" (click)="editAppointment(appointment.id!)">
+          <mat-icon>edit</mat-icon>
+          Edit
+        </button>
+        <button mat-button color="warn" (click)="deleteAppointment(appointment.id!)">
+          <mat-icon>delete</mat-icon>
+          Delete
+        </button>
+      </mat-card-actions>
+    </mat-card>
+
+    <div *ngIf="appointments.length === 0" class="no-appointments">
+      No appointments found.
+    </div>
+  </div>
+</div>

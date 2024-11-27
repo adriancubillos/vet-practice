@@ -1,0 +1,69 @@
+.appointments-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+
+    h1 {
+      margin: 0;
+    }
+  }
+
+  .spinner {
+    margin: 40px auto;
+  }
+
+  .error-message {
+    color: red;
+    text-align: center;
+    margin: 20px 0;
+  }
+
+  .appointments-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+
+  .appointment-card {
+    mat-card-header {
+      margin-bottom: 16px;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      margin-right: 8px;
+      font-weight: 500;
+      text-transform: capitalize;
+    }
+
+    mat-card-content {
+      margin-bottom: 16px;
+
+      p {
+        margin: 8px 0;
+      }
+    }
+
+    mat-card-actions {
+      padding: 8px;
+      button {
+        margin-left: 8px;
+      }
+    }
+  }
+
+  .no-appointments {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+    grid-column: 1 / -1;
+  }
+}
