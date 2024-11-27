@@ -42,10 +42,7 @@ export class AuthService {
     // Check for existing token on service initialization
     const token = this.getToken();
     if (token) {
-      this.updateState({
-        ...initialState,
-        isAuthenticated: true
-      });
+      this.loadUserProfile();
     } else {
       this.updateState(initialState);
     }
@@ -117,6 +114,25 @@ export class AuthService {
     this.updateState(initialState);
     this.router.navigate([environment.routes.auth.login]);
     this.showSuccessMessage('Logged out successfully!');
+  }
+
+  // Load user profile
+  private loadUserProfile(): void {
+    this.http.get<any>(`${this.authUrl}/profile`).pipe(
+      tap(user => {
+        this.updateState({
+          ...initialState,
+          isAuthenticated: true,
+          user: user
+        });
+      }),
+      catchError(error => {
+        console.error('Error loading user profile:', error);
+        this.removeToken();
+        this.updateState(initialState);
+        return throwError(() => error);
+      })
+    ).subscribe();
   }
 
   // Token Methods

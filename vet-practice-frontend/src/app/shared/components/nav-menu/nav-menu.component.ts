@@ -8,6 +8,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { AuthService } from '../../../auth/services/auth.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-nav-menu',
@@ -29,6 +30,11 @@ import { AuthService } from '../../../auth/services/auth.service';
       </button>
       <span>Vet Practice</span>
       <span class="toolbar-spacer"></span>
+      <ng-container *ngIf="user$ | async as user">
+        <span class="user-name" *ngIf="user.firstName || user.lastName">
+          {{ user.firstName }} {{ user.lastName }}
+        </span>
+      </ng-container>
       <button mat-icon-button [matMenuTriggerFor]="profileMenu">
         <mat-icon>account_circle</mat-icon>
       </button>
@@ -96,6 +102,12 @@ import { AuthService } from '../../../auth/services/auth.service';
       flex: 1 1 auto;
     }
 
+    .user-name {
+      margin-right: 16px;
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
     .sidenav-container {
       position: absolute;
       top: 64px;
@@ -132,8 +144,11 @@ import { AuthService } from '../../../auth/services/auth.service';
 })
 export class NavMenuComponent {
   sidenavOpened = true;
+  user$: Observable<any>;
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) {
+    this.user$ = this.authService.user$;
+  }
 
   toggleSidenav() {
     this.sidenavOpened = !this.sidenavOpened;

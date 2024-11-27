@@ -16,7 +16,7 @@ export class AuthService {
     return this.userService.register(registerUserDto);
   }
 
-  async login(loginDto: LoginDto): Promise<{ accessToken: string }> {
+  async login(loginDto: LoginDto): Promise<{ accessToken: string; user: any }> {
     const user = await this.validateUser(loginDto);
     
     const payload = { 
@@ -26,6 +26,12 @@ export class AuthService {
 
     return {
       accessToken: await this.jwtService.signAsync(payload),
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName
+      }
     };
   }
 
@@ -40,6 +46,16 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
+    const { password, ...result } = user;
+    return result;
+  }
+
+  async getProfile(userId: number) {
+    const user = await this.userService.findOne(userId);
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+    
     const { password, ...result } = user;
     return result;
   }
