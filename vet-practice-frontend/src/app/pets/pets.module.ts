@@ -13,14 +13,15 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { PetRegistrationComponent } from './components/pet-registration/pet-registration.component';
+import { PetListComponent } from './components/pet-list/pet-list.component';
 import { PetService } from './services/pet.service';
 
 @NgModule({
   declarations: [],
   imports: [
     CommonModule,
-    PetRegistrationComponent,
     RouterModule.forChild([
+      { path: '', component: PetListComponent },
       { path: 'register', component: PetRegistrationComponent }
     ]),
     ReactiveFormsModule,
@@ -33,8 +34,6 @@ import { PetService } from './services/pet.service';
     MatProgressSpinnerModule,
     MatSnackBarModule
   ],
-  providers: [
-    PetService
-  ]
+  providers: [PetService]
 })
 export class PetsModule { }
