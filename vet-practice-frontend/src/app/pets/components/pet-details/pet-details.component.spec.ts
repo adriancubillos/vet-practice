@@ -108,7 +108,9 @@ describe('PetDetailsComponent', () => {
     }));
 
     it('should handle error when loading pet details', fakeAsync(() => {
-      petService.getPetById.and.returnValue(throwError(() => new Error('Failed to load')));
+      const error = new Error('Failed to load');
+      petService.getPetById.and.returnValue(throwError(() => error));
+      spyOn(console, 'error'); // Prevent error from showing in test output
 
       component.loadPetDetails(1);
       tick();
@@ -118,6 +120,7 @@ describe('PetDetailsComponent', () => {
         'Close',
         { duration: 3000 }
       );
+      expect(console.error).toHaveBeenCalledWith('Error loading pet:', error);
     }));
   });
 
@@ -228,7 +231,9 @@ describe('PetDetailsComponent', () => {
 
     it('should handle error when updating pet', fakeAsync(() => {
       component.pet = mockPet;
-      petService.updatePet.and.returnValue(throwError(() => new Error('Failed to update')));
+      const error = new Error('Failed to update');
+      petService.updatePet.and.returnValue(throwError(() => error));
+      spyOn(console, 'error'); // Prevent error from showing in test output
 
       component.petForm.patchValue({ name: 'Updated Max' });
       component.savePet();
@@ -239,6 +244,7 @@ describe('PetDetailsComponent', () => {
         'Close',
         { duration: 3000 }
       );
+      expect(console.error).toHaveBeenCalledWith('Error updating pet:', error);
     }));
   });
 
@@ -264,10 +270,12 @@ describe('PetDetailsComponent', () => {
 
     it('should handle error when deleting pet', fakeAsync(() => {
       component.pet = mockPet;
+      const error = new Error('Failed to delete');
       dialog.open.and.returnValue({
         afterClosed: () => of(true)
       } as any);
-      petService.deletePet.and.returnValue(throwError(() => new Error('Failed to delete')));
+      petService.deletePet.and.returnValue(throwError(() => error));
+      const consoleSpy = spyOn(console, 'error'); // Prevent error from showing in test output
 
       component.deletePet();
       tick();
@@ -277,6 +285,7 @@ describe('PetDetailsComponent', () => {
         'Close',
         { duration: 3000 }
       );
+      expect(consoleSpy).toHaveBeenCalledWith('Error deleting pet:', error);
     }));
 
     it('should not delete pet when dialog is cancelled', fakeAsync(() => {
