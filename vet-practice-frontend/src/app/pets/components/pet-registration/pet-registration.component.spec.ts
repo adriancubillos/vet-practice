@@ -8,6 +8,15 @@ import { of, throwError } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Pet } from '../../models/pet.interface';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 describe('PetRegistrationComponent', () => {
   let component: PetRegistrationComponent;
@@ -35,7 +44,16 @@ describe('PetRegistrationComponent', () => {
     await TestBed.configureTestingModule({
       imports: [
         ReactiveFormsModule,
-        BrowserAnimationsModule
+        BrowserAnimationsModule,
+        MatCardModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatSelectModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        MatButtonModule,
+        MatIconModule,
+        MatProgressSpinnerModule
       ],
       declarations: [ PetRegistrationComponent ],
       providers: [
