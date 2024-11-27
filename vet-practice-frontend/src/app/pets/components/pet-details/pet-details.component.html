@@ -18,7 +18,7 @@
       <mat-card class="upload-card" (click)="fileInput.click()">
         <mat-card-content class="upload-content">
           <!-- Image Preview -->
-          <div class="image-preview" *ngIf="imagePreview || pet.imageUrl">
+          <div class="image-preview" *ngIf="imagePreview || (pet.imageUrl && imageExists)">
             <img [src]="imagePreview || getImageUrl(pet.imageUrl)" 
                  (error)="onImageError($event)" 
                  alt="{{ pet.name }}">
@@ -29,7 +29,7 @@
           </div>
 
           <!-- Upload Prompt -->
-          <div class="upload-prompt" *ngIf="!imagePreview && !pet.imageUrl">
+          <div class="upload-prompt" *ngIf="!imagePreview && (!pet.imageUrl || !imageExists)">
             <mat-icon class="upload-icon">add_photo_alternate</mat-icon>
             <span class="upload-text">Upload Pet Photo</span>
             <span class="upload-hint">Click to select an image</span>

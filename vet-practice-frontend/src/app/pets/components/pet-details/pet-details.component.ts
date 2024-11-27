@@ -18,6 +18,7 @@ export class PetDetailsComponent implements OnInit {
   imagePreview: string | null = null;
   selectedFile: File | null = null;
   placeholderImage = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgMjAwIDIwMCI+CiAgPHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiNlZWUiLz4KICA8Y2lyY2xlIGN4PSIxMDAiIGN5PSI4NSIgcj0iMzUiIGZpbGw9IiNhYWEiLz4KICA8Y2lyY2xlIGN4PSI2NSIgY3k9IjEyNSIgcj0iMjAiIGZpbGw9IiNhYWEiLz4KICA8Y2lyY2xlIGN4PSIxMzUiIGN5PSIxMjUiIHI9IjIwIiBmaWxsPSIjYWFhIi8+CiAgPHBhdGggZD0iTTY1LDE1MCBRMTAwLDE4MCAxMzUsMTUwIiBzdHJva2U9IiNhYWEiIHN0cm9rZS13aWR0aD0iOCIgZmlsbD0ibm9uZSIvPgo8L3N2Zz4=';
+  imageExists = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -56,12 +57,30 @@ export class PetDetailsComponent implements OnInit {
           gender: pet.gender,
           weight: pet.weight
         });
+        // Check if image exists when loading pet details
+        if (pet.imageUrl && !pet.imageUrl.startsWith('data:image/svg+xml;base64,')) {
+          this.checkImageExists(pet.imageUrl);
+        }
       },
       error: (error) => {
         this.snackBar.open('Error loading pet details', 'Close', { duration: 3000 });
         console.error('Error loading pet:', error);
       }
     });
+  }
+
+  checkImageExists(url: string): void {
+    const img = new Image();
+    img.onload = () => {
+      this.imageExists = true;
+    };
+    img.onerror = () => {
+      this.imageExists = false;
+      if (this.pet) {
+        this.pet.imageUrl = undefined;
+      }
+    };
+    img.src = this.getImageUrl(url);
   }
 
   getImageUrl(imageUrl: string | undefined): string {
@@ -75,6 +94,10 @@ export class PetDetailsComponent implements OnInit {
   onImageError(event: Event): void {
     const img = event.target as HTMLImageElement;
     img.src = this.placeholderImage;
+    this.imageExists = false;
+    if (this.pet) {
+      this.pet.imageUrl = undefined;
+    }
   }
 
   onFileSelected(event: Event): void {
@@ -100,6 +123,7 @@ export class PetDetailsComponent implements OnInit {
     if (this.pet) {
       this.pet.imageUrl = undefined;
     }
+    this.imageExists = false;
   }
 
   toggleEdit(): void {
@@ -135,6 +159,9 @@ export class PetDetailsComponent implements OnInit {
           this.isEditing = false;
           this.imagePreview = null;
           this.selectedFile = null;
+          if (pet.imageUrl) {
+            this.checkImageExists(pet.imageUrl);
+          }
           this.snackBar.open('Pet details updated successfully', 'Close', { duration: 3000 });
         },
         error: (error) => {
@@ -158,5 +185,9 @@ export class PetDetailsComponent implements OnInit {
         }
       });
     }
+  }
+
+  hasActualImage(): boolean {
+    return this.imageExists || this.imagePreview !== null;
   }
 }
