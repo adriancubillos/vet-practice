@@ -53,8 +53,21 @@ export class PetsService {
       throw new ForbiddenException('You can only update your own pets');
     }
 
+    // If imageUrl is empty string, set it to null
+    if (imageUrl === '') {
+      imageUrl = null;
+    }
+
     // If there's a new image and the pet already has an image, delete the old one
     if (imageUrl && pet.imageUrl) {
+      const oldImagePath = path.join(process.cwd(), 'uploads/pets', path.basename(pet.imageUrl));
+      if (fs.existsSync(oldImagePath)) {
+        fs.unlinkSync(oldImagePath);
+      }
+    }
+
+    // If imageUrl is null and there was an old image, delete it
+    if (imageUrl === null && pet.imageUrl) {
       const oldImagePath = path.join(process.cwd(), 'uploads/pets', path.basename(pet.imageUrl));
       if (fs.existsSync(oldImagePath)) {
         fs.unlinkSync(oldImagePath);
@@ -64,7 +77,7 @@ export class PetsService {
     // Update the pet with new data
     Object.assign(pet, {
       ...updatePetDto,
-      imageUrl: imageUrl || pet.imageUrl,
+      imageUrl: imageUrl ?? pet.imageUrl, // Only update imageUrl if it's not null
     });
 
     return this.petsRepository.save(pet);

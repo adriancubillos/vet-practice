@@ -139,14 +139,21 @@ export class PetDetailsComponent implements OnInit {
     if (this.petForm.valid && this.pet?.id) {
       const formData = new FormData();
       const updatedPet = {
-        ...this.petForm.value,
-        id: this.pet.id,
-        ownerId: this.pet.ownerId
+        ...this.petForm.value
       };
       delete updatedPet.image; // Remove image from pet object
 
-      // Add pet data
-      formData.append('pet', JSON.stringify(updatedPet));
+      // Add each pet field to FormData individually
+      Object.entries(updatedPet).forEach(([key, value]) => {
+        if (value !== null && value !== undefined) {
+          // Handle Date objects
+          if (value instanceof Date) {
+            formData.append(key, value.toISOString());
+          } else {
+            formData.append(key, value.toString());
+          }
+        }
+      });
       
       // Add image if selected
       if (this.selectedFile) {
