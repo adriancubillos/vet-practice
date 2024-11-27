@@ -11,6 +11,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { PetListComponent } from './components/pet-list/pet-list.component';
 import { PetRegistrationComponent } from './components/pet-registration/pet-registration.component';
@@ -40,7 +42,9 @@ const routes: Routes = [
     MatDatepickerModule,
     MatNativeDateModule,
     MatIconModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatFormFieldModule,
+    MatProgressSpinnerModule
   ],
   providers: [PetService]
 })
