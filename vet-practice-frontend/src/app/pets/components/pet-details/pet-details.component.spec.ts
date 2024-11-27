@@ -10,6 +10,9 @@ import { environment } from '../../../../environments/environment';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { Pet } from '../../models/pet.interface';
 
@@ -45,7 +48,9 @@ describe('PetDetailsComponent', () => {
         ReactiveFormsModule,
         BrowserAnimationsModule,
         MatFormFieldModule,
-        MatInputModule
+        MatInputModule,
+        MatCardModule,
+        MatIconModule
       ],
       declarations: [ PetDetailsComponent ],
       providers: [
@@ -248,7 +253,7 @@ describe('PetDetailsComponent', () => {
       component.deletePet();
       tick();
 
-      expect(petService.deletePet).toHaveBeenCalledWith(mockPet.id);
+      expect(petService.deletePet).toHaveBeenCalledWith(1);
       expect(router.navigate).toHaveBeenCalledWith(['/pets']);
       expect(snackBar.open).toHaveBeenCalledWith(
         'Pet deleted successfully',

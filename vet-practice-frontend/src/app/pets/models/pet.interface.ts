@@ -16,6 +16,7 @@ export interface MedicalRecord {
   petId: number;
   date: Date;
   diagnosis: string;
+  description: string;
   treatment: string;
   notes?: string;
   veterinarianId: number;

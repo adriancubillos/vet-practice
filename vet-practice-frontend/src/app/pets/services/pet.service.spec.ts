@@ -128,7 +128,8 @@ describe('PetService', () => {
       description: 'Annual checkup',
       diagnosis: 'Healthy',
       treatment: 'None required',
-      notes: 'Regular checkup completed'
+      notes: 'Regular checkup completed',
+      veterinarianId: 1
     };
 
     it('should add a medical record', () => {
@@ -137,7 +138,8 @@ describe('PetService', () => {
         description: 'Annual checkup',
         diagnosis: 'Healthy',
         treatment: 'None required',
-        notes: 'Regular checkup completed'
+        notes: 'Regular checkup completed',
+        veterinarianId: 1
       };
 
       service.addMedicalRecord(1, record).subscribe(response => {

@@ -4,6 +4,7 @@ import { PetService } from '../../services/pet.service';
 import { of, throwError } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { RouterTestingModule } from '@angular/router/testing';
+import { MatCardModule } from '@angular/material/card';
 import { Pet } from '../../models/pet.interface';
 
 describe('PetListComponent', () => {
@@ -43,7 +44,10 @@ describe('PetListComponent', () => {
     spy.getPets.and.returnValue(of(mockPets));
 
     await TestBed.configureTestingModule({
-      imports: [RouterTestingModule],
+      imports: [
+        RouterTestingModule,
+        MatCardModule
+      ],
       declarations: [ PetListComponent ],
       providers: [
         { provide: PetService, useValue: spy }
