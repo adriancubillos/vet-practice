@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { JwtStrategy } from './jwt.strategy';
 import { UserService } from '../user/user.service';
 import { UnauthorizedException } from '@nestjs/common';
-import { User } from '../user/user.entity';
+import { User } from '../user/entities/user.entity';
 
 describe('JwtStrategy', () => {
   let strategy: JwtStrategy;

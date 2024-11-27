@@ -3,7 +3,7 @@ import { PetsController } from './pets.controller';
 import { PetsService } from './pets.service';
 import { CreatePetDto } from './dto/create-pet.dto';
 import { Gender } from './entities/pet.entity';
-import { User } from '../user/user.entity';
+import { User } from '../user/entities/user.entity';
 
 describe('PetsController', () => {
   let controller: PetsController;

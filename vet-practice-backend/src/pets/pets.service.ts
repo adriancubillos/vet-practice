@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { Pet } from './entities/pet.entity';
 import { CreatePetDto } from './dto/create-pet.dto';
 import { UpdatePetDto } from './dto/update-pet.dto';
-import { User } from '../user/user.entity';
+import { User } from '../user/entities/user.entity';
 import * as fs from 'fs';
 import * as path from 'path';
 

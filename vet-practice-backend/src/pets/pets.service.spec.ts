@@ -3,7 +3,7 @@ import { PetsService } from './pets.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Pet, Gender } from './entities/pet.entity';
 import { Repository } from 'typeorm';
-import { User } from '../user/user.entity';
+import { User } from '../user/entities/user.entity';
 
 describe('PetsService', () => {
     let service: PetsService;
