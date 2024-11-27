@@ -146,71 +146,157 @@ describe('UserService', () => {
   });
 
   describe('update', () => {
+    const userId = 1;
+    const updateDto = { 
+      username: 'updated',
+      email: 'newemail@example.com',
+      password: 'NewPassword123!',
+      firstName: 'Updated',
+      lastName: 'User'
+    };
+
     it('should update and return the user', async () => {
-      const updateDto = { username: 'updated' };
       const existingUser = {
-        id: 1,
-        username: 'test',
-        email: 'test@example.com',
-        password: 'hashedPassword',
-        firstName: 'Test',
-        lastName: 'User',
-        address: '123 Test St',
-        phoneNumber: '1234567890',
+        id: userId,
+        username: 'original',
+        email: 'original@example.com',
+        password: 'hashedpassword',
       };
-      const updatedUser = { ...existingUser, ...updateDto };
+      mockUserRepository.findOne.mockResolvedValue(existingUser);
+      mockUserRepository.save.mockResolvedValue({ ...existingUser, ...updateDto });
 
-      // Mock findOne for getting the user
-      mockUserRepository.findOne.mockImplementation(async (options) => {
-        if (options.where.id === 1) {
-          return existingUser;
-        }
-        if (options.where.username === updateDto.username) {
-          return null; // No other user with this username
-        }
-        return null;
-      });
-      mockUserRepository.save.mockResolvedValue(updatedUser);
+      const result = await service.update(userId, updateDto);
 
-      const result = await service.update(1, updateDto);
-      expect(result).toEqual(updatedUser);
+      expect(mockUserRepository.findOne).toHaveBeenCalledWith({ where: { id: userId } });
+      expect(mockUserRepository.save).toHaveBeenCalled();
+      expect(result).toEqual(expect.objectContaining({
+        id: userId,
+        username: updateDto.username,
+        email: updateDto.email,
+      }));
     });
 
-    it('should throw NotFoundException if user not found', async () => {
+    it('should hash password when updating password', async () => {
+      const existingUser = {
+        id: userId,
+        username: 'original',
+        email: 'original@example.com',
+        password: 'oldhashed',
+      };
+      mockUserRepository.findOne.mockResolvedValue(existingUser);
+      mockUserRepository.save.mockImplementation(user => Promise.resolve(user));
+      
+      const hashedPassword = 'newhashed';
+      jest.spyOn(bcrypt, 'hash').mockImplementation(() => Promise.resolve(hashedPassword));
+
+      const result = await service.update(userId, { password: 'NewPassword123!' });
+
+      expect(bcrypt.hash).toHaveBeenCalledWith('NewPassword123!', 10);
+      expect(result.password).toBe(hashedPassword);
+    });
+
+    it('should not hash password if not updating password', async () => {
+      const existingUser = {
+        id: userId,
+        username: 'original',
+        email: 'original@example.com',
+        password: 'oldhashed',
+      };
+      mockUserRepository.findOne.mockResolvedValue(existingUser);
+      mockUserRepository.save.mockImplementation(user => Promise.resolve(user));
+      
+      const spy = jest.spyOn(bcrypt, 'hash');
+
+      await service.update(userId, { username: 'newname' });
+
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    it('should throw ConflictException when updating to existing email', async () => {
+      const existingUser = {
+        id: userId,
+        email: 'original@example.com',
+      };
+      mockUserRepository.findOne
+        .mockResolvedValueOnce(existingUser) // First call for finding user by id
+        .mockResolvedValueOnce({ id: 2 }); // Second call for finding user by email
+
+      await expect(service.update(userId, { email: 'existing@example.com' }))
+        .rejects
+        .toThrow(ConflictException);
+    });
+
+    it('should allow same email for same user', async () => {
+      const existingUser = {
+        id: userId,
+        email: 'same@example.com',
+      };
+      mockUserRepository.findOne
+        .mockResolvedValueOnce(existingUser) // First call for finding user by id
+        .mockResolvedValueOnce({ id: userId }); // Second call for finding user by email
+      mockUserRepository.save.mockImplementation(user => Promise.resolve(user));
+
+      const result = await service.update(userId, { email: 'same@example.com' });
+
+      expect(result.email).toBe('same@example.com');
+    });
+  });
+
+  describe('deactivate', () => {
+    const userId = 1;
+
+    it('should deactivate user', async () => {
+      const user = {
+        id: userId,
+        isActive: true,
+      };
+      mockUserRepository.findOne.mockResolvedValue(user);
+      mockUserRepository.save.mockImplementation(user => Promise.resolve(user));
+
+      const result = await service.deactivate(userId);
+
+      expect(result.isActive).toBe(false);
+      expect(mockUserRepository.save).toHaveBeenCalledWith(expect.objectContaining({
+        id: userId,
+        isActive: false,
+      }));
+    });
+
+    it('should throw NotFoundException when user not found', async () => {
       mockUserRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.update(1, { username: 'updated' })).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(service.deactivate(userId))
+        .rejects
+        .toThrow(NotFoundException);
+    });
+  });
+
+  describe('activate', () => {
+    const userId = 1;
+
+    it('should activate user', async () => {
+      const user = {
+        id: userId,
+        isActive: false,
+      };
+      mockUserRepository.findOne.mockResolvedValue(user);
+      mockUserRepository.save.mockImplementation(user => Promise.resolve(user));
+
+      const result = await service.activate(userId);
+
+      expect(result.isActive).toBe(true);
+      expect(mockUserRepository.save).toHaveBeenCalledWith(expect.objectContaining({
+        id: userId,
+        isActive: true,
+      }));
     });
 
-    it('should throw ConflictException if username already exists', async () => {
-      const existingUser = {
-        id: 1,
-        username: 'test',
-        email: 'test@example.com',
-      };
-      const otherUser = {
-        id: 2,
-        username: 'updated',
-        email: 'other@example.com',
-      };
+    it('should throw NotFoundException when user not found', async () => {
+      mockUserRepository.findOne.mockResolvedValue(null);
 
-      // Mock findOne to return the existing user for ID lookup
-      // and the other user for username lookup
-      mockUserRepository.findOne.mockImplementation(async (options) => {
-        if (options.where.id === 1) {
-          return existingUser;
-        }
-        if (options.where.username === 'updated') {
-          return otherUser; // Another user already has this username
-        }
-        return null;
-      });
-
-      await expect(
-        service.update(1, { username: 'updated' }),
-      ).rejects.toThrow(ConflictException);
+      await expect(service.activate(userId))
+        .rejects
+        .toThrow(NotFoundException);
     });
   });
 

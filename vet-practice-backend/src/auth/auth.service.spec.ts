@@ -13,6 +13,7 @@ describe('AuthService', () => {
   const mockUserService = {
     findUserByEmail: jest.fn(),
     register: jest.fn(),
+    findOne: jest.fn(),
   };
 
   const mockJwtService = {
@@ -75,9 +76,11 @@ describe('AuthService', () => {
       id: 1,
       email: 'test@example.com',
       password: 'hashedPassword',
+      firstName: 'Test',
+      lastName: 'User'
     };
 
-    it('should return JWT token when credentials are valid', async () => {
+    it('should return JWT token and user data when credentials are valid', async () => {
       const mockToken = 'jwt-token';
       mockUserService.findUserByEmail.mockResolvedValue(mockUser);
       mockJwtService.signAsync.mockResolvedValue(mockToken);
@@ -87,7 +90,15 @@ describe('AuthService', () => {
 
       expect(mockUserService.findUserByEmail).toHaveBeenCalledWith(loginDto.email);
       expect(mockJwtService.signAsync).toHaveBeenCalled();
-      expect(result).toEqual({ accessToken: mockToken });
+      expect(result).toEqual({
+        accessToken: mockToken,
+        user: {
+          id: mockUser.id,
+          email: mockUser.email,
+          firstName: mockUser.firstName,
+          lastName: mockUser.lastName
+        }
+      });
     });
 
     it('should throw UnauthorizedException when user not found', async () => {
@@ -118,6 +129,15 @@ describe('AuthService', () => {
       id: 1,
       email: 'test@example.com',
       password: 'hashedPassword',
+      firstName: 'Test',
+      lastName: 'User',
+      username: 'testuser',
+      address: '123 Test St',
+      phoneNumber: '1234567890',
+      pets: [],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      isActive: true,
     };
 
     it('should return user without password when validation succeeds', async () => {
@@ -126,8 +146,8 @@ describe('AuthService', () => {
 
       const result = await authService.validateUser(loginDto);
 
-      expect(result).toEqual({ id: 1, email: 'test@example.com' });
-      expect(result.password).toBeUndefined();
+      const { password, ...expectedResult } = mockUser;
+      expect(result).toEqual(expectedResult);
     });
 
     it('should throw UnauthorizedException when user not found', async () => {
@@ -143,6 +163,41 @@ describe('AuthService', () => {
       jest.spyOn(bcrypt, 'compare').mockImplementation(() => Promise.resolve(false));
 
       await expect(authService.validateUser(loginDto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+  });
+
+  describe('getProfile', () => {
+    const userId = 1;
+    const mockUser = {
+      id: userId,
+      email: 'test@example.com',
+      password: 'hashedPassword',
+      firstName: 'Test',
+      lastName: 'User',
+      username: 'testuser',
+      address: '123 Test St',
+      phoneNumber: '1234567890',
+      pets: [],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      isActive: true,
+    };
+
+    it('should return user profile without password', async () => {
+      mockUserService.findOne.mockResolvedValue(mockUser);
+
+      const result = await authService.getProfile(userId);
+
+      const { password, ...expectedResult } = mockUser;
+      expect(result).toEqual(expectedResult);
+    });
+
+    it('should throw UnauthorizedException when user not found', async () => {
+      mockUserService.findOne.mockResolvedValue(null);
+
+      await expect(authService.getProfile(userId)).rejects.toThrow(
         UnauthorizedException,
       );
     });

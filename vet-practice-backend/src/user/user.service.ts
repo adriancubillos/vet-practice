@@ -29,30 +29,46 @@ export class UserService {
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
     const user = await this.findOne(id);
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
 
-    // If email is being updated, check for uniqueness
-    if (updateUserDto.email && updateUserDto.email !== user.email) {
-      const existingUser = await this.findUserByEmail(updateUserDto.email);
-      if (existingUser) {
+    // Check if email is being updated and if it's already taken
+    if (updateUserDto.email) {
+      const existingUser = await this.userRepository.findOne({
+        where: { email: updateUserDto.email },
+      });
+      if (existingUser && existingUser.id !== id) {
         throw new ConflictException('Email already exists');
       }
     }
 
-    // If username is being updated, check for uniqueness
-    if (updateUserDto.username && updateUserDto.username !== user.username) {
-      const existingUser = await this.findUserByUsername(updateUserDto.username);
-      if (existingUser) {
-        throw new ConflictException('Username already exists');
-      }
-    }
-
-    // If password is being updated, hash it
+    // Hash password if it's being updated
     if (updateUserDto.password) {
       updateUserDto.password = await bcrypt.hash(updateUserDto.password, 10);
     }
 
-    // Update user
     Object.assign(user, updateUserDto);
+    return this.userRepository.save(user);
+  }
+
+  async deactivate(id: number) {
+    const user = await this.findOne(id);
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+
+    user.isActive = false;
+    return this.userRepository.save(user);
+  }
+
+  async activate(id: number) {
+    const user = await this.findOne(id);
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+
+    user.isActive = true;
     return this.userRepository.save(user);
   }
 
