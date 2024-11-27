@@ -6,6 +6,7 @@ import { environment } from '../../../../environments/environment';
 import { RouterTestingModule } from '@angular/router/testing';
 import { MatCardModule } from '@angular/material/card';
 import { Pet } from '../../models/pet.interface';
+import { MatIconModule } from '@angular/material/icon';
 
 describe('PetListComponent', () => {
   let component: PetListComponent;
@@ -46,7 +47,8 @@ describe('PetListComponent', () => {
     await TestBed.configureTestingModule({
       imports: [
         RouterTestingModule,
-        MatCardModule
+        MatCardModule,
+        MatIconModule
       ],
       declarations: [ PetListComponent ],
       providers: [
@@ -78,15 +80,18 @@ describe('PetListComponent', () => {
       expect(component.error).toBeNull();
     }));
 
-    it('should handle error when loading pets fails', fakeAsync(() => {
-      petService.getPets.and.returnValue(throwError(() => new Error('Failed to load')));
+    it('should handle error when loading pets', fakeAsync(() => {
+      const error = new Error('Failed to load');
+      petService.getPets.and.returnValue(throwError(() => error));
+      spyOn(console, 'error'); // Prevent error from showing in test output
 
       component.loadPets();
       tick();
 
-      expect(component.pets).toEqual([]);
+      expect(console.error).toHaveBeenCalledWith('Error loading pets:', error);
       expect(component.loading).toBeFalse();
       expect(component.error).toBe('Failed to load pets. Please try again later.');
+      expect(component.pets).toEqual([]);
     }));
   });
 
