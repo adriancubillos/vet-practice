@@ -9,7 +9,8 @@ import {
   UseGuards,
   HttpStatus,
   HttpCode,
-  ParseIntPipe
+  ParseIntPipe,
+  Request
 } from '@nestjs/common';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { UpdateUserDto } from '../user/dto/update-user.dto';
@@ -21,6 +22,12 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 @UseGuards(JwtAuthGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  @Get('profile')
+  async getProfile(@Request() req) {
+    const userId = req.user.id;
+    return this.userService.findOne(userId);
+  }
 
   @Get()
   async findAll(): Promise<User[]> {
