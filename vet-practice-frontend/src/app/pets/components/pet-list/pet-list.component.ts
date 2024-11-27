@@ -59,4 +59,9 @@ export class PetListComponent implements OnInit {
     
     return age;
   }
+
+  onImageError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    img.src = this.placeholderImage;
+  }
 }

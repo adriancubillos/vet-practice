@@ -17,7 +17,10 @@
 
   <div *ngIf="!loading && !error" class="pet-grid">
     <mat-card *ngFor="let pet of pets" class="pet-card" [routerLink]="['/pets', pet.id]">
-      <div class="pet-image" [style.backgroundImage]="'url(' + getImageUrl(pet.imageUrl) + ')'"></div>
+      <img [src]="getImageUrl(pet.imageUrl)" 
+           (error)="onImageError($event)" 
+           alt="{{ pet.name }}" 
+           class="pet-image">
       <mat-card-content>
         <h2>{{ pet.name }}</h2>
         <p class="breed">{{ pet.species }} - {{ pet.breed }}</p>

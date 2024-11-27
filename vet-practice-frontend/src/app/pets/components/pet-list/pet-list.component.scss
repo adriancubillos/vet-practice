@@ -1,11 +1,11 @@
 .pet-list-container {
-  padding: 2rem;
+  padding: 20px;
 
   .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
+    margin-bottom: 20px;
 
     h1 {
       margin: 0;
@@ -15,40 +15,40 @@
   .pet-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 2rem;
-  }
+    gap: 20px;
+    
+    .pet-card {
+      cursor: pointer;
+      transition: transform 0.2s ease-in-out;
 
-  .pet-card {
-    cursor: pointer;
-    transition: transform 0.2s ease-in-out;
-
-    &:hover {
-      transform: translateY(-5px);
-    }
-
-    .pet-image {
-      height: 200px;
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-    }
-
-    mat-card-content {
-      padding: 1rem;
-
-      h2 {
-        margin: 0 0 0.5rem;
-        font-size: 1.25rem;
+      &:hover {
+        transform: translateY(-5px);
       }
 
-      .breed {
-        color: rgba(0, 0, 0, 0.6);
-        margin: 0 0 0.5rem;
+      .pet-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
       }
 
-      .age {
-        margin: 0;
-        font-size: 0.9rem;
+      mat-card-content {
+        padding: 16px;
+
+        h2 {
+          margin: 0 0 8px 0;
+          font-size: 1.2em;
+        }
+
+        .breed {
+          color: rgba(0, 0, 0, 0.6);
+          margin: 0 0 4px 0;
+        }
+
+        .age {
+          color: rgba(0, 0, 0, 0.6);
+          margin: 0;
+          font-size: 0.9rem;
+        }
       }
     }
   }
@@ -56,18 +56,18 @@
   .loading-container {
     display: flex;
     justify-content: center;
-    padding: 2rem;
+    padding: 40px;
   }
 
   .error-message {
     color: #f44336;
     text-align: center;
-    padding: 1rem;
+    padding: 20px;
   }
 
   .no-pets {
     text-align: center;
-    padding: 2rem;
+    padding: 20px;
     color: rgba(0, 0, 0, 0.6);
   }
 }

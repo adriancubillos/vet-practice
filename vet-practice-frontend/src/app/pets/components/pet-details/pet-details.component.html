@@ -6,7 +6,11 @@
     </mat-card-header>
 
     <div class="image-container">
-      <img [src]="pet.imageUrl ? getImageUrl(pet.imageUrl) : placeholderImage" alt="{{ pet.name }}" mat-card-image class="pet-image">
+      <img [src]="pet.imageUrl ? getImageUrl(pet.imageUrl) : placeholderImage" 
+           (error)="onImageError($event)" 
+           alt="{{ pet.name }}" 
+           mat-card-image 
+           class="pet-image">
     </div>
 
     <mat-card-content>
