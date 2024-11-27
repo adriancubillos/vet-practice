@@ -4,6 +4,7 @@ import { PetsService } from './pets.service';
 import { CreatePetDto } from './dto/create-pet.dto';
 import { Gender } from './entities/pet.entity';
 import { User } from '../user/entities/user.entity';
+import { Role } from 'src/user/enums/role.enum';
 
 describe('PetsController', () => {
   let controller: PetsController;
@@ -27,7 +28,8 @@ describe('PetsController', () => {
     pets: [],
     createdAt: new Date(),
     updatedAt: new Date(),
-    isActive: true
+    isActive: true, 
+    role: Role.USER,
   };
 
   const mockPet = {

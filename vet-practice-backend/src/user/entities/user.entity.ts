@@ -1,6 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { Pet } from '../../pets/entities/pet.entity';
+import { Role } from '../enums/role.enum';
 
 @Entity()
 export class User {
@@ -40,6 +41,9 @@ export class User {
 
   @Column({ default: true })
   isActive: boolean;
+
+  @Column({ type: 'enum', enum: Role, default: Role.USER })
+  role: Role;
 
   constructor(partial: Partial<User>) {
     Object.assign(this, partial);

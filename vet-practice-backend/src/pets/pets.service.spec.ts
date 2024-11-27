@@ -4,6 +4,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Pet, Gender } from './entities/pet.entity';
 import { Repository } from 'typeorm';
 import { User } from '../user/entities/user.entity';
+import { Role } from 'src/user/enums/role.enum';
 
 describe('PetsService', () => {
     let service: PetsService;
@@ -22,6 +23,7 @@ describe('PetsService', () => {
         createdAt: new Date(),
         updatedAt: new Date(),
         isActive: true,
+        role: Role.USER,
     }
 
     const mockPet = {
