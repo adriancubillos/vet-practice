@@ -1,0 +1,36 @@
+<div class="pet-list-container">
+  <div class="header">
+    <h1>My Pets</h1>
+    <button mat-raised-button color="primary" routerLink="register">
+      <mat-icon>add</mat-icon>
+      Register New Pet
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && !error" class="pet-grid">
+    <mat-card *ngFor="let pet of pets" class="pet-card" [routerLink]="['/pets', pet.id]">
+      <div class="pet-image" [style.backgroundImage]="'url(' + getImageUrl(pet.imageUrl) + ')'"></div>
+      <mat-card-content>
+        <h2>{{ pet.name }}</h2>
+        <p class="breed">{{ pet.species }} - {{ pet.breed }}</p>
+        <p class="age">{{ getAgeInYears(pet.dateOfBirth) }} years old</p>
+      </mat-card-content>
+    </mat-card>
+
+    <div *ngIf="pets.length === 0" class="no-pets">
+      <mat-icon>pets</mat-icon>
+      <p>You haven't registered any pets yet.</p>
+      <button mat-raised-button color="primary" routerLink="register">
+        Register Your First Pet
+      </button>
+    </div>
+  </div>
+</div>

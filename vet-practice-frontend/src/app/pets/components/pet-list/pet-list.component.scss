@@ -1,0 +1,73 @@
+.pet-list-container {
+  padding: 2rem;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+
+    h1 {
+      margin: 0;
+    }
+  }
+
+  .pet-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 2rem;
+  }
+
+  .pet-card {
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+
+    &:hover {
+      transform: translateY(-5px);
+    }
+
+    .pet-image {
+      height: 200px;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    mat-card-content {
+      padding: 1rem;
+
+      h2 {
+        margin: 0 0 0.5rem;
+        font-size: 1.25rem;
+      }
+
+      .breed {
+        color: rgba(0, 0, 0, 0.6);
+        margin: 0 0 0.5rem;
+      }
+
+      .age {
+        margin: 0;
+        font-size: 0.9rem;
+      }
+    }
+  }
+
+  .loading-container {
+    display: flex;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  .error-message {
+    color: #f44336;
+    text-align: center;
+    padding: 1rem;
+  }
+
+  .no-pets {
+    text-align: center;
+    padding: 2rem;
+    color: rgba(0, 0, 0, 0.6);
+  }
+}
