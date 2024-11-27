@@ -34,17 +34,17 @@ const routes: Routes = [
   imports: [
     CommonModule,
     RouterModule.forChild(routes),
-    ReactiveFormsModule,
     MatCardModule,
     MatButtonModule,
+    MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatIconModule,
     MatSnackBarModule,
-    MatFormFieldModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatIconModule,
+    ReactiveFormsModule
   ],
   providers: [PetService]
 })

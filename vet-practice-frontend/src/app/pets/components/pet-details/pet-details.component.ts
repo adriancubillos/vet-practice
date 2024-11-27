@@ -4,6 +4,7 @@ import { PetService } from '../../services/pet.service';
 import { Pet } from '../../models/pet.interface';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-pet-details',
@@ -14,6 +15,7 @@ export class PetDetailsComponent implements OnInit {
   pet: Pet | null = null;
   isEditing = false;
   petForm: FormGroup;
+  placeholderImage = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgMjAwIDIwMCI+CiAgPHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiNlZWUiLz4KICA8Y2lyY2xlIGN4PSIxMDAiIGN5PSI4NSIgcj0iMzUiIGZpbGw9IiNhYWEiLz4KICA8Y2lyY2xlIGN4PSI2NSIgY3k9IjEyNSIgcj0iMjAiIGZpbGw9IiNhYWEiLz4KICA8Y2lyY2xlIGN4PSIxMzUiIGN5PSIxMjUiIHI9IjIwIiBmaWxsPSIjYWFhIi8+CiAgPHBhdGggZD0iTTY1LDE1MCBRMTAwLDE4MCAxMzUsMTUwIiBzdHJva2U9IiNhYWEiIHN0cm9rZS13aWR0aD0iOCIgZmlsbD0ibm9uZSIvPgo8L3N2Zz4=';
 
   constructor(
     private route: ActivatedRoute,
@@ -57,6 +59,15 @@ export class PetDetailsComponent implements OnInit {
         console.error('Error loading pet:', error);
       }
     });
+  }
+
+  getImageUrl(imageUrl: string | undefined): string {
+    if (!imageUrl) {
+      return 'assets/images/pet-placeholder.jpg';
+    }
+    // Remove any leading slashes from the imageUrl to prevent double slashes
+    const cleanImageUrl = imageUrl.replace(/^\/+/, '');
+    return imageUrl.startsWith('http') ? imageUrl : `${environment.apiUrl}/${cleanImageUrl}`;
   }
 
   toggleEdit(): void {

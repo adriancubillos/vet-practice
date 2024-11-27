@@ -5,7 +5,9 @@
       <mat-card-subtitle>{{ pet.species }} - {{ pet.breed }}</mat-card-subtitle>
     </mat-card-header>
 
-    <img *ngIf="pet.imageUrl" [src]="pet.imageUrl" alt="{{ pet.name }}" mat-card-image class="pet-image">
+    <div class="image-container">
+      <img [src]="pet.imageUrl ? getImageUrl(pet.imageUrl) : placeholderImage" alt="{{ pet.name }}" mat-card-image class="pet-image">
+    </div>
 
     <mat-card-content>
       <div *ngIf="!isEditing" class="details-view">
