@@ -1,0 +1,85 @@
+<div class="pet-details-container" *ngIf="pet">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>{{ pet.name }}</mat-card-title>
+      <mat-card-subtitle>{{ pet.species }} - {{ pet.breed }}</mat-card-subtitle>
+    </mat-card-header>
+
+    <img *ngIf="pet.imageUrl" [src]="pet.imageUrl" alt="{{ pet.name }}" mat-card-image class="pet-image">
+
+    <mat-card-content>
+      <div *ngIf="!isEditing" class="details-view">
+        <div class="detail-item">
+          <strong>Date of Birth:</strong>
+          <span>{{ pet.dateOfBirth | date }}</span>
+        </div>
+        <div class="detail-item">
+          <strong>Gender:</strong>
+          <span>{{ pet.gender | titlecase }}</span>
+        </div>
+        <div class="detail-item" *ngIf="pet.weight">
+          <strong>Weight:</strong>
+          <span>{{ pet.weight }} kg</span>
+        </div>
+      </div>
+
+      <form [formGroup]="petForm" *ngIf="isEditing" class="edit-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Name</mat-label>
+          <input matInput formControlName="name">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Species</mat-label>
+          <input matInput formControlName="species">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Breed</mat-label>
+          <input matInput formControlName="breed">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Date of Birth</mat-label>
+          <input matInput [matDatepicker]="picker" formControlName="dateOfBirth">
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Gender</mat-label>
+          <mat-select formControlName="gender">
+            <mat-option value="male">Male</mat-option>
+            <mat-option value="female">Female</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Weight (kg)</mat-label>
+          <input matInput type="number" formControlName="weight">
+        </mat-form-field>
+      </form>
+    </mat-card-content>
+
+    <mat-card-actions align="end">
+      <button mat-button color="primary" (click)="toggleEdit()" *ngIf="!isEditing">
+        <mat-icon>edit</mat-icon>
+        Edit
+      </button>
+      <ng-container *ngIf="isEditing">
+        <button mat-button color="warn" (click)="toggleEdit()">
+          <mat-icon>close</mat-icon>
+          Cancel
+        </button>
+        <button mat-button color="primary" (click)="savePet()" [disabled]="!petForm.valid">
+          <mat-icon>save</mat-icon>
+          Save
+        </button>
+      </ng-container>
+      <button mat-button color="warn" (click)="deletePet()">
+        <mat-icon>delete</mat-icon>
+        Delete
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>
