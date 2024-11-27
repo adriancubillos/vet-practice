@@ -15,6 +15,8 @@ export class PetDetailsComponent implements OnInit {
   pet: Pet | null = null;
   isEditing = false;
   petForm: FormGroup;
+  imagePreview: string | null = null;
+  selectedFile: File | null = null;
   placeholderImage = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgMjAwIDIwMCI+CiAgPHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiNlZWUiLz4KICA8Y2lyY2xlIGN4PSIxMDAiIGN5PSI4NSIgcj0iMzUiIGZpbGw9IiNhYWEiLz4KICA8Y2lyY2xlIGN4PSI2NSIgY3k9IjEyNSIgcj0iMjAiIGZpbGw9IiNhYWEiLz4KICA8Y2lyY2xlIGN4PSIxMzUiIGN5PSIxMjUiIHI9IjIwIiBmaWxsPSIjYWFhIi8+CiAgPHBhdGggZD0iTTY1LDE1MCBRMTAwLDE4MCAxMzUsMTUwIiBzdHJva2U9IiNhYWEiIHN0cm9rZS13aWR0aD0iOCIgZmlsbD0ibm9uZSIvPgo8L3N2Zz4=';
 
   constructor(
@@ -31,6 +33,7 @@ export class PetDetailsComponent implements OnInit {
       dateOfBirth: ['', Validators.required],
       gender: ['', Validators.required],
       weight: [null],
+      image: [null]
     });
   }
 
@@ -63,32 +66,75 @@ export class PetDetailsComponent implements OnInit {
 
   getImageUrl(imageUrl: string | undefined): string {
     if (!imageUrl) {
-      return 'assets/images/pet-placeholder.jpg';
+      return this.placeholderImage;
     }
-    // Remove any leading slashes from the imageUrl to prevent double slashes
     const cleanImageUrl = imageUrl.replace(/^\/+/, '');
     return imageUrl.startsWith('http') ? imageUrl : `${environment.apiUrl}/${cleanImageUrl}`;
+  }
+
+  onImageError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    img.src = this.placeholderImage;
+  }
+
+  onFileSelected(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (file) {
+      // Update form control
+      this.petForm.patchValue({ image: file });
+      this.selectedFile = file;
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.imagePreview = reader.result as string;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  removeImage(): void {
+    this.imagePreview = null;
+    this.selectedFile = null;
+    this.petForm.patchValue({ image: null });
+    if (this.pet) {
+      this.pet.imageUrl = undefined;
+    }
   }
 
   toggleEdit(): void {
     this.isEditing = !this.isEditing;
     if (!this.isEditing && this.pet) {
       this.petForm.patchValue(this.pet);
+      this.imagePreview = null;
+      this.selectedFile = null;
     }
   }
 
   savePet(): void {
     if (this.petForm.valid && this.pet?.id) {
+      const formData = new FormData();
       const updatedPet = {
         ...this.petForm.value,
         id: this.pet.id,
         ownerId: this.pet.ownerId
       };
+      delete updatedPet.image; // Remove image from pet object
 
-      this.petService.updatePet(this.pet.id, updatedPet).subscribe({
+      // Add pet data
+      formData.append('pet', JSON.stringify(updatedPet));
+      
+      // Add image if selected
+      if (this.selectedFile) {
+        formData.append('image', this.selectedFile);
+      }
+
+      this.petService.updatePet(this.pet.id, formData).subscribe({
         next: (pet) => {
           this.pet = pet;
           this.isEditing = false;
+          this.imagePreview = null;
+          this.selectedFile = null;
           this.snackBar.open('Pet details updated successfully', 'Close', { duration: 3000 });
         },
         error: (error) => {
@@ -112,10 +158,5 @@ export class PetDetailsComponent implements OnInit {
         }
       });
     }
-  }
-
-  onImageError(event: Event): void {
-    const img = event.target as HTMLImageElement;
-    img.src = this.placeholderImage;
   }
 }

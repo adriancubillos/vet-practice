@@ -37,8 +37,8 @@ export class PetService {
     return this.http.get<Pet>(`${this.baseUrl}/${id}`, { headers: this.getHeaders() });
   }
 
-  updatePet(id: number, pet: Partial<Pet>): Observable<Pet> {
-    return this.http.patch<Pet>(`${this.baseUrl}/${id}`, pet, { headers: this.getHeaders() });
+  updatePet(id: number, formData: FormData): Observable<Pet> {
+    return this.http.put<Pet>(`${environment.apiUrl}/pets/${id}`, formData, { headers: this.getHeaders() });
   }
 
   deletePet(id: number): Observable<void> {

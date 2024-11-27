@@ -5,12 +5,40 @@
       <mat-card-subtitle>{{ pet.species }} - {{ pet.breed }}</mat-card-subtitle>
     </mat-card-header>
 
-    <div class="image-container">
+    <div class="image-container" *ngIf="!isEditing">
       <img [src]="pet.imageUrl ? getImageUrl(pet.imageUrl) : placeholderImage" 
            (error)="onImageError($event)" 
            alt="{{ pet.name }}" 
            mat-card-image 
            class="pet-image">
+    </div>
+
+    <!-- Image Upload Section (Edit Mode) -->
+    <div class="form-row" *ngIf="isEditing">
+      <mat-card class="upload-card" (click)="fileInput.click()">
+        <mat-card-content class="upload-content">
+          <!-- Image Preview -->
+          <div class="image-preview" *ngIf="imagePreview || pet.imageUrl">
+            <img [src]="imagePreview || getImageUrl(pet.imageUrl)" 
+                 (error)="onImageError($event)" 
+                 alt="{{ pet.name }}">
+            <button mat-mini-fab color="warn" class="remove-button" type="button"
+                    (click)="removeImage(); $event.stopPropagation()">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+
+          <!-- Upload Prompt -->
+          <div class="upload-prompt" *ngIf="!imagePreview && !pet.imageUrl">
+            <mat-icon class="upload-icon">add_photo_alternate</mat-icon>
+            <span class="upload-text">Upload Pet Photo</span>
+            <span class="upload-hint">Click to select an image</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Hidden file input -->
+      <input #fileInput type="file" accept="image/*" style="display: none" (change)="onFileSelected($event)">
     </div>
 
     <mat-card-content>
