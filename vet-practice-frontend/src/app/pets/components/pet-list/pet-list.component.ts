@@ -42,7 +42,9 @@ export class PetListComponent implements OnInit {
       return this.placeholderImage;
       //return 'assets/images/pet-placeholder.jpg';
     }
-    return imageUrl.startsWith('http') ? imageUrl : `${environment.apiUrl}/${imageUrl}`;
+    // Remove any leading slashes from the imageUrl to prevent double slashes
+    const cleanImageUrl = imageUrl.replace(/^\/+/, '');
+    return imageUrl.startsWith('http') ? imageUrl : `${environment.apiUrl}/${cleanImageUrl}`;
   }
 
   getAgeInYears(dateOfBirth: Date): number {
