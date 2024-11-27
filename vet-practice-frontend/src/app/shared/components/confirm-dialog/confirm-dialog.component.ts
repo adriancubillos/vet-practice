@@ -33,18 +33,22 @@ export interface ConfirmDialogData {
     .dialog-container {
       max-width: 100%;
       width: 360px;
+      text-align: center;
+      padding-left: 20px;
     }
     .dialog-title {
       margin: 0;
       font-size: 20px;
       font-weight: 500;
-      color: #1a1a1a;
+      color: #f44336;
       line-height: 1.4;
       padding: 16px 24px 0;
+      text-align: center;
     }
     .dialog-content {
       margin: 0;
       padding: 16px 24px;
+      text-align: center;
     }
     .dialog-message {
       margin: 0;
@@ -57,6 +61,7 @@ export interface ConfirmDialogData {
       margin: 0;
       border-top: 1px solid #e0e0e0;
       gap: 8px;
+      justify-content: center;
     }
     .cancel-button {
       color: #666;
