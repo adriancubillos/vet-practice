@@ -120,6 +120,19 @@ export class UserService {
     return this.userRepository.findOne({ where: { username } });
   }
 
+  async findUserPets(userId: number) {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['pets']
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with ID "${userId}" not found`);
+    }
+
+    return user.pets;
+  }
+
   async generateJwt(user: User): Promise<string> {
     const payload = { email: user.email, sub: user.id };
     return this.jwtService.sign(payload);

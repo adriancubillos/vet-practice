@@ -4,6 +4,7 @@ import {
   Post, 
   Get,
   Put,
+  Patch,
   Delete,
   Param,
   UseGuards,
@@ -27,6 +28,21 @@ export class UserController {
   async getProfile(@Request() req) {
     const userId = req.user.id;
     return this.userService.findOne(userId);
+  }
+
+  @Get('profile/pets')
+  async getUserPets(@Request() req) {
+    const userId = req.user.id;
+    return this.userService.findUserPets(userId);
+  }
+
+  @Patch('profile')
+  async updateProfile(
+    @Request() req,
+    @Body() updateUserDto: UpdateUserDto
+  ) {
+    const userId = req.user.id;
+    return this.userService.update(userId, updateUserDto);
   }
 
   @Get()
