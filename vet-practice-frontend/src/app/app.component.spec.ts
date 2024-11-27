@@ -1,10 +1,20 @@
 import { TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
+import { AuthService } from './auth/services/auth.service';
+import { of } from 'rxjs';
+
+// Create a mock AuthService
+const mockAuthService = {
+  isAuthenticated$: of(false)
+};
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AppComponent],
+      providers: [
+        { provide: AuthService, useValue: mockAuthService }
+      ]
     }).compileComponents();
   });
 
@@ -20,10 +30,11 @@ describe('AppComponent', () => {
     expect(app.title).toEqual('vet-practice-frontend');
   });
 
-  it('should render title', () => {
+  // Update this test to match your actual template
+  it('should render router-outlet when not authenticated', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, vet-practice-frontend');
+    expect(compiled.querySelector('router-outlet')).toBeTruthy();
   });
 });
