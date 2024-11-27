@@ -26,5 +26,7 @@ import { AuthService } from './auth/services/auth.service';
   `]
 })
 export class AppComponent {
+  title = 'vet-practice-frontend';
+
   constructor(public authService: AuthService) {}
 }
