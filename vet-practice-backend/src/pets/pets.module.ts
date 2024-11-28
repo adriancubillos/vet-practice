@@ -42,4 +42,4 @@ import { existsSync, mkdirSync } from 'fs';
   providers: [PetsService],
   exports: [PetsService],
 })
-export class PetsModule {}
+export class PetsModule { }

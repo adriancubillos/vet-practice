@@ -59,6 +59,7 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard)
   @Patch('profile')
+  @UseInterceptors(FileInterceptor('image'))
   async updateProfile(
     @Request() req,
     @Body() updateUserDto: UpdateUserDto,
@@ -100,6 +101,7 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard)
   @Put(':id')
+  @UseInterceptors(FileInterceptor('image'))
   async update(
     @Param('id', ParseIntPipe) id: string,
     @Body() updateUserDto: UpdateUserDto,
