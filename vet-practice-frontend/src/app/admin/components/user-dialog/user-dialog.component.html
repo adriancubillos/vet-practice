@@ -16,9 +16,7 @@
             <mat-form-field appearance="outline">
                 <mat-label>Username</mat-label>
                 <input matInput formControlName="username" required>
-                <mat-error *ngIf="form.get('username')?.hasError('required')">
-                    Username is required
-                </mat-error>
+                <mat-error>{{getErrorMessage('username')}}</mat-error>
             </mat-form-field>
         </div>
 
@@ -26,12 +24,7 @@
             <mat-form-field appearance="outline">
                 <mat-label>Email</mat-label>
                 <input matInput formControlName="email" type="email" required>
-                <mat-error *ngIf="form.get('email')?.hasError('required')">
-                    Email is required
-                </mat-error>
-                <mat-error *ngIf="form.get('email')?.hasError('email')">
-                    Please enter a valid email
-                </mat-error>
+                <mat-error>{{getErrorMessage('email')}}</mat-error>
             </mat-form-field>
         </div>
 
@@ -39,17 +32,13 @@
             <mat-form-field appearance="outline">
                 <mat-label>First Name</mat-label>
                 <input matInput formControlName="firstName" required>
-                <mat-error *ngIf="form.get('firstName')?.hasError('required')">
-                    First name is required
-                </mat-error>
+                <mat-error>{{getErrorMessage('firstName')}}</mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="outline">
                 <mat-label>Last Name</mat-label>
                 <input matInput formControlName="lastName" required>
-                <mat-error *ngIf="form.get('lastName')?.hasError('required')">
-                    Last name is required
-                </mat-error>
+                <mat-error>{{getErrorMessage('lastName')}}</mat-error>
             </mat-form-field>
         </div>
 
@@ -57,6 +46,7 @@
             <mat-form-field appearance="outline">
                 <mat-label>Address</mat-label>
                 <textarea matInput formControlName="address" rows="2"></textarea>
+                <mat-error>{{getErrorMessage('address')}}</mat-error>
             </mat-form-field>
         </div>
 
@@ -64,6 +54,7 @@
             <mat-form-field appearance="outline">
                 <mat-label>Phone Number</mat-label>
                 <input matInput formControlName="phoneNumber">
+                <mat-error>{{getErrorMessage('phoneNumber')}}</mat-error>
             </mat-form-field>
         </div>
 
@@ -75,19 +66,18 @@
                         {{role.label}}
                     </mat-option>
                 </mat-select>
-                <mat-error *ngIf="form.get('role')?.hasError('required')">
-                    Role is required
-                </mat-error>
+                <mat-error>{{getErrorMessage('role')}}</mat-error>
             </mat-form-field>
         </div>
 
         <div class="form-row" *ngIf="!data">
             <mat-form-field appearance="outline">
                 <mat-label>Password</mat-label>
-                <input matInput formControlName="password" type="password" required>
-                <mat-error *ngIf="form.get('password')?.hasError('required')">
-                    Password is required
-                </mat-error>
+                <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" required>
+                <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
+                    <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+                <mat-error>{{getErrorMessage('password')}}</mat-error>
             </mat-form-field>
         </div>
 
