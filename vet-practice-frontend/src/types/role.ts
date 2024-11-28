@@ -4,28 +4,40 @@ export enum Role {
   VET = 'vet'
 }
 
-export const roleLabels: Record<Role, string> = {
-  [Role.USER]: 'User',
-  [Role.ADMIN]: 'Administrator',
-  [Role.VET]: 'Veterinarian'
-};
-
-export function getRoleLabel(role: Role): string {
-  return roleLabels[role] || role;
+export interface RoleInfo {
+  value: Role;
+  label: string;
 }
 
 export function isValidRole(role: string): role is Role {
   return Object.values(Role).includes(role as Role);
 }
 
+// Example usage in a component:
+/*
+import { Role, RoleInfo } from '../types/role';
+import { useState, useEffect } from 'react';
 
-// import { Role } from '../types/role';
+function RoleSelector({ value, onChange }: { value: Role; onChange: (role: Role) => void }) {
+  const [roles, setRoles] = useState<RoleInfo[]>([]);
 
-// // In a select/dropdown component
-// <select value={role} onChange={handleRoleChange}>
-//   {Object.values(Role).map(role => (
-//     <option key={role} value={role}>
-//       {getRoleLabel(role)}
-//     </option>
-//   ))}
-// </select>
+  useEffect(() => {
+    fetch('/auth/roles')
+      .then(res => res.json())
+      .then(data => setRoles(data));
+  }, []);
+
+  return (
+    <select 
+      value={value} 
+      onChange={e => onChange(e.target.value as Role)}
+    >
+      {roles.map(role => (
+        <option key={role.value} value={role.value}>
+          {role.label}
+        </option>
+      ))}
+    </select>
+  );
+}
+*/
