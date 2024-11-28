@@ -1,43 +1,33 @@
-import { 
-  Controller, 
-  Post, 
-  Get, 
-  Put,
+import {
+  Body,
+  Controller,
   Delete,
+  Get,
   Param,
-  Body, 
-  UseInterceptors, 
-  UploadedFile, 
-  Request, 
-  UseGuards, 
-  ParseFilePipe, 
-  MaxFileSizeValidator, 
-  FileTypeValidator,
-  ParseIntPipe
+  ParseIntPipe,
+  Post,
+  Put,
+  Request,
+  UseGuards,
+  UseInterceptors
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { PetsService } from './pets.service';
+import { CreateFileUploadDecorator } from 'src/shared/decorators/file.upload.decorator';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CreatePetDto } from './dto/create-pet.dto';
 import { UpdatePetDto } from './dto/update-pet.dto';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { PetsService } from './pets.service';
 
 @Controller('pets')
 @UseGuards(JwtAuthGuard)
 export class PetsController {
-  constructor(private readonly petsService: PetsService) {}
+  constructor(private readonly petsService: PetsService) { }
 
   @Post()
   @UseInterceptors(FileInterceptor('image'))
   async create(
     @Body() createPetDto: CreatePetDto,
-    @UploadedFile(
-      new ParseFilePipe({
-        validators: [
-          new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }), // 5MB
-          new FileTypeValidator({ fileType: /(jpg|jpeg|png)$/ }),
-        ],
-        fileIsRequired: false,
-      }),
+    @CreateFileUploadDecorator(
     )
     file: Express.Multer.File | undefined,
     @Request() req,
@@ -61,15 +51,7 @@ export class PetsController {
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updatePetDto: UpdatePetDto,
-    @UploadedFile(
-      new ParseFilePipe({
-        validators: [
-          new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }), // 5MB
-          new FileTypeValidator({ fileType: /(jpg|jpeg|png)$/ }),
-        ],
-        fileIsRequired: false,
-      }),
-    )
+    @CreateFileUploadDecorator()
     file: Express.Multer.File | undefined,
     @Request() req,
   ) {
