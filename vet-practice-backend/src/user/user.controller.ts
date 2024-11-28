@@ -11,7 +11,8 @@ import {
   HttpStatus,
   HttpCode,
   ParseIntPipe,
-  Request
+  Request,
+  UnauthorizedException
 } from '@nestjs/common';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { UpdateUserDto } from '../user/dto/update-user.dto';
@@ -26,7 +27,8 @@ export class UserController {
 
   @Post('register')
   async register(@Body() registerUserDto: RegisterUserDto): Promise<User> {
-    return this.userService.register(registerUserDto);
+    // Public registration always creates a user with 'user' role
+    return this.userService.register({ ...registerUserDto, role: Role.USER });
   }
 
   @UseGuards(JwtAuthGuard)
@@ -67,7 +69,11 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  async create(@Body() createUserDto: RegisterUserDto): Promise<User> {
+  async create(@Body() createUserDto: RegisterUserDto, @Request() req): Promise<User> {
+    // Only admins can create users with specific roles
+    if (req.user.role !== Role.ADMIN) {
+      throw new UnauthorizedException('Only admins can create users');
+    }
     return this.userService.register(createUserDto);
   }
 
