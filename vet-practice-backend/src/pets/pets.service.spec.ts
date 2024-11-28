@@ -4,7 +4,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Pet, Gender } from './entities/pet.entity';
 import { Repository } from 'typeorm';
 import { User } from '../user/entities/user.entity';
-import { Role } from 'src/user/enums/role.enum';
+import { Role } from 'src/auth/enums/role.enum';
 
 describe('PetsService', () => {
     let service: PetsService;

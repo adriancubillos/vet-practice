@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { Pet } from '../../pets/entities/pet.entity';
-import { Role } from '../enums/role.enum';
+import { Role } from '../../auth/enums/role.enum';
 
 @Entity()
 export class User {

@@ -4,7 +4,7 @@ import { PetsService } from './pets.service';
 import { CreatePetDto } from './dto/create-pet.dto';
 import { Gender } from './entities/pet.entity';
 import { User } from '../user/entities/user.entity';
-import { Role } from 'src/user/enums/role.enum';
+import { Role } from 'src/auth/enums/role.enum';
 
 describe('PetsController', () => {
   let controller: PetsController;

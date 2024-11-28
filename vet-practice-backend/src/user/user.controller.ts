@@ -18,6 +18,8 @@ import { UpdateUserDto } from '../user/dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { Role } from '../auth/enums/role.enum';
+import { Public } from '../auth/public.decorator';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard)
@@ -71,5 +73,11 @@ export class UserController {
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: string): Promise<User> {
     return this.userService.remove(parseInt(id, 10));
+  }
+
+  @Public()
+  @Get('roles')
+  getRoles() {
+    return Object.values(Role);
   }
 }
