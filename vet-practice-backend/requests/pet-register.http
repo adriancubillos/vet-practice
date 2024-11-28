@@ -65,5 +65,5 @@ Content-Disposition: form-data; name="weight"
 Content-Disposition: form-data; name="image"; filename="dog.jpg"
 Content-Type: image/jpeg
 
-< ./dog.jpg
+< ./test-files/dog.jpg
 ------WebKitFormBoundary7MA4YWxkTrZu0gW--

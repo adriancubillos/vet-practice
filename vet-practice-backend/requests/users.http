@@ -4,7 +4,7 @@ POST http://localhost:3000/auth/login
 Content-Type: application/json
 
 {
-  "email": "john.doe@example.com",
+  "email": "john.doe2@example.com",
   "password": "Password123!"
 }
 
@@ -55,6 +55,50 @@ Content-Type: application/json
   "role": "user"
 }
 
+### Create new user with image (admin only)
+POST http://localhost:3000/users
+Authorization: Bearer {{authToken}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="username"
+
+newuserwithimage
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="email"
+
+newuserwithimage@example.com
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="password"
+
+Password123!
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="firstName"
+
+New
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="lastName"
+
+User
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="address"
+
+456 Example St, City, Country
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="phoneNumber"
+
++1234567891
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="role"
+
+user
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="image"; filename="profile.jpg"
+Content-Type: image/jpeg
+
+< ./test-files/profile.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
 ### Update user by ID
 PUT http://localhost:3000/users/18
 Authorization: Bearer {{authToken}}
@@ -65,6 +109,46 @@ Content-Type: application/json
   "lastName": "Name",
   "address": "789 Updated St, City, Country",
   "phoneNumber": "+1234567892"
+}
+
+### Update user with image
+PUT http://localhost:3000/users/7
+Authorization: Bearer {{authToken}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="firstName"
+
+UpdatedFirst
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="lastName"
+
+UpdatedLast
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="address"
+
+789 Updated St, New City, Country
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="phoneNumber"
+
++1987654321
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="image"; filename="new-profile.jpg"
+Content-Type: image/jpeg
+
+< ./test-files/new-profile.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+### Update user without image
+PUT http://localhost:3000/users/1
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "firstName": "UpdatedFirst",
+  "lastName": "UpdatedLast",
+  "address": "789 Updated St, New City, Country",
+  "phoneNumber": "+1987654321"
 }
 
 ### Delete user by ID

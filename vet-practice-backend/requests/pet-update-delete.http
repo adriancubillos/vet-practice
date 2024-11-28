@@ -42,7 +42,7 @@ Content-Disposition: form-data; name="weight"
 Content-Disposition: form-data; name="image"; filename="pet.jpg"
 Content-Type: image/jpeg
 
-< ./pet.jpeg
+< ./test-files/pet.jpeg
 ------WebKitFormBoundary7MA4YWxkTrZu0gW--
 
 ### Delete pet
