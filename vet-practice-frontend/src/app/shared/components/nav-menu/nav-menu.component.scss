@@ -1,10 +1,16 @@
 .sidenav-container {
   height: 100%;
+  min-height: 100vh;
 }
 
 .sidenav {
-  width: 200px;
+  width: 250px;
   background: #fafafa;
+  
+  @media (max-width: 599px) {
+    width: 100%;
+    max-width: 300px;
+  }
 }
 
 .user-info {
@@ -12,6 +18,7 @@
   display: flex;
   align-items: center;
   background: #f0f0f0;
+  min-height: 64px;
 }
 
 .user-icon {
@@ -24,10 +31,14 @@
 .user-details {
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .username {
   font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .role {
@@ -35,12 +46,33 @@
   color: #666;
 }
 
+mat-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
 .content {
   padding: 20px;
+  
+  @media (max-width: 599px) {
+    padding: 16px;
+  }
 }
 
 mat-nav-list {
   a.active {
     background: rgba(0, 0, 0, 0.04);
   }
+  
+  a {
+    &:hover {
+      background: rgba(0, 0, 0, 0.04);
+    }
+  }
+}
+
+// Make sure the sidenav doesn't cover the toolbar on mobile
+.mat-sidenav-fixed {
+  top: 56px !important;
 }
