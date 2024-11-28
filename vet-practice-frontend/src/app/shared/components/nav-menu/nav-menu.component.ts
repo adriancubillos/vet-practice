@@ -57,7 +57,7 @@ import { map } from 'rxjs/operators';
             <h3 matSubheader>Admin</h3>
             <a mat-list-item routerLink="/admin/users" routerLinkActive="active">
               <mat-icon matListItemIcon>people</mat-icon>
-              <span matListItemTitle>User Management</span>
+              <span matListItemTitle>Users</span>
             </a>
           </ng-container>
 
