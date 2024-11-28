@@ -1,19 +1,17 @@
-import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatTableModule } from '@angular/material/table';
+import { Component, OnInit } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatDialogModule, MatDialog } from '@angular/material/dialog';
-import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTableModule } from '@angular/material/table';
 
-import { UserService, User } from '../../services/user.service';
-import { RoleService, RoleInfo } from '../../../auth/services/role.service';
-import { Observable } from 'rxjs';
+import { User, UserService } from '../../services/user.service';
 import { UserDialogComponent } from "../user-dialog/user-dialog.component";
 
 
@@ -38,7 +36,7 @@ import { UserDialogComponent } from "../user-dialog/user-dialog.component";
 })
 export class UserManagementComponent implements OnInit {
   users: User[] = [];
-  displayedColumns = ['username', 'email', 'role', 'actions'];
+  displayedColumns = ['username', 'email', 'actions'];
   loading = true;
 
   constructor(

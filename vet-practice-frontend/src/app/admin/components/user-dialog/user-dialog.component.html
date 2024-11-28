@@ -1,6 +1,17 @@
 <h2 mat-dialog-title>{{data ? 'Edit' : 'Add'}} User</h2>
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
     <mat-dialog-content>
+        <!-- Image Upload -->
+        <div class="form-row image-upload">
+            <div class="preview-container" *ngIf="imagePreview">
+                <img [src]="imagePreview" alt="User profile preview" class="image-preview">
+            </div>
+            <button type="button" mat-stroked-button (click)="fileInput.click()">
+                {{ imagePreview ? 'Change Image' : 'Upload Image' }}
+            </button>
+            <input #fileInput type="file" (change)="onFileSelected($event)" accept="image/*" style="display: none">
+        </div>
+
         <div class="form-row">
             <mat-form-field appearance="outline">
                 <mat-label>Username</mat-label>
@@ -21,6 +32,38 @@
                 <mat-error *ngIf="form.get('email')?.hasError('email')">
                     Please enter a valid email
                 </mat-error>
+            </mat-form-field>
+        </div>
+
+        <div class="form-row name-fields">
+            <mat-form-field appearance="outline">
+                <mat-label>First Name</mat-label>
+                <input matInput formControlName="firstName" required>
+                <mat-error *ngIf="form.get('firstName')?.hasError('required')">
+                    First name is required
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Last Name</mat-label>
+                <input matInput formControlName="lastName" required>
+                <mat-error *ngIf="form.get('lastName')?.hasError('required')">
+                    Last name is required
+                </mat-error>
+            </mat-form-field>
+        </div>
+
+        <div class="form-row">
+            <mat-form-field appearance="outline">
+                <mat-label>Address</mat-label>
+                <textarea matInput formControlName="address" rows="2"></textarea>
+            </mat-form-field>
+        </div>
+
+        <div class="form-row">
+            <mat-form-field appearance="outline">
+                <mat-label>Phone Number</mat-label>
+                <input matInput formControlName="phoneNumber">
             </mat-form-field>
         </div>
 
@@ -46,6 +89,10 @@
                     Password is required
                 </mat-error>
             </mat-form-field>
+        </div>
+
+        <div class="form-row">
+            <mat-checkbox formControlName="isActive">Active User</mat-checkbox>
         </div>
     </mat-dialog-content>
 
