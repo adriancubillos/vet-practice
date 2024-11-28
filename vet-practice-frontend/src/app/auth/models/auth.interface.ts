@@ -6,6 +6,7 @@ export interface User {
   lastName: string;
   address?: string;
   phoneNumber?: string;
+  role?: string;
 }
 
 export interface RegisterRequest {

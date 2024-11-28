@@ -1,7 +1,9 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './auth/guards/auth.guard';
+import { ADMIN_ROUTES } from './admin/admin.routes';
 
 export const routes: Routes = [
+  ...ADMIN_ROUTES,
   {
     path: '',
     redirectTo: 'dashboard',

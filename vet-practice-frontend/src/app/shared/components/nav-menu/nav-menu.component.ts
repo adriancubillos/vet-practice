@@ -1,14 +1,13 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../../auth/services/auth.service';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-nav-menu',
@@ -16,68 +15,56 @@ import { Observable } from 'rxjs';
   imports: [
     CommonModule,
     RouterModule,
-    MatToolbarModule,
-    MatButtonModule,
-    MatIconModule,
     MatSidenavModule,
     MatListModule,
-    MatMenuModule
+    MatMenuModule,
+    MatIconModule
   ],
   template: `
-    <mat-toolbar color="primary" class="toolbar">
-      <button mat-icon-button (click)="toggleSidenav()">
-        <mat-icon>menu</mat-icon>
-      </button>
-      <span>Vet Practice</span>
-      <span class="toolbar-spacer"></span>
-      <ng-container *ngIf="user$ | async as user">
-        <span class="user-name" *ngIf="user.firstName || user.lastName">
-          {{ user.firstName }} {{ user.lastName }}
-        </span>
-      </ng-container>
-      <button mat-icon-button [matMenuTriggerFor]="profileMenu">
-        <mat-icon>account_circle</mat-icon>
-      </button>
-      <mat-menu #profileMenu="matMenu">
-        <button mat-menu-item routerLink="/profile">
-          <mat-icon>person</mat-icon>
-          <span>Profile</span>
-        </button>
-        <button mat-menu-item (click)="logout()">
-          <mat-icon>logout</mat-icon>
-          <span>Logout</span>
-        </button>
-      </mat-menu>
-    </mat-toolbar>
-
     <mat-sidenav-container class="sidenav-container">
-      <mat-sidenav #sidenav mode="side" [opened]="sidenavOpened">
+      <mat-sidenav #sidenav mode="side" [opened]="sidenavOpened" class="sidenav">
+        <div class="user-info" *ngIf="user$ | async as user">
+          <mat-icon class="user-icon">account_circle</mat-icon>
+          <div class="user-details">
+            <span class="username">{{ user.username }}</span>
+            <span class="role">{{ user.role || 'User' }}</span>
+          </div>
+        </div>
+
         <mat-nav-list>
+          <h3 matSubheader>Main</h3>
           <a mat-list-item routerLink="/dashboard" routerLinkActive="active">
             <mat-icon matListItemIcon>dashboard</mat-icon>
             <span matListItemTitle>Dashboard</span>
           </a>
 
           <mat-divider></mat-divider>
-          
-          <!-- Pets Section -->
           <h3 matSubheader>Pets</h3>
-          <a mat-list-item routerLink="/pets/register" routerLinkActive="active">
-            <mat-icon matListItemIcon>pets</mat-icon>
-            <span matListItemTitle>Register Pet</span>
-          </a>
           <a mat-list-item routerLink="/pets" routerLinkActive="active">
-            <mat-icon matListItemIcon>list</mat-icon>
-            <span matListItemTitle>Pet List</span>
+            <mat-icon matListItemIcon>pets</mat-icon>
+            <span matListItemTitle>My Pets</span>
           </a>
 
           <mat-divider></mat-divider>
-
-          <!-- Appointments Section -->
           <h3 matSubheader>Appointments</h3>
           <a mat-list-item routerLink="/appointments" routerLinkActive="active">
             <mat-icon matListItemIcon>event</mat-icon>
             <span matListItemTitle>Schedule</span>
+          </a>
+
+          <ng-container *ngIf="isAdmin$ | async">
+            <mat-divider></mat-divider>
+            <h3 matSubheader>Admin</h3>
+            <a mat-list-item routerLink="/admin/users" routerLinkActive="active">
+              <mat-icon matListItemIcon>people</mat-icon>
+              <span matListItemTitle>User Management</span>
+            </a>
+          </ng-container>
+
+          <mat-divider></mat-divider>
+          <a mat-list-item (click)="logout()">
+            <mat-icon matListItemIcon>exit_to_app</mat-icon>
+            <span matListItemTitle>Logout</span>
           </a>
         </mat-nav-list>
       </mat-sidenav>
@@ -90,68 +77,54 @@ import { Observable } from 'rxjs';
     </mat-sidenav-container>
   `,
   styles: [`
-    .toolbar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 2;
-    }
-
-    .toolbar-spacer {
-      flex: 1 1 auto;
-    }
-
-    .user-name {
-      margin-right: 16px;
-      font-size: 14px;
-      color: rgba(255, 255, 255, 0.9);
-    }
-
     .sidenav-container {
-      position: absolute;
-      top: 64px;
-      bottom: 0;
-      left: 0;
-      right: 0;
+      height: 100%;
     }
-
-    mat-sidenav {
+    .sidenav {
       width: 200px;
-      background-color: #fafafa;
+      background: #fafafa;
     }
-
+    .user-info {
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      background: #f0f0f0;
+    }
+    .user-icon {
+      margin-right: 8px;
+      font-size: 40px;
+      width: 40px;
+      height: 40px;
+    }
+    .user-details {
+      display: flex;
+      flex-direction: column;
+    }
+    .username {
+      font-weight: 500;
+    }
+    .role {
+      font-size: 12px;
+      color: rgba(0, 0, 0, 0.6);
+    }
     .content {
       padding: 20px;
     }
-
     .active {
-      background-color: rgba(0, 0, 0, 0.04);
-    }
-
-    mat-divider {
-      margin: 8px 0;
-    }
-
-    h3[matSubheader] {
-      color: rgba(0, 0, 0, 0.54);
-      padding: 16px;
-      margin: 0;
-      font-size: 14px;
-      font-weight: 500;
+      background: rgba(0, 0, 0, 0.04);
     }
   `]
 })
 export class NavMenuComponent {
   sidenavOpened = true;
-  user$: Observable<any>;
+  user$: Observable<any | null>;
+  isAdmin$: Observable<boolean>;
 
   constructor(private authService: AuthService) {
     this.user$ = this.authService.user$;
-  }
-
-  toggleSidenav() {
-    this.sidenavOpened = !this.sidenavOpened;
+    this.isAdmin$ = this.authService.user$.pipe(
+      map((user: any | null) => user?.role === 'admin')
+    );
   }
 
   logout() {

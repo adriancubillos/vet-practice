@@ -33,7 +33,7 @@ export class AuthService {
   readonly loading$ = this.state.pipe(map(state => state.loading));
   readonly error$ = this.state.pipe(map(state => state.error));
   readonly user$ = this.state.pipe(map(state => state.user));
-  
+
   constructor(
     private http: HttpClient,
     private router: Router,
