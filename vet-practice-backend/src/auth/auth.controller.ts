@@ -21,12 +21,6 @@ export class AuthController {
     return this.authService.login(loginDto);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Get('profile')
-  async getProfile(@Request() req) {
-    return this.authService.getProfile(req.user.sub);
-  }
-
   @Get('roles')
   getRoles(): RoleInfo[] {
     return Object.values(Role).map(role => ({

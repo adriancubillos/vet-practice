@@ -51,14 +51,4 @@ export class AuthService {
     const { password, ...result } = user;
     return result;
   }
-
-  async getProfile(userId: number) {
-    const user = await this.userService.findOne(userId);
-    if (!user) {
-      throw new UnauthorizedException('User not found');
-    }
-    
-    const { password, ...result } = user;
-    return result;
-  }
 }
