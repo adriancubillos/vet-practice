@@ -1,0 +1,35 @@
+### Login user
+# @name loginTest
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "123456Aq!"
+}
+
+### Get me
+@authToken = {{loginTest.response.body.accessToken}}
+
+
+### Get user profile
+GET http://localhost:3000/users/profile
+Authorization: Bearer {{authToken}}
+
+### Update user profile
+PATCH http://localhost:3000/users/profile
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+    "username": "testuser",
+    "firstName": "Camille",
+    "lastName": "Hill",
+    "address": "456 New Street",
+    "phoneNumber": "9876543210",
+    "role": "ADMIN"
+}
+
+### Get user's pets
+GET http://localhost:3000/users/profile/pets
+Authorization: Bearer {{authToken}}

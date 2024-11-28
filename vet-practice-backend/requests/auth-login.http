@@ -1,0 +1,19 @@
+### Login user
+# @name loginTest
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "email": "john.doe@example.com",
+  "password": "Password123!"
+}
+
+### Get me
+@authToken = {{loginTest.response.body.accessToken}}
+
+### Get user roles
+GET http://localhost:3000/auth/roles
+
+### Example of using the JWT token
+GET http://localhost:3000/users/profile
+Authorization: Bearer {{authToken}}

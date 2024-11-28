@@ -3,8 +3,8 @@
 /node_modules
 /build
 
-# endpoints testing
-/requests
+# # endpoints testing
+# /requests
 
 #pets pictures
 *.jpg

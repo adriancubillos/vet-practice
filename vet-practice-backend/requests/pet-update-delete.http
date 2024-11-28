@@ -1,0 +1,50 @@
+### Login to get token (run this first)
+# @name loginTest
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "email": "john.doe@example.com",
+  "password": "Password123!"
+}
+
+### Get me
+@authToken = {{loginTest.response.body.accessToken}}
+
+### Get specific pet
+GET http://localhost:3000/pets/1
+Authorization: Bearer {{authToken}}
+
+### Update pet without image
+PUT http://localhost:3000/pets/5
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+    "name": "Max Updated",
+    "weight": 27.5
+}
+
+### Update pet with image
+PUT http://localhost:3000/pets/5
+Authorization: Bearer {{authToken}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="name"
+
+Max With New Image
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="weight"
+
+28.5
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="image"; filename="pet.jpg"
+Content-Type: image/jpeg
+
+< ./pet.jpeg
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+### Delete pet
+DELETE http://localhost:3000/pets/4
+Authorization: Bearer {{authToken}}

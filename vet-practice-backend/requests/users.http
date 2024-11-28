@@ -1,0 +1,92 @@
+### First, login to get the token
+# @name login
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "email": "john.doe@example.com",
+  "password": "Password123!"
+}
+
+### Store the token
+@authToken = {{login.response.body.accessToken}}
+
+### Get all users
+GET http://localhost:3000/users
+Authorization: Bearer {{authToken}}
+
+### Get all users except current user
+GET http://localhost:3000/users/others
+Authorization: Bearer {{authToken}}
+
+### Get specific user by ID
+GET http://localhost:3000/users/5
+Authorization: Bearer {{authToken}}
+
+
+### new users (Public endpoint)
+POST http://localhost:3000/users/register
+Content-Type: application/json
+
+{
+  "username": "johndoe7",
+  "email": "john.doe7@example.com",
+  "password": "Password123!",
+  "firstName": "John",
+  "lastName": "Doe",
+  "address": "123 Main St, City, Country",
+  "phoneNumber": "+1234567890",
+  "role": "admin"
+}
+
+### Create new user (admin only)
+POST http://localhost:3000/users
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "username": "newuser1",
+  "email": "newuser1@example.com",
+  "password": "Password123!",
+  "firstName": "New",
+  "lastName": "User",
+  "address": "456 New St, City, Country",
+  "phoneNumber": "+1234567891",
+  "role": "user"
+}
+
+### Update user by ID
+PUT http://localhost:3000/users/18
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "firstName": "Updated",
+  "lastName": "Name",
+  "address": "789 Updated St, City, Country",
+  "phoneNumber": "+1234567892"
+}
+
+### Delete user by ID
+DELETE http://localhost:3000/users/18
+Authorization: Bearer {{authToken}}
+
+### Update own profile
+PATCH http://localhost:3000/users/profile
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "firstName": "John",
+  "lastName": "Updated",
+  "address": "123 Updated Main St, City, Country",
+  "phoneNumber": "+1234567899"
+}
+
+### Get own profile
+GET http://localhost:3000/users/profile
+Authorization: Bearer {{authToken}}
+
+### Get own pets
+GET http://localhost:3000/users/profile/pets
+Authorization: Bearer {{authToken}}
