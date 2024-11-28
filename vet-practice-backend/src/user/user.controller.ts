@@ -1,7 +1,7 @@
-import { 
-  Body, 
-  Controller, 
-  Post, 
+import {
+  Body,
+  Controller,
+  Post,
   Get,
   Put,
   Patch,
@@ -23,7 +23,7 @@ import { Role } from '../auth/enums/role.enum';
 
 @Controller('users')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
   @Post('register')
   async register(@Body() registerUserDto: RegisterUserDto): Promise<User> {
@@ -44,6 +44,14 @@ export class UserController {
     const userId = req.user.id;
     return this.userService.findUserPets(userId);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('others')
+  async findAllUsersExceptCurrent(@Request() req) {
+    const userId = req.user.id;
+    return this.userService.findAllUsersExceptCurrent(userId);
+  }
+
 
   @UseGuards(JwtAuthGuard)
   @Patch('profile')

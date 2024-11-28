@@ -1,6 +1,6 @@
 import { Injectable, ConflictException, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -13,7 +13,7 @@ export class UserService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly jwtService: JwtService
-  ) {}
+  ) { }
 
   async findAll(): Promise<User[]> {
     return this.userRepository.find();
@@ -21,7 +21,7 @@ export class UserService {
 
   async findOne(id: number | string): Promise<User> {
     const userId = typeof id === 'string' ? parseInt(id, 10) : id;
-    const user = await this.userRepository.findOne({ 
+    const user = await this.userRepository.findOne({
       where: { id: userId },
       relations: ['pets']
     });
@@ -132,6 +132,10 @@ export class UserService {
     }
 
     return user.pets;
+  }
+
+  async findAllUsersExceptCurrent(userId: number): Promise<User[]> {
+    return this.userRepository.find({ where: { id: Not(userId) } });
   }
 
   async generateJwt(user: User): Promise<string> {
