@@ -3,13 +3,13 @@
                [opened]="!(isHandset$ | async)"
                class="sidenav"
                [fixedInViewport]="isHandset$ | async">
-    <div class="user-info" *ngIf="user$ | async as user">
+    <a class="user-info" *ngIf="user$ | async as user" routerLink="/profile" (click)="onNavItemClick()">
       <mat-icon class="user-icon">account_circle</mat-icon>
       <div class="user-details">
         <span class="username">{{ user.username }}</span>
         <span class="role">{{ user.role || 'User' }}</span>
       </div>
-    </div>
+    </a>
 
     <mat-nav-list>
       <h3 matSubheader>Main</h3>
