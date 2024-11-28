@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { RegisterUserDto } from '../user/dto/register-user.dto';
 import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { Role } from './enums/role.enum';
 
 @Controller('auth')
 export class AuthController {
@@ -23,5 +24,10 @@ export class AuthController {
   @Get('profile')
   async getProfile(@Request() req) {
     return this.authService.getProfile(req.user.sub);
+  }
+
+  @Get('roles')
+  getRoles() {
+    return Object.values(Role);
   }
 }
