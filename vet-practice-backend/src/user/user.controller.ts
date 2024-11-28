@@ -1,34 +1,39 @@
 import {
   Body,
   Controller,
-  Post,
-  Get,
-  Put,
-  Patch,
   Delete,
+  Get,
   Param,
-  UseGuards,
-  HttpStatus,
-  HttpCode,
   ParseIntPipe,
+  Patch,
+  Post,
+  Put,
   Request,
-  UnauthorizedException
+  UnauthorizedException,
+  UseGuards,
+  UseInterceptors
 } from '@nestjs/common';
-import { RegisterUserDto } from './dto/register-user.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { CreateFileUploadDecorator } from 'src/shared/decorators/file.upload.decorator';
+import { Role } from '../auth/enums/role.enum';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { UpdateUserDto } from '../user/dto/update-user.dto';
+import { RegisterUserDto } from './dto/register-user.dto';
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { Role } from '../auth/enums/role.enum';
 
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) { }
 
-  @Post('register')
-  async register(@Body() registerUserDto: RegisterUserDto): Promise<User> {
-    // Public registration always creates a user with 'user' role
-    return this.userService.register({ ...registerUserDto, role: Role.USER });
+  @Post()
+  @UseInterceptors(FileInterceptor('image'))
+  async register(
+    @Body() registerUserDto: RegisterUserDto,
+    @CreateFileUploadDecorator() file: Express.Multer.File | undefined,
+  ): Promise<User> {
+    const imageUrl = file ? `/uploads/users/${file.filename}` : null;
+    return this.userService.register({ ...registerUserDto, role: Role.USER }, imageUrl);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -52,15 +57,16 @@ export class UserController {
     return this.userService.findAllUsersExceptCurrent(userId);
   }
 
-
   @UseGuards(JwtAuthGuard)
   @Patch('profile')
   async updateProfile(
     @Request() req,
-    @Body() updateUserDto: UpdateUserDto
-  ) {
+    @Body() updateUserDto: UpdateUserDto,
+    @CreateFileUploadDecorator() file: Express.Multer.File | undefined,
+  ): Promise<User> {
     const userId = req.user.id;
-    return this.userService.update(userId, updateUserDto);
+    const imageUrl = file ? `/uploads/users/${file.filename}` : null;
+    return this.userService.update(userId, updateUserDto, imageUrl);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -77,21 +83,30 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  async create(@Body() createUserDto: RegisterUserDto, @Request() req): Promise<User> {
+  @UseInterceptors(FileInterceptor('image'))
+  async create(
+    @Body() createUserDto: RegisterUserDto,
+    @CreateFileUploadDecorator() file: Express.Multer.File | undefined,
+    @Request() req,
+  ): Promise<User> {
+    const imageUrl = file ? `/uploads/users/${file.filename}` : null;
     // Only admins can create users with specific roles
     if (req.user.role !== Role.ADMIN) {
       throw new UnauthorizedException('Only admins can create users');
     }
-    return this.userService.register(createUserDto);
+    return this.userService.register(createUserDto, imageUrl);
   }
+
 
   @UseGuards(JwtAuthGuard)
   @Put(':id')
   async update(
     @Param('id', ParseIntPipe) id: string,
     @Body() updateUserDto: UpdateUserDto,
+    @CreateFileUploadDecorator() file: Express.Multer.File | undefined,
   ): Promise<User> {
-    return this.userService.update(parseInt(id, 10), updateUserDto);
+    const imageUrl = file ? `/uploads/users/${file.filename}` : null;
+    return this.userService.update(parseInt(id, 10), updateUserDto, imageUrl);
   }
 
   @UseGuards(JwtAuthGuard)

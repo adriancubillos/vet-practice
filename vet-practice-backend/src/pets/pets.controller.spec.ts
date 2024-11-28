@@ -28,8 +28,9 @@ describe('PetsController', () => {
     pets: [],
     createdAt: new Date(),
     updatedAt: new Date(),
-    isActive: true, 
+    isActive: true,
     role: Role.USER,
+    imageUrl: null,
   };
 
   const mockPet = {

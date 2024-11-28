@@ -1,11 +1,14 @@
-import { Injectable, ConflictException, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as bcrypt from 'bcrypt';
+import * as fs from 'fs';
+import * as path from 'path';
 import { Not, Repository } from 'typeorm';
-import { User } from './entities/user.entity';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import * as bcrypt from 'bcrypt';
-import { JwtService } from '@nestjs/jwt';
+import { User } from './entities/user.entity';
+import { imageChecksUtil } from 'src/utils/common-utils';
 
 @Injectable()
 export class UserService {
@@ -32,7 +35,7 @@ export class UserService {
     return result as User;
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+  async update(id: number, updateUserDto: UpdateUserDto, imageUrl: string | null): Promise<User> {
     const user = await this.findOne(id);
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
@@ -47,6 +50,13 @@ export class UserService {
         throw new ConflictException('Email already exists');
       }
     }
+
+    imageChecksUtil(user, imageUrl, 'uploads/users');
+    // Update the pet with new data
+    Object.assign(user, {
+      ...updateUserDto,
+      imageUrl: imageUrl ?? user.imageUrl, // Only update imageUrl if it's not null
+    });
 
     // Hash password if it's being updated
     if (updateUserDto.password) {
@@ -79,11 +89,20 @@ export class UserService {
 
   async remove(id: number): Promise<User> {
     const user = await this.findOne(id);
+
+    // Delete the pet's image if it exists
+    if (user.imageUrl) {
+      const imagePath = path.join(process.cwd(), 'uploads/users', path.basename(user.imageUrl));
+      if (fs.existsSync(imagePath)) {
+        fs.unlinkSync(imagePath);
+      }
+    }
+
     await this.userRepository.delete(id);
     return user;
   }
 
-  async register(registerUserDto: RegisterUserDto): Promise<User> {
+  async register(registerUserDto: RegisterUserDto, imageUrl: string | null): Promise<User> {
     const { email, username } = registerUserDto;
 
     // Check for existing user

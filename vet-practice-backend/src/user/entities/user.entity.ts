@@ -48,4 +48,7 @@ export class User {
   constructor(partial: Partial<User>) {
     Object.assign(this, partial);
   }
+
+  @Column({ nullable: true })
+  imageUrl: string;
 }

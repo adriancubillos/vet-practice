@@ -17,6 +17,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CreatePetDto } from './dto/create-pet.dto';
 import { UpdatePetDto } from './dto/update-pet.dto';
 import { PetsService } from './pets.service';
+import { imageChecksUtil } from 'src/utils/common-utils';
 
 @Controller('pets')
 @UseGuards(JwtAuthGuard)
@@ -51,12 +52,14 @@ export class PetsController {
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updatePetDto: UpdatePetDto,
-    @CreateFileUploadDecorator()
-    file: Express.Multer.File | undefined,
+    @CreateFileUploadDecorator() file: Express.Multer.File | undefined,
     @Request() req,
   ) {
     const imageUrl = file ? `/uploads/pets/${file.filename}` : null;
-    return this.petsService.update(id, updatePetDto, imageUrl, req.user);
+
+    imageChecksUtil(this.petsService.findOne(id), imageUrl, 'uploads/pets');
+    await this.petsService.update(id, updatePetDto, imageUrl, req.user);
+    return { message: 'Pet updated successfully' };
   }
 
   @Delete(':id')

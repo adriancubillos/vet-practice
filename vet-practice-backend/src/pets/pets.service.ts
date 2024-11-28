@@ -7,13 +7,14 @@ import { UpdatePetDto } from './dto/update-pet.dto';
 import { User } from '../user/entities/user.entity';
 import * as fs from 'fs';
 import * as path from 'path';
+import { deleteImageInRepo, imageChecksUtil } from 'src/utils/common-utils';
 
 @Injectable()
 export class PetsService {
   constructor(
     @InjectRepository(Pet)
     private petsRepository: Repository<Pet>,
-  ) {}
+  ) { }
 
   async create(createPetDto: CreatePetDto, imageUrl: string | null, owner: User): Promise<Pet> {
     const pet = this.petsRepository.create({
@@ -29,7 +30,7 @@ export class PetsService {
   }
 
   async findOne(id: number): Promise<Pet> {
-    const pet = await this.petsRepository.findOne({ 
+    const pet = await this.petsRepository.findOne({
       where: { id },
       relations: ['owner']
     });
@@ -47,32 +48,13 @@ export class PetsService {
 
   async update(id: number, updatePetDto: UpdatePetDto, imageUrl: string | null, user: User): Promise<Pet> {
     const pet = await this.findOne(id);
-    
+
     // Check if the user is the owner of the pet
     if (pet.owner.id !== user.id) {
       throw new ForbiddenException('You can only update your own pets');
     }
 
-    // If imageUrl is empty string, set it to null
-    if (imageUrl === '') {
-      imageUrl = null;
-    }
-
-    // If there's a new image and the pet already has an image, delete the old one
-    if (imageUrl && pet.imageUrl) {
-      const oldImagePath = path.join(process.cwd(), 'uploads/pets', path.basename(pet.imageUrl));
-      if (fs.existsSync(oldImagePath)) {
-        fs.unlinkSync(oldImagePath);
-      }
-    }
-
-    // If imageUrl is null and there was an old image, delete it
-    if (imageUrl === null && pet.imageUrl) {
-      const oldImagePath = path.join(process.cwd(), 'uploads/pets', path.basename(pet.imageUrl));
-      if (fs.existsSync(oldImagePath)) {
-        fs.unlinkSync(oldImagePath);
-      }
-    }
+    imageChecksUtil(pet, imageUrl, 'uploads/pets');
 
     // Update the pet with new data
     Object.assign(pet, {
@@ -85,19 +67,14 @@ export class PetsService {
 
   async remove(id: number, user: User): Promise<void> {
     const pet = await this.findOne(id);
-    
+
     // Check if the user is the owner of the pet
     if (pet.owner.id !== user.id) {
       throw new ForbiddenException('You can only delete your own pets');
     }
 
     // Delete the pet's image if it exists
-    if (pet.imageUrl) {
-      const imagePath = path.join(process.cwd(), 'uploads/pets', path.basename(pet.imageUrl));
-      if (fs.existsSync(imagePath)) {
-        fs.unlinkSync(imagePath);
-      }
-    }
+    deleteImageInRepo(pet, 'uploads/pets');
 
     await this.petsRepository.remove(pet);
   }

@@ -75,7 +75,7 @@ describe('UserController', () => {
       const result = { id: 1, ...createUserDto };
       mockUserService.register.mockResolvedValue(result);
 
-      expect(await controller.create(createUserDto)).toBe(result);
+      expect(await controller.create(createUserDto, undefined, { user: createUserDto })).toBe(result);
       expect(mockUserService.register).toHaveBeenCalledWith(createUserDto);
     });
   });
@@ -89,7 +89,7 @@ describe('UserController', () => {
       const result = { id: 1, ...updateUserDto };
       mockUserService.update.mockResolvedValue(result);
 
-      expect(await controller.update('1', updateUserDto)).toBe(result);
+      expect(await controller.update('1', updateUserDto, undefined)).toBe(result);
       expect(mockUserService.update).toHaveBeenCalledWith(1, updateUserDto);
     });
   });
