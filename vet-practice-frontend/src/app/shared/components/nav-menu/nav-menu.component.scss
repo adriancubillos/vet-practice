@@ -6,7 +6,7 @@
 .sidenav {
   width: 250px;
   background: #fafafa;
-  
+
   @media (max-width: 599px) {
     width: 100%;
     max-width: 300px;
@@ -30,28 +30,37 @@
 }
 
 .user-icon {
-  margin-right: 8px;
   font-size: 40px;
   width: 40px;
   height: 40px;
+  color: #666;
 }
 
 .user-details {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  flex: 1;
 }
 
 .username {
   font-weight: 500;
+  font-size: 1rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: rgba(0, 0, 0, 0.87);
+  margin-bottom: 4px;
+  text-align: center;
 }
 
 .role {
-  font-size: 0.9em;
-  color: #666;
+  font-size: 0.85rem;
+  color: rgba(0, 0, 0, 0.6);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
 }
 
 mat-toolbar {
@@ -62,7 +71,7 @@ mat-toolbar {
 
 .content {
   padding: 20px;
-  
+
   @media (max-width: 599px) {
     padding: 16px;
   }
@@ -72,7 +81,7 @@ mat-nav-list {
   a.active {
     background: rgba(0, 0, 0, 0.04);
   }
-  
+
   a {
     &:hover {
       background: rgba(0, 0, 0, 0.04);
