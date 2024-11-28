@@ -14,7 +14,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { UserService, User } from '../../services/user.service';
 import { RoleService, RoleInfo } from '../../../auth/services/role.service';
 import { Observable } from 'rxjs';
-import { UserDialogComponent } from './user-dialog.component';
+import { UserDialogComponent } from "../user-dialog/user-dialog.component";
+
 
 @Component({
   selector: 'app-user-management',

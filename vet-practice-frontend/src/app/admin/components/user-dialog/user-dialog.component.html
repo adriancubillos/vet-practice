@@ -1,0 +1,58 @@
+<h2 mat-dialog-title>{{data ? 'Edit' : 'Add'}} User</h2>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <mat-dialog-content>
+        <div class="form-row">
+            <mat-form-field appearance="outline">
+                <mat-label>Username</mat-label>
+                <input matInput formControlName="username" required>
+                <mat-error *ngIf="form.get('username')?.hasError('required')">
+                    Username is required
+                </mat-error>
+            </mat-form-field>
+        </div>
+
+        <div class="form-row">
+            <mat-form-field appearance="outline">
+                <mat-label>Email</mat-label>
+                <input matInput formControlName="email" type="email" required>
+                <mat-error *ngIf="form.get('email')?.hasError('required')">
+                    Email is required
+                </mat-error>
+                <mat-error *ngIf="form.get('email')?.hasError('email')">
+                    Please enter a valid email
+                </mat-error>
+            </mat-form-field>
+        </div>
+
+        <div class="form-row">
+            <mat-form-field appearance="outline">
+                <mat-label>Role</mat-label>
+                <mat-select formControlName="role" required>
+                    <mat-option *ngFor="let role of roles$ | async" [value]="role.value">
+                        {{role.label}}
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('role')?.hasError('required')">
+                    Role is required
+                </mat-error>
+            </mat-form-field>
+        </div>
+
+        <div class="form-row" *ngIf="!data">
+            <mat-form-field appearance="outline">
+                <mat-label>Password</mat-label>
+                <input matInput formControlName="password" type="password" required>
+                <mat-error *ngIf="form.get('password')?.hasError('required')">
+                    Password is required
+                </mat-error>
+            </mat-form-field>
+        </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+        <button mat-button mat-dialog-close>Cancel</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="!form.valid">
+            {{data ? 'Update' : 'Create'}}
+        </button>
+    </mat-dialog-actions>
+</form>
