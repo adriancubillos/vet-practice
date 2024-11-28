@@ -66,6 +66,19 @@
                 </mat-form-field>
               </div>
 
+              <div class="form-row">
+                <mat-form-field appearance="outline">
+                  <mat-label>Role</mat-label>
+                  <mat-select formControlName="role" required>
+                    <mat-option *ngFor="let role of roles$ | async" [value]="role.value">
+                      {{ role.label }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-icon matSuffix matTooltip="Select your role in the system">help_outline</mat-icon>
+                  <mat-error>{{ getErrorMessage('role', accountFormGroup) }}</mat-error>
+                </mat-form-field>
+              </div>
+
               <div class="step-actions">
                 <button mat-button matStepperNext [disabled]="!accountFormGroup.valid">Next</button>
               </div>

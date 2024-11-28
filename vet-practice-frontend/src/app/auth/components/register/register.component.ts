@@ -12,10 +12,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSelectModule } from '@angular/material/select';
 
 import { environment } from '../../../../environments/environment';
-
 import { AuthService } from '../../services/auth.service';
+import { RoleService, RoleInfo } from '../../services/role.service';
 
 @Component({
   selector: 'app-register',
@@ -31,7 +32,8 @@ import { AuthService } from '../../services/auth.service';
     MatIconModule,
     MatCardModule,
     MatProgressSpinnerModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatSelectModule
   ]
 })
 export class RegisterComponent implements OnInit {
@@ -41,14 +43,17 @@ export class RegisterComponent implements OnInit {
   hidePassword = true;
   loading$: Observable<boolean>;
   error$: Observable<string | null>;
+  roles$: Observable<RoleInfo[]>;
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
+    private roleService: RoleService,
     private router: Router
   ) {
     this.loading$ = this.authService.loading$;
     this.error$ = this.authService.error$;
+    this.roles$ = this.roleService.getRoles();
   }
 
   ngOnInit() {
@@ -73,7 +78,8 @@ export class RegisterComponent implements OnInit {
         Validators.maxLength(32),
         Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)
       ]],
-      confirmPassword: ['', Validators.required]
+      confirmPassword: ['', Validators.required],
+      role: ['', Validators.required]
     }, {
       validators: this.passwordMatchValidator
     });
@@ -106,36 +112,47 @@ export class RegisterComponent implements OnInit {
   private passwordMatchValidator(g: FormGroup) {
     return g.get('password')?.value === g.get('confirmPassword')?.value
       ? null
-      : { mismatch: true };
+      : { passwordMismatch: true };
   }
 
-  getErrorMessage(controlName: string, formGroup: FormGroup): string {
-    const control = formGroup.get(controlName);
-    if (control?.hasError('required')) {
-      return 'This field is required';
+  getErrorMessage(field: string, formGroup: FormGroup): string {
+    const control = formGroup.get(field);
+    if (!control) return '';
+
+    if (control.hasError('required')) {
+      return `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
     }
-    if (control?.hasError('email')) {
+
+    if (field === 'email' && control.hasError('email')) {
       return 'Please enter a valid email address';
     }
-    if (control?.hasError('minlength')) {
-      const minLength = control.errors?.['minlength'].requiredLength;
-      return `Minimum length is ${minLength} characters`;
-    }
-    if (control?.hasError('maxlength')) {
-      const maxLength = control.errors?.['maxlength'].requiredLength;
-      return `Maximum length is ${maxLength} characters`;
-    }
-    if (control?.hasError('pattern')) {
-      if (controlName === 'password') {
-        return 'Password must contain at least one uppercase letter, one lowercase letter, one number and one special character';
+
+    if (field === 'username') {
+      if (control.hasError('minlength')) {
+        return 'Username must be at least 4 characters';
       }
-      if (controlName === 'phoneNumber') {
-        return 'Please enter a valid phone number';
+      if (control.hasError('maxlength')) {
+        return 'Username cannot exceed 20 characters';
       }
     }
-    if (formGroup.hasError('mismatch') && controlName === 'confirmPassword') {
+
+    if (field === 'password') {
+      if (control.hasError('minlength')) {
+        return 'Password must be at least 8 characters';
+      }
+      if (control.hasError('pattern')) {
+        return 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character';
+      }
+    }
+
+    if (field === 'confirmPassword' && formGroup.hasError('passwordMismatch')) {
       return 'Passwords do not match';
     }
+
+    if (field === 'role' && control.hasError('required')) {
+      return 'Please select a role';
+    }
+
     return '';
   }
 
