@@ -8,25 +8,11 @@ import { AuthService } from './auth/services/auth.service';
   selector: 'app-root',
   standalone: true,
   imports: [CommonModule, RouterModule, NavMenuComponent],
-  template: `
-    <ng-container *ngIf="(authService.isAuthenticated$ | async); else loginContent">
-      <app-nav-menu>
-        <router-outlet></router-outlet>
-      </app-nav-menu>
-    </ng-container>
-    <ng-template #loginContent>
-      <router-outlet></router-outlet>
-    </ng-template>
-  `,
-  styles: [`
-    :host {
-      display: block;
-      height: 100vh;
-    }
-  `]
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.scss'
 })
 export class AppComponent {
   title = 'vet-practice-frontend';
 
-  constructor(public authService: AuthService) {}
+  constructor(public authService: AuthService) { }
 }

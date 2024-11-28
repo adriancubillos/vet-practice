@@ -19,70 +19,8 @@ import { UserDialogComponent } from "../user-dialog/user-dialog.component";
 
 @Component({
   selector: 'app-user-management',
-  template: `
-    <div class="container">
-      <h1>User Management</h1>
-      
-      <div class="actions">
-        <button mat-raised-button color="primary" (click)="openUserDialog()">
-          <mat-icon>add</mat-icon>
-          Add User
-        </button>
-      </div>
-
-      <div class="loading-spinner" *ngIf="loading">
-        <mat-spinner diameter="50"></mat-spinner>
-      </div>
-
-      <mat-table [dataSource]="users" class="mat-elevation-z8">
-        <ng-container matColumnDef="username">
-          <mat-header-cell *matHeaderCellDef>Username</mat-header-cell>
-          <mat-cell *matCellDef="let user">{{user.username}}</mat-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="email">
-          <mat-header-cell *matHeaderCellDef>Email</mat-header-cell>
-          <mat-cell *matCellDef="let user">{{user.email}}</mat-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="role">
-          <mat-header-cell *matHeaderCellDef>Role</mat-header-cell>
-          <mat-cell *matCellDef="let user">{{user.role}}</mat-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="actions">
-          <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
-          <mat-cell *matCellDef="let user">
-            <button mat-icon-button color="primary" (click)="openUserDialog(user)">
-              <mat-icon>edit</mat-icon>
-            </button>
-            <button mat-icon-button color="warn" (click)="deleteUser(user)">
-              <mat-icon>delete</mat-icon>
-            </button>
-          </mat-cell>
-        </ng-container>
-
-        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-      </mat-table>
-    </div>
-  `,
-  styles: [`
-    .container {
-      padding: 20px;
-    }
-    .actions {
-      margin-bottom: 20px;
-    }
-    .loading-spinner {
-      display: flex;
-      justify-content: center;
-      margin: 20px 0;
-    }
-    .mat-column-actions {
-      width: 100px;
-    }
-  `],
+  templateUrl: './user-management.component.html',
+  styleUrls: ['./user-management-component.scss'],
   standalone: true,
   imports: [
     CommonModule,
@@ -107,7 +45,7 @@ export class UserManagementComponent implements OnInit {
     private userService: UserService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.loadUsers();

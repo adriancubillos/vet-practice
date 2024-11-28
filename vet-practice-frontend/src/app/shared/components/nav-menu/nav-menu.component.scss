@@ -1,0 +1,46 @@
+.sidenav-container {
+  height: 100%;
+}
+
+.sidenav {
+  width: 200px;
+  background: #fafafa;
+}
+
+.user-info {
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  background: #f0f0f0;
+}
+
+.user-icon {
+  margin-right: 8px;
+  font-size: 40px;
+  width: 40px;
+  height: 40px;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.username {
+  font-weight: 500;
+}
+
+.role {
+  font-size: 0.9em;
+  color: #666;
+}
+
+.content {
+  padding: 20px;
+}
+
+mat-nav-list {
+  a.active {
+    background: rgba(0, 0, 0, 0.04);
+  }
+}

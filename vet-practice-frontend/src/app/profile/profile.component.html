@@ -1,0 +1,40 @@
+<div class="profile-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Profile Information</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="profile-info">
+        <div class="profile-avatar">
+          <mat-icon class="avatar-icon">account_circle</mat-icon>
+        </div>
+        <div class="profile-details">
+          <h2>{{ user?.firstName }} {{ user?.lastName }}</h2>
+          <p class="detail-item">
+            <mat-icon>email</mat-icon>
+            {{ user?.email }}
+          </p>
+          <p class="detail-item">
+            <mat-icon>phone</mat-icon>
+            {{ user?.phoneNumber }}
+          </p>
+          <p class="detail-item">
+            <mat-icon>location_on</mat-icon>
+            {{ user?.address }}
+          </p>
+        </div>
+      </div>
+      <mat-divider></mat-divider>
+      <div class="profile-actions">
+        <button mat-raised-button color="primary">
+          <mat-icon>edit</mat-icon>
+          Edit Profile
+        </button>
+        <button mat-raised-button color="accent">
+          <mat-icon>lock</mat-icon>
+          Change Password
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

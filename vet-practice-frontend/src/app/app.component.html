@@ -1,4 +1,8 @@
-
-<div class="app-container">
+<ng-container *ngIf="(authService.isAuthenticated$ | async); else loginContent">
+  <app-nav-menu>
+    <router-outlet></router-outlet>
+  </app-nav-menu>
+</ng-container>
+<ng-template #loginContent>
   <router-outlet></router-outlet>
-</div>
+</ng-template>
