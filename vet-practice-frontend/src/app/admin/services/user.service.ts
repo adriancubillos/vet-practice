@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { Pet } from '../../pets/models/pet.interface';
 
 export interface User {
   id: number;
@@ -10,6 +11,13 @@ export interface User {
   role: string;
   createdAt: string;
   updatedAt: string;
+  firstName: string;
+  lastName: string;
+  address: string;
+  phoneNumber: string;
+  pets: Pet[];
+  isActive: boolean;
+  imageUrl: string;
 }
 
 @Injectable({
