@@ -40,6 +40,7 @@ export class UserCreateComponent {
   selectedFile: File | null = null;
   imageExists = false;
   hidePassword = true;
+  hideConfirmPassword = true;
   placeholderImage = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgMjAwIDIwMCI+CiAgPHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiNlZWUiLz4KICA8Y2lyY2xlIGN4PSIxMDAiIGN5PSI4NSIgcj0iNDAiIGZpbGw9IiNhYWEiLz4KICA8cGF0aCBkPSJNNDAsOTAgQzQwLDE0MCAxNjAsMTQwIDE2MCw5MCIgc3Ryb2tlPSIjYWFhIiBzdHJva2Utd2lkdGg9IjgiIGZpbGw9Im5vbmUiLz4KPC9zdmc+';
 
   constructor(
@@ -91,9 +92,19 @@ export class UserCreateComponent {
   }
 
   private passwordMatchValidator(g: FormGroup) {
-    return g.get('password')?.value === g.get('confirmPassword')?.value
-      ? null
-      : { passwordMismatch: true };
+    const password = g.get('password');
+    const confirmPassword = g.get('confirmPassword');
+    
+    if (password && confirmPassword && password.value !== confirmPassword.value) {
+      confirmPassword.setErrors({ passwordMismatch: true });
+      return { passwordMismatch: true };
+    }
+    
+    // Clear the error if passwords match
+    if (confirmPassword?.hasError('passwordMismatch')) {
+      confirmPassword.setErrors(null);
+    }
+    return null;
   }
 
   onSubmit(): void {
@@ -208,8 +219,13 @@ export class UserCreateComponent {
       }
     }
 
-    if (field === 'confirmPassword' && this.userForm.hasError('passwordMismatch')) {
-      return 'Passwords do not match';
+    if (field === 'confirmPassword') {
+      if (control.hasError('required')) {
+        return 'Confirm Password is required';
+      }
+      if (control.hasError('passwordMismatch')) {
+        return 'Passwords do not match';
+      }
     }
 
     if (field === 'firstName' || field === 'lastName') {
