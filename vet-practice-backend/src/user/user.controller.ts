@@ -21,6 +21,7 @@ import { UpdateUserDto } from '../user/dto/update-user.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
+import { imageChecksUtil } from 'src/utils/common-utils';
 
 @Controller('users')
 export class UserController {
@@ -106,9 +107,20 @@ export class UserController {
     @Param('id', ParseIntPipe) id: string,
     @Body() updateUserDto: UpdateUserDto,
     @CreateFileUploadDecorator() file: Express.Multer.File | undefined,
-  ): Promise<User> {
-    const imageUrl = file ? `/uploads/users/${file.filename}` : null;
-    return this.userService.update(parseInt(id, 10), updateUserDto, imageUrl);
+  ): Promise<{ message: string }> {
+    // Handle image URL
+    let imageUrl;
+    if (file) {
+      imageUrl = `/uploads/users/${file.filename}`;
+    } else if (updateUserDto.imageUrl === '') {
+      imageUrl = null;  // Convert empty string to null in database
+    } else if (updateUserDto.imageUrl) {
+      imageUrl = updateUserDto.imageUrl;
+    }
+
+    imageChecksUtil(this.userService.findOne(id), imageUrl, 'uploads/users');
+    await this.userService.update(parseInt(id, 10), updateUserDto, imageUrl);
+    return { message: 'User updated successfully' };
   }
 
   @UseGuards(JwtAuthGuard)

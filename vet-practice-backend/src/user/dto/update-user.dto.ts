@@ -32,6 +32,10 @@ export class UpdateUserDto {
   phoneNumber?: string;
 
   @IsOptional()
+  @IsString()
+  imageUrl?: string;
+
+  @IsOptional()
   @IsEnum(Role)
   role?: Role;
 }

@@ -8,6 +8,13 @@
     margin-bottom: 1rem;
     padding-bottom: 1rem;
 
+    .back-button {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      z-index: 1;
+    }
+
     mat-card-header {
       margin-bottom: 1rem;
     }
@@ -15,9 +22,13 @@
     mat-card-actions {
       display: flex;
       justify-content: flex-end;
-      gap: 1rem;
       padding: 1rem;
       margin: 0;
+
+      .action-buttons-right {
+        display: flex;
+        gap: 1rem;
+      }
 
       button {
         mat-icon {

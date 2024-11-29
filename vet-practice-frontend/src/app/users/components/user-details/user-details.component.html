@@ -1,5 +1,9 @@
 <div class="user-details-container" *ngIf="user">
   <mat-card>
+    <button *ngIf="!isEditing" mat-mini-fab color="basic" class="back-button" (click)="onCancel()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+
     <mat-card-header>
       <mat-card-title>{{ user?.firstName || '' }} {{ user?.lastName || '' }}</mat-card-title>
       <mat-card-subtitle>{{ user?.role || '' }}</mat-card-subtitle>
@@ -91,26 +95,28 @@
     </ng-container>
 
     <mat-card-actions>
-      <ng-container *ngIf="isEditing">
-        <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="userForm.invalid || isLoading">
-          <mat-icon>save</mat-icon>
-          Save
+      <div class="action-buttons-right">
+        <ng-container *ngIf="isEditing">
+          <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="userForm.invalid || isLoading">
+            <mat-icon>save</mat-icon>
+            Save
+          </button>
+          <button mat-button color="basic" (click)="toggleEdit()">
+            <mat-icon>close</mat-icon>
+            Cancel
+          </button>
+        </ng-container>
+        <ng-container *ngIf="!isEditing">
+          <button mat-raised-button color="primary" (click)="toggleEdit()">
+            <mat-icon>edit</mat-icon>
+            Edit
+          </button>
+        </ng-container>
+        <button mat-raised-button color="warn" (click)="deleteUser()">
+          <mat-icon>delete</mat-icon>
+          Delete
         </button>
-        <button mat-button color="basic" (click)="toggleEdit()">
-          <mat-icon>close</mat-icon>
-          Cancel
-        </button>
-      </ng-container>
-      <ng-container *ngIf="!isEditing">
-        <button mat-raised-button color="primary" (click)="toggleEdit()">
-          <mat-icon>edit</mat-icon>
-          Edit
-        </button>
-      </ng-container>
-      <button mat-raised-button color="warn" (click)="deleteUser()">
-        <mat-icon>delete</mat-icon>
-        Delete
-      </button>
+      </div>
     </mat-card-actions>
   </mat-card>
 

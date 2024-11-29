@@ -86,6 +86,8 @@ export class UserDetailsComponent implements OnInit {
         this.userForm.patchValue(user);
         if (user.imageUrl) {
           this.checkImageExists(user.imageUrl);
+        } else {
+          this.imageExists = false;
         }
         this.isLoading = false;
       },
@@ -97,35 +99,73 @@ export class UserDetailsComponent implements OnInit {
     });
   }
 
+  checkImageExists(imageUrl: string): void {
+    const img = new Image();
+    img.src = environment.apiUrl + imageUrl;
+
+    img.onload = () => {
+      this.imageExists = true;
+    };
+
+    img.onerror = () => {
+      this.imageExists = false;
+      if (this.user) {
+        this.user.imageUrl = '';
+      }
+    };
+  }
+
+  getImageUrl(imageUrl: string | undefined): string {
+    if (!imageUrl) {
+      return this.placeholderImage;
+    }
+    return `${environment.apiUrl}${imageUrl}`;
+  }
+
+  toggleEdit(): void {
+    this.isEditing = !this.isEditing;
+    if (this.isEditing) {
+      this.userForm.patchValue(this.user || {});
+      if (this.user?.imageUrl) {
+        this.imageExists = true;
+      }
+    }
+  }
+
   onSubmit(): void {
     if (this.userForm.valid && this.userId) {
-      this.isLoading = true;
       const formData = new FormData();
-
-      // Add user data
       const formValue = this.userForm.value;
+
+      // Add all form fields to formData
       Object.keys(formValue).forEach(key => {
-        if (key !== 'image' && formValue[key] !== null && formValue[key] !== undefined) {
+        if (formValue[key] !== null && formValue[key] !== undefined) {
           formData.append(key, formValue[key]);
         }
       });
 
-      // Add image if selected
+      // Add image only if a new one is selected
       if (this.selectedFile) {
         formData.append('image', this.selectedFile);
+      } else if (!this.imageExists || !this.user?.imageUrl) {
+        formData.append('imageUrl', '');  // Send empty string when no image
+      } else if (this.user && this.user.imageUrl) {
+        formData.append('imageUrl', this.user.imageUrl);
       }
 
       this.userService.updateUser(this.userId, formData).subscribe({
-        next: () => {
-          this.isEditing = false;
-          this.loadUser();
-          this.snackBar.open('User updated successfully', 'Close', { duration: 3000 });
+        next: (user) => {
+          this.user = user;
+          this.snackBar.open('User updated successfully', 'Close', {
+            duration: 3000,
+          });
+          this.router.navigate(['/users']);
         },
         error: (error) => {
           console.error('Error updating user:', error);
-          this.error = 'Failed to update user';
-          this.isLoading = false;
-          this.snackBar.open('Failed to update user', 'Close', { duration: 3000 });
+          this.snackBar.open('Failed to update user', 'Close', {
+            duration: 3000,
+          });
         }
       });
     }
@@ -133,58 +173,29 @@ export class UserDetailsComponent implements OnInit {
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
-    if (input.files?.length) {
+    if (input.files && input.files[0]) {
       this.selectedFile = input.files[0];
-      this.previewImage();
-    }
-  }
-
-  previewImage(): void {
-    if (this.selectedFile) {
       const reader = new FileReader();
-      reader.onload = () => {
-        this.imagePreview = reader.result as string;
+      reader.onload = (e) => {
+        this.imagePreview = e.target?.result as string;
+        this.imageExists = true;
       };
-      reader.readAsDataURL(this.selectedFile);
+      reader.readAsDataURL(input.files[0]);
     }
   }
 
   removeImage(): void {
     this.selectedFile = null;
     this.imagePreview = null;
-    this.userForm.get('image')?.setValue(null);
-  }
-
-  getImageUrl(imageUrl: string | undefined): string {
-    if (!imageUrl) return this.placeholderImage;
-    // Remove leading slash if present to avoid double slash
-    const cleanImageUrl = imageUrl.startsWith('/') ? imageUrl.substring(1) : imageUrl;
-    return `${environment.apiUrl}/${cleanImageUrl}`;
-  }
-
-  checkImageExists(imageUrl: string): void {
-    const img = new Image();
-    img.onload = () => {
-      this.imageExists = true;
-    };
-    img.onerror = () => {
-      this.imageExists = false;
-    };
-    img.src = this.getImageUrl(imageUrl);
+    this.imageExists = false;
+    if (this.user) {
+      this.user.imageUrl = '';
+    }
   }
 
   onImageError(event: Event): void {
     const img = event.target as HTMLImageElement;
     img.src = this.placeholderImage;
-  }
-
-  toggleEdit(): void {
-    if (this.isEditing) {
-      this.userForm.patchValue(this.user!);
-      this.selectedFile = null;
-      this.imagePreview = null;
-    }
-    this.isEditing = !this.isEditing;
   }
 
   onCancel(): void {
@@ -219,6 +230,4 @@ export class UserDetailsComponent implements OnInit {
       }
     });
   }
-
-
 }
