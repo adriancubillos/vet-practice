@@ -8,8 +8,8 @@ export const ADMIN_ROUTES: Routes = [
     children: [
       {
         path: 'users',
-        loadComponent: () => 
-          import('./components/user-management/user-management.component').then(m => m.UserManagementComponent)
+        loadComponent: () =>
+          import('../users/components/user-list/user-list.component').then(m => m.UserListComponent)
       },
       {
         path: '',
