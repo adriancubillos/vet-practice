@@ -1,8 +1,5 @@
 <div class="user-details-container" *ngIf="user">
   <mat-card>
-    <button mat-mini-fab color="primary" class="back-button" (click)="onCancel()">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
     <mat-card-header>
       <mat-card-title>{{ user?.firstName || '' }} {{ user?.lastName || '' }}</mat-card-title>
       <mat-card-subtitle>{{ user?.role || '' }}</mat-card-subtitle>
@@ -35,7 +32,7 @@
               <!-- Image Preview -->
               <div class="image-preview" *ngIf="imagePreview || (user?.imageUrl && imageExists)">
                 <img [src]="imagePreview || getImageUrl(user?.imageUrl)" (error)="onImageError($event)"
-                  [alt]="(user?.firstName || '') + ' ' + (user?.lastName || '')">
+                  [alt]="(user.firstName || '') + ' ' + (user.lastName || '')">
                 <button mat-mini-fab color="warn" class="remove-button" type="button"
                   (click)="removeImage(); $event.stopPropagation()">
                   <mat-icon>close</mat-icon>
@@ -90,24 +87,31 @@
             </mat-option>
           </mat-select>
         </mat-form-field>
-
-        <div class="form-actions">
-          <button mat-button type="button" (click)="toggleEdit()">Cancel</button>
-          <button mat-raised-button color="primary" type="submit" [disabled]="userForm.invalid || isLoading">
-            Save
-          </button>
-        </div>
       </form>
     </ng-container>
 
-    <div class="card-actions">
-      <button mat-mini-fab color="warn" class="delete-button" (click)="deleteUser()">
+    <mat-card-actions>
+      <ng-container *ngIf="isEditing">
+        <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="userForm.invalid || isLoading">
+          <mat-icon>save</mat-icon>
+          Save
+        </button>
+        <button mat-button color="basic" (click)="toggleEdit()">
+          <mat-icon>close</mat-icon>
+          Cancel
+        </button>
+      </ng-container>
+      <ng-container *ngIf="!isEditing">
+        <button mat-raised-button color="primary" (click)="toggleEdit()">
+          <mat-icon>edit</mat-icon>
+          Edit
+        </button>
+      </ng-container>
+      <button mat-raised-button color="warn" (click)="deleteUser()">
         <mat-icon>delete</mat-icon>
+        Delete
       </button>
-      <button mat-mini-fab color="secondary" class="edit-button" (click)="toggleEdit()">
-        <mat-icon>{{ isEditing ? 'close' : 'edit' }}</mat-icon>
-      </button>
-    </div>
+    </mat-card-actions>
   </mat-card>
 
   <mat-spinner *ngIf="isLoading" diameter="50"></mat-spinner>
