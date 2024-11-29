@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { environment } from '../../../../environments/environment';
+import { UserAvatarComponent } from '../../../shared/components/user-avatar/user-avatar.component';
 
 @Component({
   selector: 'app-user-list',
@@ -20,7 +21,8 @@ import { environment } from '../../../../environments/environment';
     MatProgressSpinnerModule,
     MatIconModule,
     MatButtonModule,
-    MatCardModule
+    MatCardModule,
+    UserAvatarComponent
   ]
 })
 export class UserListComponent implements OnInit {
@@ -44,16 +46,15 @@ export class UserListComponent implements OnInit {
 
   loadUsers(): void {
     this.isLoading = true;
-    this.error = null;
     this.userService.getUsers().subscribe({
       next: (users) => {
         this.users = users;
         this.isLoading = false;
       },
       error: (error) => {
-        this.error = 'Failed to load users. Please try again later.';
+        console.error('Error fetching users:', error);
+        this.error = error;
         this.isLoading = false;
-        console.error('Error loading users:', error);
       }
     });
   }
@@ -86,11 +87,15 @@ export class UserListComponent implements OnInit {
     }
   }
 
-  getImageUrl(imageUrl: string | undefined): string {
-    if (!imageUrl) return '';
-    // Remove leading slash if present to avoid double slash
-    const cleanImageUrl = imageUrl.startsWith('/') ? imageUrl.substring(1) : imageUrl;
-    return `${environment.apiUrl}/${cleanImageUrl}`;
+  getImageUrl(imageUrl: string | undefined): string | null {
+    if (!imageUrl) return null;
+    
+    // Handle case where the URL might be relative or absolute
+    if (imageUrl.startsWith('http')) return imageUrl;
+    
+    // Ensure the URL starts with /uploads/
+    const path = imageUrl.startsWith('/') ? imageUrl : `/uploads/users/${imageUrl}`;
+    return `${environment.apiUrl}${path}`;
   }
 
   addUser(): void {

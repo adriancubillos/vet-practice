@@ -1,0 +1,13 @@
+<div class="avatar-container" [ngClass]="size">
+  <ng-container *ngIf="imageUrl && !hasImageError">
+    <img [src]="imageUrl" 
+         [alt]="firstName + ' ' + lastName" 
+         (error)="onImageError()"
+         class="avatar-image">
+  </ng-container>
+  <div *ngIf="(!imageUrl || hasImageError) && initials" 
+       class="avatar-initials"
+       [style.background-color]="getBackgroundColor()">
+    {{ initials }}
+  </div>
+</div>
