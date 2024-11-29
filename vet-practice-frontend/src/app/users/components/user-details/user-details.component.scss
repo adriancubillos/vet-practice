@@ -4,13 +4,23 @@
   padding: 0 1rem;
 
   mat-card {
+    position: relative;
     margin-bottom: 1rem;
-  }
 
-  .header-actions {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
+    .back-button {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      z-index: 1;
+    }
+
+    .action-buttons {
+      position: absolute;
+      bottom: 1rem;
+      right: 1rem;
+      display: flex;
+      gap: 0.5rem;
+    }
   }
 
   .image-container {

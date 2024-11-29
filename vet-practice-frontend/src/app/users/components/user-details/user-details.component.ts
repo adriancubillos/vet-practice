@@ -152,7 +152,10 @@ export class UserDetailsComponent implements OnInit {
   }
 
   getImageUrl(imageUrl: string | undefined): string {
-    return imageUrl ? `${environment.apiUrl}/${imageUrl}` : this.placeholderImage;
+    if (!imageUrl) return this.placeholderImage;
+    // Remove leading slash if present to avoid double slash
+    const cleanImageUrl = imageUrl.startsWith('/') ? imageUrl.substring(1) : imageUrl;
+    return `${environment.apiUrl}/${cleanImageUrl}`;
   }
 
   checkImageExists(imageUrl: string): void {
@@ -182,5 +185,25 @@ export class UserDetailsComponent implements OnInit {
 
   onCancel(): void {
     this.router.navigate(['/admin/users']);
+  }
+
+  confirmDelete(): void {
+    if (!this.user || !this.user.id) return;
+
+    if (confirm(`Are you sure you want to delete ${this.user.firstName} ${this.user.lastName}?`)) {
+      this.isLoading = true;
+      this.userService.deleteUser(this.user.id).subscribe({
+        next: () => {
+          this.snackBar.open('User deleted successfully', 'Close', { duration: 3000 });
+          this.router.navigate(['/admin/users']);
+        },
+        error: (error) => {
+          console.error('Error deleting user:', error);
+          this.error = 'Failed to delete user';
+          this.isLoading = false;
+          this.snackBar.open('Failed to delete user', 'Close', { duration: 3000 });
+        }
+      });
+    }
   }
 }

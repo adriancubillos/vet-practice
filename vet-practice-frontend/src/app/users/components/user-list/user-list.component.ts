@@ -7,6 +7,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-user-list',
@@ -27,7 +28,7 @@ export class UserListComponent implements OnInit {
   isLoading = true;
   error: string | null = null;
   avatarColors = [
-    '#F44336', '#E91E63', '#9C27B0', '#673AB7', 
+    '#F44336', '#E91E63', '#9C27B0', '#673AB7',
     '#3F51B5', '#2196F3', '#03A9F4', '#00BCD4',
     '#009688', '#4CAF50', '#8BC34A', '#CDDC39'
   ];
@@ -85,6 +86,13 @@ export class UserListComponent implements OnInit {
     }
   }
 
+  getImageUrl(imageUrl: string | undefined): string {
+    if (!imageUrl) return '';
+    // Remove leading slash if present to avoid double slash
+    const cleanImageUrl = imageUrl.startsWith('/') ? imageUrl.substring(1) : imageUrl;
+    return `${environment.apiUrl}/${cleanImageUrl}`;
+  }
+
   addUser(): void {
     this.router.navigate(['/admin/users/new']);
   }
@@ -104,7 +112,7 @@ export class UserListComponent implements OnInit {
       this.error = 'Cannot delete this user. Missing ID.';
       return;
     }
-    
+
     if (confirm(`Are you sure you want to delete ${this.getFullName(user)}?`)) {
       this.userService.deleteUser(user.id).subscribe({
         next: () => {
