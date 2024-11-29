@@ -123,6 +123,7 @@ export class UserService {
     const user = this.userRepository.create({
       ...registerUserDto,
       password: hashedPassword,
+      imageUrl: imageUrl,
     });
 
     try {

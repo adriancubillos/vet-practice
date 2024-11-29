@@ -27,7 +27,7 @@ import { imageChecksUtil } from 'src/utils/common-utils';
 export class UserController {
   constructor(private readonly userService: UserService) { }
 
-  @Post()
+  @Post('register')
   @UseInterceptors(FileInterceptor('image'))
   async register(
     @Body() registerUserDto: RegisterUserDto,
@@ -84,14 +84,21 @@ export class UserController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post()
+  @Post('create')
   @UseInterceptors(FileInterceptor('image'))
   async create(
     @Body() createUserDto: RegisterUserDto,
     @CreateFileUploadDecorator() file: Express.Multer.File | undefined,
     @Request() req,
   ): Promise<User> {
-    const imageUrl = file ? `/uploads/users/${file.filename}` : null;
+    let imageUrl;
+    if (file) {
+      imageUrl = `/uploads/users/${file.filename}`;
+    } else if (createUserDto.imageUrl === '') {
+      imageUrl = null;  // Convert empty string to null in database
+    } else if (createUserDto.imageUrl) {
+      imageUrl = createUserDto.imageUrl;
+    }
     // Only admins can create users with specific roles
     if (req.user.role !== Role.ADMIN) {
       throw new UnauthorizedException('Only admins can create users');

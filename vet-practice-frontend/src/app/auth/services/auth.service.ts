@@ -50,12 +50,13 @@ export class AuthService {
 
   // Auth Methods
   register(credentials: any): Observable<any> {
+    const authUrl = `${environment.apiUrl}/users`;
     this.setLoading(true);
-    return this.http.post<any>(`${this.authUrl}/register`, credentials).pipe(
+    return this.http.post<any>(`${authUrl}/register`, credentials).pipe(
       tap(response => {
         console.log('Register response:', response); // Debug log
-        if (response.accessToken) {
-          this.setToken(response.accessToken);
+        if (response.token) {
+          this.setToken(response.token);
           this.updateState({
             ...initialState,
             isAuthenticated: true,

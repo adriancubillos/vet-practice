@@ -116,7 +116,7 @@ export class UserCreateComponent {
       // Add image only if a new one is selected
       if (this.selectedFile) {
         formData.append('image', this.selectedFile);
-        formData.append('imageUrl', this.selectedFile.name);
+        // Don't send imageUrl - let backend generate the proper filename with timestamp/uuid
       } else if (!this.imageExists || formValue.imageUrl) {
         formData.append('imageUrl', '');  // Send empty string when no image
       } else if (formValue && formValue.imageUrl) {
