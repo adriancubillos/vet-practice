@@ -35,6 +35,8 @@
     gap: 20px;
 
     .user-card {
+      position: relative;
+      padding-top: 40px;
       cursor: pointer;
       transition: transform 0.2s, box-shadow 0.2s;
 
@@ -43,8 +45,61 @@
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       }
 
+      .avatar-container {
+        position: absolute;
+        top: -30px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+        .initials {
+          color: white;
+          font-size: 24px;
+          font-weight: 500;
+        }
+      }
+
+      mat-card-header {
+        padding-top: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+
+        mat-card-title {
+          margin-bottom: 8px;
+          font-size: 1.2em;
+          font-weight: 500;
+        }
+
+        mat-card-subtitle {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          
+          .role-icon {
+            font-size: 16px;
+            width: 16px;
+            height: 16px;
+          }
+        }
+      }
+
       mat-card-content {
         padding: 16px;
+        text-align: center;
+
+        .email, .phone {
+          margin: 4px 0;
+          color: rgba(0, 0, 0, 0.7);
+          font-size: 0.9em;
+        }
 
         .role {
           margin: 0;

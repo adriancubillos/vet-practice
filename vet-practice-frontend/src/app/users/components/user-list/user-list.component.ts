@@ -4,11 +4,9 @@ import { Router, RouterModule } from '@angular/router';
 import { User } from '../../models/user.interface';
 import { UserService } from '../../services/user.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-
 
 @Component({
   selector: 'app-user-list',
@@ -19,7 +17,6 @@ import { MatCardModule } from '@angular/material/card';
     CommonModule,
     RouterModule,
     MatProgressSpinnerModule,
-    MatTableModule,
     MatIconModule,
     MatButtonModule,
     MatCardModule
@@ -29,6 +26,11 @@ export class UserListComponent implements OnInit {
   users: User[] = [];
   isLoading = true;
   error: string | null = null;
+  avatarColors = [
+    '#F44336', '#E91E63', '#9C27B0', '#673AB7', 
+    '#3F51B5', '#2196F3', '#03A9F4', '#00BCD4',
+    '#009688', '#4CAF50', '#8BC34A', '#CDDC39'
+  ];
 
   constructor(
     private userService: UserService,
@@ -57,6 +59,30 @@ export class UserListComponent implements OnInit {
 
   getFullName(user: User): string {
     return `${user.firstName} ${user.lastName}`;
+  }
+
+  getInitials(user: User): string {
+    return (user.firstName.charAt(0) + user.lastName.charAt(0)).toUpperCase();
+  }
+
+  getAvatarColor(user: User): string {
+    const nameHash = this.getFullName(user)
+      .split('')
+      .reduce((hash, char) => char.charCodeAt(0) + ((hash << 5) - hash), 0);
+    return this.avatarColors[Math.abs(nameHash) % this.avatarColors.length];
+  }
+
+  getRoleIcon(role: string): string {
+    switch (role) {
+      case 'ADMIN':
+        return 'admin_panel_settings';
+      case 'VET':
+        return 'medical_services';
+      case 'CLIENT':
+        return 'person';
+      default:
+        return 'person_outline';
+    }
   }
 
   addUser(): void {
