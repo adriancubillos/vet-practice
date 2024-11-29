@@ -57,12 +57,34 @@ export class UserDetailsComponent implements OnInit {
     private dialog: MatDialog
   ) {
     this.userForm = this.fb.group({
-      firstName: ['', [Validators.required]],
-      lastName: ['', [Validators.required]],
-      email: ['', [Validators.required, Validators.email]],
-      phoneNumber: ['', [Validators.required]],
-      address: ['', [Validators.required]],
-      role: ['', [Validators.required]],
+      username: ['', [
+        Validators.required,
+        Validators.minLength(4),
+        Validators.maxLength(20)
+      ]],
+      email: ['', [
+        Validators.required,
+        Validators.email
+      ]],
+      firstName: ['', [
+        Validators.required,
+        Validators.minLength(2),
+        Validators.maxLength(50)
+      ]],
+      lastName: ['', [
+        Validators.required,
+        Validators.minLength(2),
+        Validators.maxLength(50)
+      ]],
+      address: ['', [
+        Validators.required,
+        Validators.maxLength(200)
+      ]],
+      phoneNumber: ['', [
+        Validators.required,
+        Validators.pattern(/^\+?[1-9]\d{1,14}$/)
+      ]],
+      role: ['user', [Validators.required]],
       image: [null]
     });
   }

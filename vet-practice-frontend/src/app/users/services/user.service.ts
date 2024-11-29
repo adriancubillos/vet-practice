@@ -13,15 +13,15 @@ export class UserService {
   constructor(private http: HttpClient) { }
 
   getUsers(): Observable<User[]> {
-    return this.http.get<User[]>(this.apiUrl);
+    return this.http.get<User[]>(`${this.apiUrl}/others`);
   }
 
   getUser(id: number): Observable<User> {
     return this.http.get<User>(`${this.apiUrl}/${id}`);
   }
 
-  createUser(user: User): Observable<User> {
-    return this.http.post<User>(this.apiUrl, user);
+  createUser(userData: User | FormData): Observable<User> {
+    return this.http.post<User>(this.apiUrl, userData);
   }
 
   updateUser(id: number, userData: User | FormData): Observable<User> {

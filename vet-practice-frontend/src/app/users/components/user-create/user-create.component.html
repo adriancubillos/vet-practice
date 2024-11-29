@@ -1,0 +1,135 @@
+<div class="user-create-container">
+  <mat-card>
+    <button mat-mini-fab color="basic" class="back-button" (click)="onCancel()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+
+    <mat-card-header>
+      <mat-card-title>Create New User</mat-card-title>
+    </mat-card-header>
+
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+      <!-- Image Upload Section -->
+      <div class="form-row">
+        <mat-card class="upload-card" (click)="fileInput.click()">
+          <mat-card-content class="upload-content">
+            <!-- Image Preview -->
+            <div class="image-preview" *ngIf="imagePreview && imageExists">
+              <img [src]="imagePreview" (error)="onImageError($event)" alt="User profile image">
+              <button mat-mini-fab color="warn" class="remove-button" type="button"
+                (click)="removeImage(); $event.stopPropagation()">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+
+            <!-- Upload Prompt -->
+            <div class="upload-prompt" *ngIf="!imagePreview || !imageExists">
+              <mat-icon>cloud_upload</mat-icon>
+              <p>Click to upload image</p>
+            </div>
+          </mat-card-content>
+        </mat-card>
+        <input #fileInput type="file" accept="image/*" style="display: none" (change)="onFileSelected($event)">
+      </div>
+
+      <!-- User Details Form -->
+      <div class="form-row">
+        <mat-form-field>
+          <mat-label>Username</mat-label>
+          <input matInput formControlName="username" required>
+          <mat-error>{{ getErrorMessage('username') }}</mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Password Section -->
+      <div class="form-row">
+        <mat-form-field>
+          <mat-label>Password</mat-label>
+          <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" required>
+          <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
+            <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
+          <mat-hint>Password must contain at least 6 characters with uppercase, lowercase, number, and special character</mat-hint>
+          <mat-error>{{ getErrorMessage('password') }}</mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field>
+          <mat-label>Confirm Password</mat-label>
+          <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="confirmPassword" required>
+          <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
+            <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
+          <mat-error>{{ getErrorMessage('confirmPassword') }}</mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field>
+          <mat-label>First Name</mat-label>
+          <input matInput formControlName="firstName" required>
+          <mat-error>{{ getErrorMessage('firstName') }}</mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Last Name</mat-label>
+          <input matInput formControlName="lastName" required>
+          <mat-error>{{ getErrorMessage('lastName') }}</mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field>
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" required type="email">
+          <mat-error>{{ getErrorMessage('email') }}</mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Phone Number</mat-label>
+          <input matInput formControlName="phoneNumber" required>
+          <mat-hint>Format: +1234567890</mat-hint>
+          <mat-error>{{ getErrorMessage('phoneNumber') }}</mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field class="full-width">
+          <mat-label>Address</mat-label>
+          <textarea matInput formControlName="address" required rows="3"></textarea>
+          <mat-error>{{ getErrorMessage('address') }}</mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field class="full-width">
+          <mat-label>Role</mat-label>
+          <mat-select formControlName="role" required>
+            <mat-option *ngFor="let role of roles" [value]="role">
+              {{role | titlecase}}
+            </mat-option>
+          </mat-select>
+          <mat-error>{{ getErrorMessage('role') }}</mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="action-buttons-right">
+        <button mat-raised-button color="primary" type="submit" [disabled]="!userForm.valid || isLoading">
+          <mat-icon>save</mat-icon>
+          Create
+        </button>
+        <button mat-button color="basic" type="button" (click)="onCancel()">
+          <mat-icon>close</mat-icon>
+          Cancel
+        </button>
+      </div>
+    </form>
+
+    <mat-spinner *ngIf="isLoading" diameter="50"></mat-spinner>
+
+    <div class="error-message" *ngIf="error">
+      {{ error }}
+    </div>
+  </mat-card>
+</div>

@@ -29,6 +29,10 @@ export class RegisterUserDto {
   phoneNumber: string;
 
   @IsOptional()
+  @IsString()
+  imageUrl?: string;
+
+  @IsOptional()
   @IsEnum(Role)
   role?: Role;
 }
