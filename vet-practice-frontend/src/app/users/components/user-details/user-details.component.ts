@@ -159,7 +159,7 @@ export class UserDetailsComponent implements OnInit {
           this.snackBar.open('User updated successfully', 'Close', {
             duration: 3000,
           });
-          this.router.navigate(['/users']);
+          this.router.navigate(['/admin/users']);
         },
         error: (error) => {
           console.error('Error updating user:', error);
