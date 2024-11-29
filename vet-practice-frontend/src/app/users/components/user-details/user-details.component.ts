@@ -39,7 +39,7 @@ export class UserDetailsComponent implements OnInit {
   isLoading = false;
   error: string | null = null;
   isEditing = false;
-  roles = ['CLIENT', 'VET', 'ADMIN'];
+  roles = ['user', 'vet', 'admin'];
   imagePreview: string | null = null;
   selectedFile: File | null = null;
   imageExists = false;

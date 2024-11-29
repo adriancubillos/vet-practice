@@ -75,11 +75,11 @@ export class UserListComponent implements OnInit {
 
   getRoleIcon(role: string): string {
     switch (role) {
-      case 'ADMIN':
+      case 'admin':
         return 'admin_panel_settings';
-      case 'VET':
+      case 'vet':
         return 'medical_services';
-      case 'CLIENT':
+      case 'user':
         return 'person';
       default:
         return 'person_outline';

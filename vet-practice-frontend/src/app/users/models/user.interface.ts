@@ -5,7 +5,7 @@ export interface User {
     email: string;
     phoneNumber: string;
     address: string;
-    role: 'CLIENT' | 'VET' | 'ADMIN';
+    role: 'user' | 'vet' | 'admin';
     imageUrl?: string;
     createdAt?: Date;
     updatedAt?: Date;
