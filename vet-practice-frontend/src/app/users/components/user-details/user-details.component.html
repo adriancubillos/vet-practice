@@ -1,14 +1,9 @@
 <div class="user-details-container" *ngIf="user">
   <mat-card>
+    <button mat-mini-fab color="primary" class="back-button" (click)="onCancel()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
     <mat-card-header>
-      <div class="header-actions">
-        <button mat-icon-button (click)="onCancel()">
-          <mat-icon>arrow_back</mat-icon>
-        </button>
-        <button mat-icon-button (click)="toggleEdit()">
-          <mat-icon>{{ isEditing ? 'close' : 'edit' }}</mat-icon>
-        </button>
-      </div>
       <mat-card-title>{{ user?.firstName || '' }} {{ user?.lastName || '' }}</mat-card-title>
       <mat-card-subtitle>{{ user?.role || '' }}</mat-card-subtitle>
     </mat-card-header>
@@ -16,11 +11,8 @@
     <!-- View Mode -->
     <ng-container *ngIf="!isEditing">
       <div class="image-container">
-        <img [src]="getImageUrl(user?.imageUrl)" 
-             (error)="onImageError($event)" 
-             [alt]="(user?.firstName || '') + ' ' + (user?.lastName || '')" 
-             mat-card-image 
-             class="user-image">
+        <img [src]="getImageUrl(user?.imageUrl)" (error)="onImageError($event)"
+          [alt]="(user?.firstName || '') + ' ' + (user?.lastName || '')" mat-card-image class="user-image">
       </div>
 
       <mat-card-content>
@@ -42,11 +34,10 @@
             <mat-card-content class="upload-content">
               <!-- Image Preview -->
               <div class="image-preview" *ngIf="imagePreview || (user?.imageUrl && imageExists)">
-                <img [src]="imagePreview || getImageUrl(user?.imageUrl)" 
-                     (error)="onImageError($event)" 
-                     [alt]="(user?.firstName || '') + ' ' + (user?.lastName || '')">
+                <img [src]="imagePreview || getImageUrl(user?.imageUrl)" (error)="onImageError($event)"
+                  [alt]="(user?.firstName || '') + ' ' + (user?.lastName || '')">
                 <button mat-mini-fab color="warn" class="remove-button" type="button"
-                        (click)="removeImage(); $event.stopPropagation()">
+                  (click)="removeImage(); $event.stopPropagation()">
                   <mat-icon>close</mat-icon>
                 </button>
               </div>
@@ -58,10 +49,7 @@
               </div>
             </mat-card-content>
           </mat-card>
-          <input #fileInput type="file" 
-                 accept="image/*" 
-                 style="display: none"
-                 (change)="onFileSelected($event)">
+          <input #fileInput type="file" accept="image/*" style="display: none" (change)="onFileSelected($event)">
         </div>
 
         <!-- User Details Form -->
@@ -111,10 +99,19 @@
         </div>
       </form>
     </ng-container>
+
+    <div class="card-actions">
+      <button mat-mini-fab color="warn" class="delete-button" (click)="deleteUser()">
+        <mat-icon>delete</mat-icon>
+      </button>
+      <button mat-mini-fab color="secondary" class="edit-button" (click)="toggleEdit()">
+        <mat-icon>{{ isEditing ? 'close' : 'edit' }}</mat-icon>
+      </button>
+    </div>
   </mat-card>
 
   <mat-spinner *ngIf="isLoading" diameter="50"></mat-spinner>
-  
+
   <div class="error-message" *ngIf="error">
     {{ error }}
   </div>

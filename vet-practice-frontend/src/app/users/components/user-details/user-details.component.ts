@@ -13,6 +13,9 @@ import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { environment } from '../../../../environments/environment';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
+
 
 @Component({
   selector: 'app-user-details',
@@ -50,7 +53,8 @@ export class UserDetailsComponent implements OnInit {
     private router: Router,
     private userService: UserService,
     private fb: FormBuilder,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
   ) {
     this.userForm = this.fb.group({
       firstName: ['', [Validators.required]],
@@ -187,23 +191,34 @@ export class UserDetailsComponent implements OnInit {
     this.router.navigate(['/admin/users']);
   }
 
-  confirmDelete(): void {
-    if (!this.user || !this.user.id) return;
+  deleteUser() {
+    if (!this.user?.id) return;
 
-    if (confirm(`Are you sure you want to delete ${this.user.firstName} ${this.user.lastName}?`)) {
-      this.isLoading = true;
-      this.userService.deleteUser(this.user.id).subscribe({
-        next: () => {
-          this.snackBar.open('User deleted successfully', 'Close', { duration: 3000 });
-          this.router.navigate(['/admin/users']);
-        },
-        error: (error) => {
-          console.error('Error deleting user:', error);
-          this.error = 'Failed to delete user';
-          this.isLoading = false;
-          this.snackBar.open('Failed to delete user', 'Close', { duration: 3000 });
-        }
-      });
-    }
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      data: {
+        title: 'Delete Uer',
+        message: 'Are you sure you want to delete this user? This action cannot be undone.',
+        confirmText: 'Delete',
+        cancelText: 'Keep'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && this.user?.id) {
+        this.userService.deleteUser(this.user.id).subscribe({
+          next: () => {
+            this.snackBar.open('user deleted successfully', 'Close', { duration: 3000 });
+            this.router.navigate(['/admin/users']);
+          },
+          error: (error) => {
+            this.snackBar.open('Error deleting user', 'Close', { duration: 3000 });
+            console.error('Error deleting user:', error);
+          }
+        });
+      }
+    });
   }
+
+
 }
