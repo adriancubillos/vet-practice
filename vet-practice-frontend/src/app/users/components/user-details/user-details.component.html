@@ -1,88 +1,121 @@
-<div class="user-details-container">
-  <div class="header">
-    <button mat-icon-button (click)="goBack()">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
-    <h2>User Details</h2>
-  </div>
+<div class="user-details-container" *ngIf="user">
+  <mat-card>
+    <mat-card-header>
+      <div class="header-actions">
+        <button mat-icon-button (click)="onCancel()">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <button mat-icon-button (click)="toggleEdit()">
+          <mat-icon>{{ isEditing ? 'close' : 'edit' }}</mat-icon>
+        </button>
+      </div>
+      <mat-card-title>{{ user?.firstName || '' }} {{ user?.lastName || '' }}</mat-card-title>
+      <mat-card-subtitle>{{ user?.role || '' }}</mat-card-subtitle>
+    </mat-card-header>
 
-  <div class="loading-error-container" *ngIf="isLoading || error">
-    <mat-spinner *ngIf="isLoading"></mat-spinner>
-    <div class="error-message" *ngIf="error">{{ error }}</div>
-  </div>
-
-  <div class="content" *ngIf="!isLoading && !error && user">
-    <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
-      <div class="form-row">
-        <mat-form-field appearance="outline">
-          <mat-label>First Name</mat-label>
-          <input matInput formControlName="firstName" [readonly]="!isEditing">
-          <mat-error *ngIf="userForm.get('firstName')?.errors?.['required']">
-            First name is required
-          </mat-error>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>Last Name</mat-label>
-          <input matInput formControlName="lastName" [readonly]="!isEditing">
-          <mat-error *ngIf="userForm.get('lastName')?.errors?.['required']">
-            Last name is required
-          </mat-error>
-        </mat-form-field>
+    <!-- View Mode -->
+    <ng-container *ngIf="!isEditing">
+      <div class="image-container">
+        <img [src]="getImageUrl(user?.imageUrl)" 
+             (error)="onImageError($event)" 
+             [alt]="(user?.firstName || '') + ' ' + (user?.lastName || '')" 
+             mat-card-image 
+             class="user-image">
       </div>
 
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Email</mat-label>
-        <input matInput formControlName="email" [readonly]="!isEditing">
-        <mat-error *ngIf="userForm.get('email')?.errors?.['required']">
-          Email is required
-        </mat-error>
-        <mat-error *ngIf="userForm.get('email')?.errors?.['email']">
-          Please enter a valid email
-        </mat-error>
-      </mat-form-field>
+      <mat-card-content>
+        <div class="user-info">
+          <p><strong>Email:</strong> {{ user?.email || '' }}</p>
+          <p><strong>Phone:</strong> {{ user?.phoneNumber || '' }}</p>
+          <p><strong>Address:</strong> {{ user?.address || '' }}</p>
+          <p><strong>Role:</strong> {{ user?.role || '' }}</p>
+        </div>
+      </mat-card-content>
+    </ng-container>
 
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Phone Number</mat-label>
-        <input matInput formControlName="phoneNumber" [readonly]="!isEditing">
-        <mat-error *ngIf="userForm.get('phoneNumber')?.errors?.['required']">
-          Phone number is required
-        </mat-error>
-      </mat-form-field>
+    <!-- Edit Mode -->
+    <ng-container *ngIf="isEditing">
+      <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+        <!-- Image Upload Section -->
+        <div class="form-row">
+          <mat-card class="upload-card" (click)="fileInput.click()">
+            <mat-card-content class="upload-content">
+              <!-- Image Preview -->
+              <div class="image-preview" *ngIf="imagePreview || (user?.imageUrl && imageExists)">
+                <img [src]="imagePreview || getImageUrl(user?.imageUrl)" 
+                     (error)="onImageError($event)" 
+                     [alt]="(user?.firstName || '') + ' ' + (user?.lastName || '')">
+                <button mat-mini-fab color="warn" class="remove-button" type="button"
+                        (click)="removeImage(); $event.stopPropagation()">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </div>
 
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Address</mat-label>
-        <textarea matInput formControlName="address" [readonly]="!isEditing" rows="3"></textarea>
-        <mat-error *ngIf="userForm.get('address')?.errors?.['required']">
-          Address is required
-        </mat-error>
-      </mat-form-field>
+              <!-- Upload Prompt -->
+              <div class="upload-prompt" *ngIf="!imagePreview && (!user?.imageUrl || !imageExists)">
+                <mat-icon>cloud_upload</mat-icon>
+                <p>Click to upload image</p>
+              </div>
+            </mat-card-content>
+          </mat-card>
+          <input #fileInput type="file" 
+                 accept="image/*" 
+                 style="display: none"
+                 (change)="onFileSelected($event)">
+        </div>
 
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Role</mat-label>
-        <mat-select formControlName="role" [disabled]="!isEditing">
-          <mat-option value="CLIENT">Client</mat-option>
-          <mat-option value="VET">Veterinarian</mat-option>
-          <mat-option value="ADMIN">Administrator</mat-option>
-        </mat-select>
-        <mat-error *ngIf="userForm.get('role')?.errors?.['required']">
-          Role is required
-        </mat-error>
-      </mat-form-field>
+        <!-- User Details Form -->
+        <div class="form-row">
+          <mat-form-field>
+            <mat-label>First Name</mat-label>
+            <input matInput formControlName="firstName" required>
+          </mat-form-field>
 
-      <div class="actions">
-        <button mat-raised-button color="primary" type="button" (click)="toggleEdit()" *ngIf="!isEditing">
-          Edit
-        </button>
-        <ng-container *ngIf="isEditing">
-          <button mat-raised-button color="primary" type="submit" [disabled]="userForm.invalid">
+          <mat-form-field>
+            <mat-label>Last Name</mat-label>
+            <input matInput formControlName="lastName" required>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field>
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="email" type="email" required>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Phone Number</mat-label>
+            <input matInput formControlName="phoneNumber" required>
+          </mat-form-field>
+        </div>
+
+        <mat-form-field class="full-width">
+          <mat-label>Address</mat-label>
+          <input matInput formControlName="address" required>
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
+          <mat-label>Role</mat-label>
+          <mat-select formControlName="role" required>
+            <mat-option *ngFor="let role of roles" [value]="role">
+              {{ role }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div class="form-actions">
+          <button mat-button type="button" (click)="toggleEdit()">Cancel</button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="userForm.invalid || isLoading">
             Save
           </button>
-          <button mat-button type="button" (click)="toggleEdit()">
-            Cancel
-          </button>
-        </ng-container>
-      </div>
-    </form>
+        </div>
+      </form>
+    </ng-container>
+  </mat-card>
+
+  <mat-spinner *ngIf="isLoading" diameter="50"></mat-spinner>
+  
+  <div class="error-message" *ngIf="error">
+    {{ error }}
   </div>
 </div>

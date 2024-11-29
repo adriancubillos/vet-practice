@@ -6,6 +6,7 @@ export interface User {
     phoneNumber: string;
     address: string;
     role: 'CLIENT' | 'VET' | 'ADMIN';
+    imageUrl?: string;
     createdAt?: Date;
     updatedAt?: Date;
 }

@@ -12,6 +12,11 @@ export const ADMIN_ROUTES: Routes = [
           import('../users/components/user-list/user-list.component').then(m => m.UserListComponent)
       },
       {
+        path: 'users/:id',
+        loadComponent: () =>
+          import('../users/components/user-details/user-details.component').then(m => m.UserDetailsComponent)
+      },
+      {
         path: '',
         redirectTo: 'users',
         pathMatch: 'full'

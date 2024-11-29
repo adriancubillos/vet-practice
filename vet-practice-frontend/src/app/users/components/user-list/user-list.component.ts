@@ -95,7 +95,7 @@ export class UserListComponent implements OnInit {
       this.error = 'Cannot edit this user. Missing ID.';
       return;
     }
-    this.router.navigate(['/admin/users/edit', user.id]);
+    this.router.navigate(['/admin/users', user.id]);
   }
 
   deleteUser(user: User): void {
