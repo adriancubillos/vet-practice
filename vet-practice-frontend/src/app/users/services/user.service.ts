@@ -31,4 +31,8 @@ export class UserService {
   deleteUser(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  updatePassword(passwordData: { currentPassword: string; newPassword: string }): Observable<{ message: string }> {
+    return this.http.patch<{ message: string }>(`${this.apiUrl}/profile/password`, passwordData);
+  }
 }
