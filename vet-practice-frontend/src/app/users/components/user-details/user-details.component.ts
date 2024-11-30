@@ -101,7 +101,7 @@ export class UserDetailsComponent implements OnInit {
       });
     } else if (this.user) {
       // In profile view, use the provided user
-      this.userId = this.user.id;
+      this.userId = this.user.id ?? null;
       this.userForm.patchValue(this.user);
       if (this.user.imageUrl) {
         this.checkImageExists(this.user.imageUrl);
