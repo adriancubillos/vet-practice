@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
@@ -7,6 +7,7 @@ import * as path from 'path';
 import { Not, Repository } from 'typeorm';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdatePasswordDto } from './dto/update-password.dto';
 import { User } from './entities/user.entity';
 import { imageChecksUtil } from 'src/utils/common-utils';
 
@@ -22,7 +23,7 @@ export class UserService {
     return this.userRepository.find();
   }
 
-  async findOne(id: number | string): Promise<User> {
+  async findOne(id: number | string, includePassword: boolean = false): Promise<User> {
     const userId = typeof id === 'string' ? parseInt(id, 10) : id;
     const user = await this.userRepository.findOne({
       where: { id: userId },
@@ -31,8 +32,11 @@ export class UserService {
     if (!user) {
       throw new NotFoundException(`User with ID "${id}" not found`);
     }
-    const { password, ...result } = user;
-    return result as User;
+    if (!includePassword) {
+      const { password, ...result } = user;
+      return result as User;
+    }
+    return user;
   }
 
   async update(id: number, updateUserDto: UpdateUserDto, imageUrl: string | null): Promise<User> {
@@ -161,5 +165,22 @@ export class UserService {
   async generateJwt(user: User): Promise<string> {
     const payload = { email: user.email, sub: user.id };
     return this.jwtService.sign(payload);
+  }
+
+  async updatePassword(userId: number, updatePasswordDto: UpdatePasswordDto) {
+    const user = await this.findOne(userId, true);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const isPasswordValid = await bcrypt.compare(updatePasswordDto.currentPassword, user.password);
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Current password is incorrect');
+    }
+
+    const hashedPassword = await bcrypt.hash(updatePasswordDto.newPassword, 10);
+    await this.userRepository.update(userId, { password: hashedPassword });
+
+    return { message: 'Password updated successfully' };
   }
 }

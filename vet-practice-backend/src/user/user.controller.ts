@@ -11,7 +11,9 @@ import {
   Request,
   UnauthorizedException,
   UseGuards,
-  UseInterceptors
+  UseInterceptors,
+  HttpStatus,
+  HttpCode,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateFileUploadDecorator } from 'src/shared/decorators/file.upload.decorator';
@@ -19,6 +21,7 @@ import { Role } from '../auth/enums/role.enum';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { UpdateUserDto } from '../user/dto/update-user.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
+import { UpdatePasswordDto } from './dto/update-password.dto';
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 import { imageChecksUtil } from 'src/utils/common-utils';
@@ -69,6 +72,14 @@ export class UserController {
     const userId = req.user.id;
     const imageUrl = file ? `/uploads/users/${file.filename}` : null;
     return this.userService.update(userId, updateUserDto, imageUrl);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('profile/password')
+  @HttpCode(HttpStatus.OK)
+  async updatePassword(@Request() req, @Body() updatePasswordDto: UpdatePasswordDto) {
+    const userId = req.user.id;
+    return this.userService.updatePassword(userId, updatePasswordDto);
   }
 
   @UseGuards(JwtAuthGuard)

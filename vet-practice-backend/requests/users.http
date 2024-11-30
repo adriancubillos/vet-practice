@@ -4,7 +4,7 @@ POST http://localhost:3000/auth/login
 Content-Type: application/json
 
 {
-  "email": "john.doe2@example.com",
+  "email": "john.doe@example.com",
   "password": "Password123!"
 }
 
@@ -165,6 +165,16 @@ Content-Type: application/json
   "lastName": "Updated",
   "address": "123 Updated Main St, City, Country",
   "phoneNumber": "+1234567899"
+}
+
+### Update password
+PATCH http://localhost:3000/users/profile/password
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "currentPassword": "NewPassword123!",
+  "newPassword": "Password123!"
 }
 
 ### Get own profile
