@@ -28,6 +28,8 @@ export class AuthService {
         firstName: user.firstName,
         lastName: user.lastName,
         username: user.username,
+        address: user.address,
+        phoneNumber: user.phoneNumber,
         role: user.role
       }
     };
