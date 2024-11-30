@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -36,8 +36,9 @@ import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialo
   ]
 })
 export class UserDetailsComponent implements OnInit {
+  @Input() user: User | null = null;
+  @Input() isProfileView = false;
   userId: number | null = null;
-  user: User | null = null;
   userForm: FormGroup;
   isLoading = false;
   error: string | null = null;
@@ -90,12 +91,22 @@ export class UserDetailsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.route.params.subscribe(params => {
-      if (params['id']) {
-        this.userId = +params['id'];
-        this.loadUser();
+    // Only load user from route if not in profile view
+    if (!this.isProfileView) {
+      this.route.params.subscribe(params => {
+        if (params['id']) {
+          this.userId = +params['id'];
+          this.loadUser();
+        }
+      });
+    } else if (this.user) {
+      // In profile view, use the provided user
+      this.userId = this.user.id;
+      this.userForm.patchValue(this.user);
+      if (this.user.imageUrl) {
+        this.checkImageExists(this.user.imageUrl);
       }
-    });
+    }
   }
 
   loadUser(): void {
@@ -175,19 +186,25 @@ export class UserDetailsComponent implements OnInit {
         formData.append('imageUrl', this.user.imageUrl);
       }
 
+      this.isLoading = true;
       this.userService.updateUser(this.userId, formData).subscribe({
         next: (user) => {
           this.user = user;
-          this.snackBar.open('User updated successfully', 'Close', {
+          this.isEditing = false;
+          this.snackBar.open('Profile updated successfully', 'Close', {
             duration: 3000,
           });
-          this.router.navigate(['/admin/users']);
+          if (!this.isProfileView) {
+            this.router.navigate(['/admin/users']);
+          }
+          this.isLoading = false;
         },
         error: (error) => {
           console.error('Error updating user:', error);
-          this.snackBar.open('Failed to update user', 'Close', {
+          this.snackBar.open('Failed to update profile', 'Close', {
             duration: 3000,
           });
+          this.isLoading = false;
         }
       });
     }

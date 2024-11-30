@@ -1,13 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { UserDetailsComponent } from '../users/components/user-details/user-details.component';
 import { AuthService } from '../auth/services/auth.service';
-import { UserAvatarComponent } from '../shared/components/user-avatar/user-avatar.component';
-import { environment } from '../../environments/environment';
 import { User } from '../users/models/user.interface';
 import { Subscription } from 'rxjs';
 
@@ -17,19 +12,23 @@ import { Subscription } from 'rxjs';
   imports: [
     CommonModule,
     MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    MatDividerModule,
-    UserAvatarComponent,
-    MatProgressSpinnerModule
+    UserDetailsComponent
   ],
-  templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.scss']
+  template: `
+    <div class="profile-container">
+      <app-user-details *ngIf="user" [user]="user" [isProfileView]="true"></app-user-details>
+    </div>
+  `,
+  styles: [`
+    .profile-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+  `]
 })
 export class ProfileComponent implements OnInit, OnDestroy {
-  user!: User;
-  isLoading = true;
-  error: string | null = null;
+  user: User | null = null;
   private subscriptions = new Subscription();
 
   constructor(private authService: AuthService) { }
@@ -38,18 +37,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.authService.user$.subscribe({
         next: (user) => {
-          if (user) {
-            this.user = user;
-            this.error = null;
-          } else {
-            this.error = 'User profile not found';
-          }
-          this.isLoading = false;
+          this.user = user;
         },
         error: (error) => {
           console.error('Error loading user profile:', error);
-          this.error = 'Failed to load profile. Please try again later.';
-          this.isLoading = false;
         }
       })
     );
@@ -57,10 +48,5 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscriptions.unsubscribe();
-  }
-
-  getImageUrl(imageUrl: string | undefined): string | null {
-    if (!imageUrl) return null;
-    return `${environment.apiUrl}/${imageUrl}`;
   }
 }
