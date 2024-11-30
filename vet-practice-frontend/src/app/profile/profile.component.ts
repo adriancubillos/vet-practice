@@ -45,12 +45,23 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.authService.user$.subscribe({
         next: (user) => {
-          this.user = user;
-          this.error = null;
+          if (user?.id) {
+            // Fetch complete user profile
+            this.userService.getUser(user.id).subscribe({
+              next: (completeUser) => {
+                this.user = completeUser;
+                this.error = null;
+              },
+              error: (error) => {
+                console.error('Error loading user profile:', error);
+                this.error = 'Failed to load profile';
+              }
+            });
+          }
         },
         error: (error) => {
-          console.error('Error loading user profile:', error);
-          this.error = 'Failed to load user profile';
+          console.error('Error getting user from auth service:', error);
+          this.error = 'Failed to authenticate user';
         }
       })
     );

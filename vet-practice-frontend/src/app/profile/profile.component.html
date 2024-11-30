@@ -3,7 +3,7 @@
     *ngIf="user" 
     [user]="user" 
     [isProfileView]="true">
-    <button mat-raised-button color="primary" additionalActions (click)="openChangePasswordDialog()">
+    <button mat-raised-button color="accent" additionalActions (click)="openChangePasswordDialog()" class="change-password-btn">
       <mat-icon>lock</mat-icon>
       Change Password
     </button>
