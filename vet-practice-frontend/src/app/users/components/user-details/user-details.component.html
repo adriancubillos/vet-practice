@@ -5,23 +5,23 @@
     </button>
 
     <mat-card-header>
-      <mat-card-title>{{ user?.firstName || '' }} {{ user?.lastName || '' }}</mat-card-title>
-      <mat-card-subtitle>{{ user?.role || '' }}</mat-card-subtitle>
+      <mat-card-title>{{ user.firstName }} {{ user.lastName }}</mat-card-title>
+      <mat-card-subtitle>{{ user.role }}</mat-card-subtitle>
     </mat-card-header>
 
     <!-- View Mode -->
     <ng-container *ngIf="!isEditing">
       <div class="image-container">
-        <img [src]="getImageUrl(user?.imageUrl)" (error)="onImageError($event)"
-          [alt]="(user?.firstName || '') + ' ' + (user?.lastName || '')" mat-card-image class="user-image">
+        <img [src]="getImageUrl(user.imageUrl)" (error)="onImageError($event)"
+          [alt]="user.firstName + ' ' + user.lastName" mat-card-image class="user-image">
       </div>
 
       <mat-card-content>
         <div class="user-info">
-          <p><strong>Email:</strong> {{ user?.email || '' }}</p>
-          <p><strong>Phone:</strong> {{ user?.phoneNumber || '' }}</p>
-          <p><strong>Address:</strong> {{ user?.address || '' }}</p>
-          <p><strong>Role:</strong> {{ user?.role || '' }}</p>
+          <p><strong>Email:</strong> {{ user.email }}</p>
+          <p *ngIf="user.phoneNumber"><strong>Phone:</strong> {{ user.phoneNumber }}</p>
+          <p *ngIf="user.address"><strong>Address:</strong> {{ user.address }}</p>
+          <p><strong>Role:</strong> {{ user.role }}</p>
         </div>
       </mat-card-content>
     </ng-container>
@@ -34,9 +34,9 @@
           <mat-card class="upload-card" (click)="fileInput.click()">
             <mat-card-content class="upload-content">
               <!-- Image Preview -->
-              <div class="image-preview" *ngIf="imagePreview || (user?.imageUrl && imageExists)">
-                <img [src]="imagePreview || getImageUrl(user?.imageUrl)" (error)="onImageError($event)"
-                  [alt]="(user.firstName || '') + ' ' + (user.lastName || '')">
+              <div class="image-preview" *ngIf="imagePreview || (user.imageUrl && imageExists)">
+                <img [src]="imagePreview || getImageUrl(user.imageUrl)" (error)="onImageError($event)"
+                  [alt]="user.firstName + ' ' + user.lastName">
                 <button mat-mini-fab color="warn" class="remove-button" type="button"
                   (click)="removeImage(); $event.stopPropagation()">
                   <mat-icon>close</mat-icon>
@@ -44,7 +44,7 @@
               </div>
 
               <!-- Upload Prompt -->
-              <div class="upload-prompt" *ngIf="!imagePreview && (!user?.imageUrl || !imageExists)">
+              <div class="upload-prompt" *ngIf="!imagePreview && (!user.imageUrl || !imageExists)">
                 <mat-icon>cloud_upload</mat-icon>
                 <p>Click to upload image</p>
               </div>

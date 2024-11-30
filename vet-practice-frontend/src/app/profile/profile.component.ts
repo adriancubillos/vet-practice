@@ -27,19 +27,23 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent implements OnInit, OnDestroy {
-  user: User | null = null;
-  isLoading = false;
+  user!: User;
+  isLoading = true;
   error: string | null = null;
   private subscriptions = new Subscription();
 
   constructor(private authService: AuthService) { }
 
   ngOnInit() {
-    this.isLoading = true;
     this.subscriptions.add(
       this.authService.user$.subscribe({
         next: (user) => {
-          this.user = user;
+          if (user) {
+            this.user = user;
+            this.error = null;
+          } else {
+            this.error = 'User profile not found';
+          }
           this.isLoading = false;
         },
         error: (error) => {

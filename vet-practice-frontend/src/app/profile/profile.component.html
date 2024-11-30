@@ -6,23 +6,22 @@
     <mat-card-content>
       <div class="profile-info">
         <div class="profile-avatar">
-          <app-user-avatar [imageUrl]="user?.imageUrl || ''" [firstName]="user?.firstName || ''"
-            [lastName]="user?.lastName || ''" size="large">
+          <app-user-avatar [imageUrl]="getImageUrl(user.imageUrl)" [firstName]="user.firstName" [lastName]="user.lastName" size="large">
           </app-user-avatar>
         </div>
         <div class="profile-details">
-          <h2>{{ user?.firstName }} {{ user?.lastName }}</h2>
+          <h2>{{ user.firstName }} {{ user.lastName }}</h2>
           <p class="detail-item">
             <mat-icon>email</mat-icon>
-            {{ user?.email }}
+            {{ user.email }}
           </p>
-          <p class="detail-item">
+          <p class="detail-item" *ngIf="user.phoneNumber">
             <mat-icon>phone</mat-icon>
-            {{ user?.phoneNumber }}
+            {{ user.phoneNumber }}
           </p>
-          <p class="detail-item">
+          <p class="detail-item" *ngIf="user.address">
             <mat-icon>location_on</mat-icon>
-            {{ user?.address }}
+            {{ user.address }}
           </p>
         </div>
       </div>
