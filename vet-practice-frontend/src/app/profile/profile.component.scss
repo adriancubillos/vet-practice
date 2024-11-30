@@ -4,11 +4,35 @@
   padding: 20px;
 }
 
+.loading-state,
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.54);
+  gap: 16px;
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+  }
+}
+
 .profile-info {
   display: flex;
   gap: 32px;
   margin: 24px 0;
   align-items: flex-start;
+
+  @media (max-width: 599px) {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
 }
 
 .profile-avatar {
@@ -21,17 +45,23 @@
   flex: 1;
 
   h2 {
-    margin: 0 0 16px 0;
+    margin: 0 0 24px 0;
     font-size: 24px;
     font-weight: 500;
+    color: rgba(0, 0, 0, 0.87);
   }
 
   .detail-item {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin: 8px 0;
+    gap: 12px;
+    margin: 16px 0;
     color: rgba(0, 0, 0, 0.87);
+    font-size: 16px;
+
+    @media (max-width: 599px) {
+      justify-content: center;
+    }
 
     mat-icon {
       color: rgba(0, 0, 0, 0.54);
@@ -44,6 +74,10 @@
   display: flex;
   justify-content: flex-end;
   gap: 16px;
+
+  @media (max-width: 599px) {
+    justify-content: center;
+  }
 
   button {
     mat-icon {

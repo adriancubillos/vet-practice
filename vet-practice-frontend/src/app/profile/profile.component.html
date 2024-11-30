@@ -6,10 +6,8 @@
     <mat-card-content>
       <div class="profile-info">
         <div class="profile-avatar">
-          <app-user-avatar [imageUrl]="user?.imageUrl" 
-                          [firstName]="user?.firstName || ''" 
-                          [lastName]="user?.lastName || ''"
-                          size="large">
+          <app-user-avatar [imageUrl]="user?.imageUrl || ''" [firstName]="user?.firstName || ''"
+            [lastName]="user?.lastName || ''" size="large">
           </app-user-avatar>
         </div>
         <div class="profile-details">
@@ -38,6 +36,10 @@
           <mat-icon>lock</mat-icon>
           Change Password
         </button>
+      </div>
+      <div *ngIf="error" class="error-state">
+        <mat-icon color="warn">error</mat-icon>
+        <p>{{ error }}</p>
       </div>
     </mat-card-content>
   </mat-card>
