@@ -5,6 +5,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { AuthService } from '../auth/services/auth.service';
+import { UserAvatarComponent } from '../shared/components/user-avatar/user-avatar.component';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-profile',
@@ -14,7 +16,8 @@ import { AuthService } from '../auth/services/auth.service';
     MatCardModule,
     MatButtonModule,
     MatIconModule,
-    MatDividerModule
+    MatDividerModule,
+    UserAvatarComponent
   ],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss']
@@ -22,7 +25,7 @@ import { AuthService } from '../auth/services/auth.service';
 export class ProfileComponent implements OnInit {
   user: any;
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   ngOnInit() {
     // TODO: Get user profile from AuthService
@@ -33,5 +36,10 @@ export class ProfileComponent implements OnInit {
       phoneNumber: '(555) 123-4567',
       address: '123 Main St, City, Country'
     };
+  }
+
+  getImageUrl(imageUrl: string | undefined): string | null {
+    if (!imageUrl) return null;
+    return `${environment.apiUrl}/${imageUrl}`;
   }
 }

@@ -12,19 +12,21 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { MatSidenav } from '@angular/material/sidenav';
+import { UserAvatarComponent } from '../user-avatar/user-avatar.component';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-nav-menu',
   standalone: true,
   imports: [
     CommonModule,
-    RouterModule,
+    MatButtonModule,
     MatSidenavModule,
-    MatListModule,
-    MatMenuModule,
     MatIconModule,
+    MatListModule,
+    RouterModule,
     MatToolbarModule,
-    MatButtonModule
+    UserAvatarComponent
   ],
   templateUrl: './nav-menu.component.html',
   styleUrls: ['./nav-menu.component.scss']
@@ -74,5 +76,10 @@ export class NavMenuComponent implements OnInit {
         this.sidenav?.close();
       }
     }).unsubscribe();
+  }
+
+  getImageUrl(imageUrl: string | undefined): string | null {
+    if (!imageUrl) return null;
+    return `${environment.apiUrl}/${imageUrl}`;
   }
 }

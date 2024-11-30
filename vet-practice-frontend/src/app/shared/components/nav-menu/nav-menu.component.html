@@ -2,9 +2,13 @@
   <mat-sidenav #sidenav [mode]="(isHandset$ | async) ? 'over' : 'side'" [opened]="!(isHandset$ | async)" class="sidenav"
     [fixedInViewport]="isHandset$ | async">
     <a class="user-info" *ngIf="user$ | async as user" routerLink="/profile" (click)="onNavItemClick()">
-      <mat-icon class="user-icon">account_circle</mat-icon>
+      <app-user-avatar [imageUrl]="getImageUrl(user.imageUrl)" 
+                      [firstName]="user.firstName || ''" 
+                      [lastName]="user.lastName || ''"
+                      size="small">
+      </app-user-avatar>
       <div class="user-details">
-        <span class="username">{{ user.username }}</span>
+        <span class="username">{{ user.firstName }} {{ user.lastName }}</span>
         <span class="role">{{ user.role }}</span>
       </div>
     </a>

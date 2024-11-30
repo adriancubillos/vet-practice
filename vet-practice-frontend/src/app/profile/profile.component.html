@@ -6,7 +6,11 @@
     <mat-card-content>
       <div class="profile-info">
         <div class="profile-avatar">
-          <mat-icon class="avatar-icon">account_circle</mat-icon>
+          <app-user-avatar [imageUrl]="user?.imageUrl" 
+                          [firstName]="user?.firstName || ''" 
+                          [lastName]="user?.lastName || ''"
+                          size="large">
+          </app-user-avatar>
         </div>
         <div class="profile-details">
           <h2>{{ user?.firstName }} {{ user?.lastName }}</h2>

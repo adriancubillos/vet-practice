@@ -8,6 +8,7 @@
   display: flex;
   gap: 32px;
   margin: 24px 0;
+  align-items: flex-start;
 }
 
 .profile-avatar {
@@ -16,38 +17,37 @@
   justify-content: center;
 }
 
-.avatar-icon {
-  font-size: 100px;
-  width: 100px;
-  height: 100px;
-  color: #666;
-}
-
 .profile-details {
   flex: 1;
-}
 
-.profile-details h2 {
-  margin: 0 0 16px 0;
-  color: #333;
-}
+  h2 {
+    margin: 0 0 16px 0;
+    font-size: 24px;
+    font-weight: 500;
+  }
 
-.detail-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 8px 0;
-  color: #666;
-}
+  .detail-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 8px 0;
+    color: rgba(0, 0, 0, 0.87);
 
-.detail-item mat-icon {
-  font-size: 20px;
-  width: 20px;
-  height: 20px;
+    mat-icon {
+      color: rgba(0, 0, 0, 0.54);
+    }
+  }
 }
 
 .profile-actions {
   margin-top: 24px;
   display: flex;
+  justify-content: flex-end;
   gap: 16px;
+
+  button {
+    mat-icon {
+      margin-right: 8px;
+    }
+  }
 }
