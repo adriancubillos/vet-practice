@@ -1,5 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, OneToMany, OneToOne } from 'typeorm';
 import { User } from '../../user/entities/user.entity';
+import { Appointment } from '../../appointments/entities/appointment.entity';
+import { MedicalHistory } from './medical-history.entity';
 
 export enum Gender {
   MALE = 'male',
@@ -37,6 +39,12 @@ export class Pet {
 
   @ManyToOne(() => User, user => user.pets)
   owner: User;
+
+  @OneToOne(() => MedicalHistory, medicalHistory => medicalHistory.pet)
+  medicalHistory: MedicalHistory;
+
+  @OneToMany(() => Appointment, appointment => appointment.pet)
+  appointments: Appointment[];
 
   @CreateDateColumn()
   createdAt: Date;
