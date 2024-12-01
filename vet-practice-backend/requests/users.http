@@ -11,6 +11,45 @@ Content-Type: application/json
 ### Store the token
 @authToken = {{login.response.body.accessToken}}
 
+### Login as regular user
+# @name loginUser
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "email": "john.doe@example.com",
+  "password": "Password123!"
+}
+
+### Store user token
+@userToken = {{loginUser.response.body.accessToken}}
+
+### Login as vet
+# @name loginVet
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "email": "dr.smith@vetclinic.com",
+  "password": "VetPass123!"
+}
+
+### Store vet token
+@vetToken = {{loginVet.response.body.accessToken}}
+
+### Login as admin
+# @name loginAdmin
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@vetclinic.com",
+  "password": "AdminPass123!"
+}
+
+### Store admin token
+@adminToken = {{loginAdmin.response.body.accessToken}}
+
 ### Get all users
 GET http://localhost:3000/users
 Authorization: Bearer {{authToken}}
@@ -19,10 +58,25 @@ Authorization: Bearer {{authToken}}
 GET http://localhost:3000/users/others
 Authorization: Bearer {{authToken}}
 
+### Get all users (admin only)
+GET http://localhost:3000/users
+Authorization: Bearer {{adminToken}}
+
+### Try to get all users as regular user (should fail)
+GET http://localhost:3000/users
+Authorization: Bearer {{userToken}}
+
 ### Get specific user by ID
 GET http://localhost:3000/users/5
 Authorization: Bearer {{authToken}}
 
+### Get user by ID (admin only)
+GET http://localhost:3000/users/1
+Authorization: Bearer {{adminToken}}
+
+### Try to get user by ID as regular user (should fail)
+GET http://localhost:3000/users/1
+Authorization: Bearer {{userToken}}
 
 ### new users (Public endpoint)
 POST http://localhost:3000/users/register
@@ -37,6 +91,31 @@ Content-Type: application/json
   "address": "123 Main St, City, Country",
   "phoneNumber": "+1234567890",
   "role": "admin"
+}
+
+### Create new user (admin only)
+POST http://localhost:3000/users
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "email": "new.user@example.com",
+  "password": "NewUser123!",
+  "firstName": "New",
+  "lastName": "User",
+  "phone": "+1234567890",
+  "role": "USER"
+}
+
+### Try to create user as regular user (should fail)
+POST http://localhost:3000/users
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "email": "should.fail@example.com",
+  "password": "Fail123!",
+  "role": "USER"
 }
 
 ### Create new user (admin only)
@@ -99,6 +178,27 @@ Content-Type: image/jpeg
 < ./test-files/profile.jpg
 ------WebKitFormBoundary7MA4YWxkTrZu0gW--
 
+### Update user by ID (admin only)
+PUT http://localhost:3000/users/1
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "firstName": "Updated",
+  "lastName": "Name",
+  "role": "VET"
+}
+
+### Try to update user as regular user (should fail)
+PUT http://localhost:3000/users/1
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "firstName": "Should",
+  "lastName": "Fail"
+}
+
 ### Update user by ID
 PUT http://localhost:3000/users/18
 Authorization: Bearer {{authToken}}
@@ -151,6 +251,14 @@ Content-Type: application/json
   "phoneNumber": "+1987654321"
 }
 
+### Delete user (admin only)
+DELETE http://localhost:3000/users/1
+Authorization: Bearer {{adminToken}}
+
+### Try to delete user as regular user (should fail)
+DELETE http://localhost:3000/users/1
+Authorization: Bearer {{userToken}}
+
 ### Delete user by ID
 DELETE http://localhost:3000/users/18
 Authorization: Bearer {{authToken}}
@@ -179,8 +287,20 @@ Content-Type: application/json
 
 ### Get own profile
 GET http://localhost:3000/users/profile
-Authorization: Bearer {{authToken}}
+Authorization: Bearer {{vetToken}}
 
 ### Get own pets
 GET http://localhost:3000/users/profile/pets
 Authorization: Bearer {{authToken}}
+
+### Register new user (public endpoint)
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+  "email": "new.client@example.com",
+  "password": "Client123!",
+  "firstName": "New",
+  "lastName": "Client",
+  "phone": "+1234567890"
+}

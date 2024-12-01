@@ -1,5 +1,5 @@
-### Login to get token (run this first)
-# @name loginTest
+### Login as regular user
+# @name loginUser
 POST http://localhost:3000/auth/login
 Content-Type: application/json
 
@@ -8,43 +8,58 @@ Content-Type: application/json
   "password": "Password123!"
 }
 
-### Get me
-@authToken = {{loginTest.response.body.accessToken}}
+### Store user token
+@userToken = {{loginUser.response.body.accessToken}}
 
-### Get specific pet
-GET http://localhost:3000/pets/1
-Authorization: Bearer {{authToken}}
-
-### Update pet without image
-PUT http://localhost:3000/pets/5
-Authorization: Bearer {{authToken}}
+### Login as vet
+# @name loginVet
+POST http://localhost:3000/auth/login
 Content-Type: application/json
 
 {
-    "name": "Max Updated",
-    "weight": 27.5
+  "email": "dr.smith@vetclinic.com",
+  "password": "VetPass123!"
 }
 
-### Update pet with image
-PUT http://localhost:3000/pets/5
-Authorization: Bearer {{authToken}}
+### Store vet token
+@vetToken = {{loginVet.response.body.accessToken}}
+
+### Get specific pet (as owner)
+GET http://localhost:3000/pets/1
+Authorization: Bearer {{userToken}}
+
+### Get specific pet (as vet)
+GET http://localhost:3000/pets/1
+Authorization: Bearer {{vetToken}}
+
+### Update own pet
+PUT http://localhost:3000/pets/1
+Authorization: Bearer {{userToken}}
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
 
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="name"
 
-Max With New Image
+Max Updated
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="weight"
 
-28.5
-------WebKitFormBoundary7MA4YWxkTrZu0gW
-Content-Disposition: form-data; name="image"; filename="pet.jpg"
-Content-Type: image/jpeg
-
-< ./test-files/pet.jpeg
+26.5
 ------WebKitFormBoundary7MA4YWxkTrZu0gW--
 
-### Delete pet
-DELETE http://localhost:3000/pets/4
-Authorization: Bearer {{authToken}}
+### Try to update someone else's pet (should fail)
+PUT http://localhost:3000/pets/2
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "name": "Unauthorized Update"
+}
+
+### Delete own pet
+DELETE http://localhost:3000/pets/1
+Authorization: Bearer {{userToken}}
+
+### Try to delete someone else's pet (should fail)
+DELETE http://localhost:3000/pets/2
+Authorization: Bearer {{userToken}}

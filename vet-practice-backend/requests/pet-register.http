@@ -1,5 +1,5 @@
-### Login user
-# @name loginTest
+### Login as regular user
+# @name loginUser
 POST http://localhost:3000/auth/login
 Content-Type: application/json
 
@@ -8,39 +8,43 @@ Content-Type: application/json
   "password": "Password123!"
 }
 
-### Get me
-@authToken = {{loginTest.response.body.accessToken}}
-### Get my pets
-GET http://localhost:3000/pets
-Authorization: Bearer {{authToken}}
+### Store user token
+@userToken = {{loginUser.response.body.accessToken}}
 
-### Get all pets
-GET http://localhost:3000/pets/all
-Authorization: Bearer {{authToken}}
-
-### Register pet 
-POST http://localhost:3000/pets
-Authorization: Bearer {{authToken}}
+### Login as vet
+# @name loginVet
+POST http://localhost:3000/auth/login
 Content-Type: application/json
 
 {
-    "name": "Max3",
-    "species": "Dogie",
-    "breed": "Golden Retriever",
-    "dateOfBirth": "2020-01-01",
-    "gender": "male",
-    "weight": 25.5
+  "email": "dr.smith@vetclinic.com",
+  "password": "VetPass123!"
 }
 
-### Register pet with image
+### Store vet token
+@vetToken = {{loginVet.response.body.accessToken}}
+
+### Get my pets (as user)
+GET http://localhost:3000/pets/my-pets
+Authorization: Bearer {{userToken}}
+
+### Get all pets (as vet)
+GET http://localhost:3000/pets
+Authorization: Bearer {{vetToken}}
+
+### Try to get all pets as regular user (should fail)
+GET http://localhost:3000/pets
+Authorization: Bearer {{userToken}}
+
+### Register new pet (as user)
 POST http://localhost:3000/pets
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjUsImVtYWlsIjoiam9obi5kb2VAZXhhbXBsZS5jb20iLCJpYXQiOjE3MzI2NTU3ODUsImV4cCI6MTczMjY1OTM4NX0.YRS1zQEve4BfVVfgkxK4xkJB4KqIKF0pLnJOSiupRcQ
+Authorization: Bearer {{userToken}}
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
 
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="name"
 
-Max2
+Max
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="species"
 

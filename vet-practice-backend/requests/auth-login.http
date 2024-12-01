@@ -1,5 +1,5 @@
-### Login user
-# @name loginTest
+### Login as regular user
+# @name loginUser
 POST http://localhost:3000/auth/login
 Content-Type: application/json
 
@@ -8,12 +8,43 @@ Content-Type: application/json
   "password": "Password123!"
 }
 
-### Get me
-@authToken = {{loginTest.response.body.accessToken}}
+### Store user token
+@userToken = {{loginUser.response.body.accessToken}}
 
-### Get user roles
-GET http://localhost:3000/auth/roles
+### Login as vet
+# @name loginVet
+POST http://localhost:3000/auth/login
+Content-Type: application/json
 
-### Example of using the JWT token
+{
+  "email": "dr.smith@vetclinic.com",
+  "password": "VetPass123!"
+}
+
+### Store vet token
+@vetToken = {{loginVet.response.body.accessToken}}
+
+### Login as admin
+# @name loginAdmin
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@vetclinic.com",
+  "password": "AdminPass123!"
+}
+
+### Store admin token
+@adminToken = {{loginAdmin.response.body.accessToken}}
+
+### Get current user profile (works for all roles)
 GET http://localhost:3000/users/profile
-Authorization: Bearer {{authToken}}
+Authorization: Bearer {{userToken}}
+
+### Get all users (admin only)
+GET http://localhost:3000/users
+Authorization: Bearer {{adminToken}}
+
+### Try to get all users as regular user (should fail)
+GET http://localhost:3000/users
+Authorization: Bearer {{userToken}}
