@@ -1,9 +1,7 @@
 <div class="profile-container">
-  <app-user-details 
-    *ngIf="user" 
-    [user]="user" 
-    [isProfileView]="true">
-    <button mat-raised-button color="accent" additionalActions (click)="openChangePasswordDialog()" class="change-password-btn">
+  <app-user-details *ngIf="user" [user]="user" [isProfileView]="true">
+    <button mat-raised-button color="accent" changePasswordAction (click)="openChangePasswordDialog()"
+      class="change-password-btn">
       <mat-icon>lock</mat-icon>
       Change Password
     </button>

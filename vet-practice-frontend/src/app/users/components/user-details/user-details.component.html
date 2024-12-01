@@ -95,7 +95,7 @@
     </ng-container>
 
     <mat-card-actions *ngIf="!isEditing">
-      <ng-content select="[additionalActions]"></ng-content>
+      <ng-content select="[changePasswordAction]"></ng-content>
       <button mat-raised-button color="primary" (click)="toggleEdit()">
         <mat-icon>edit</mat-icon>
         Edit
