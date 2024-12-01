@@ -1,23 +1,27 @@
-import { AppointmentStatus } from "../entities/appointment.entity";
+import { AppointmentStatus } from '../entities/appointment.entity';
 
 export class AppointmentResponseDto {
     id: number;
     dateTime: Date;
     status: AppointmentStatus;
+    
     pet: {
         id: number;
         name: string;
     };
+    
     owner: {
         id: number;
         firstName: string;
         lastName: string;
     };
+    
     veterinarian: {
         id: number;
         firstName: string;
         lastName: string;
     };
+    
     medicalDetails?: {
         symptoms?: string;
         diagnosis?: string;
@@ -31,6 +35,7 @@ export class AppointmentResponseDto {
             bloodPressure?: string;
         };
     };
+    
     followUpNeeded?: boolean;
     followUpDate?: Date;
     notes?: string;
