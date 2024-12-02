@@ -3,14 +3,19 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PetsController } from './pets.controller';
 import { PetsService } from './pets.service';
 import { Pet } from './entities/pet.entity';
+import { MedicalHistory } from './entities/medical-history.entity';
+import { Vaccination } from './entities/vaccination.entity';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { existsSync, mkdirSync } from 'fs';
+import { MedicalHistoryController } from './medical-history.controller';
+import { VaccinationsController } from './vaccinations.controller';
+import { VaccinationsService } from './vaccinations.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Pet]),
+    TypeOrmModule.forFeature([Pet, MedicalHistory, Vaccination]),
     MulterModule.register({
       storage: diskStorage({
         destination: (req, file, cb) => {
@@ -38,8 +43,8 @@ import { existsSync, mkdirSync } from 'fs';
       },
     }),
   ],
-  controllers: [PetsController],
-  providers: [PetsService],
-  exports: [PetsService],
+  controllers: [PetsController, MedicalHistoryController, VaccinationsController],
+  providers: [PetsService, VaccinationsService],
+  exports: [PetsService, VaccinationsService],
 })
 export class PetsModule { }

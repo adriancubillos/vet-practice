@@ -133,6 +133,29 @@ export class AppointmentsService {
             throw new BadRequestException('Only the veterinarian can update medical details');
         }
 
+        // If marking as completed, create a medical history entry
+        if (updateAppointmentDto.status === AppointmentStatus.COMPLETED) {
+            const medicalHistory = await this.medicalHistoryRepository.findOne({
+                where: { pet: { id: appointment.pet.id } }
+            });
+
+            if (medicalHistory) {
+                // Update the medical history with appointment details
+                if (updateAppointmentDto.diagnosis || updateAppointmentDto.treatment || 
+                    updateAppointmentDto.prescriptions || updateAppointmentDto.vitals) {
+                    medicalHistory.specialNotes = [
+                        medicalHistory.specialNotes || '',
+                        `Visit on ${appointment.dateTime.toISOString()}:`,
+                        updateAppointmentDto.diagnosis ? `Diagnosis: ${updateAppointmentDto.diagnosis}` : '',
+                        updateAppointmentDto.treatment ? `Treatment: ${updateAppointmentDto.treatment}` : '',
+                        updateAppointmentDto.prescriptions ? `Prescriptions: ${updateAppointmentDto.prescriptions}` : ''
+                    ].filter(note => note).join('\n');
+
+                    await this.medicalHistoryRepository.save(medicalHistory);
+                }
+            }
+        }
+
         Object.assign(appointment, updateAppointmentDto);
         return this.appointmentRepository.save(appointment);
     }

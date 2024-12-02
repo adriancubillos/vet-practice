@@ -1,0 +1,103 @@
+@baseUrl = http://localhost:3000
+@petId = 1
+
+### Login as vet
+# @name loginVet
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+    "email": "dr.smith@vetclinic.com",
+    "password": "VetPass123!"
+}
+
+###
+@vetToken = {{loginVet.response.body.accessToken}}
+
+### Login as user
+# @name loginUser
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "password123"
+}
+
+###
+@userToken = {{loginUser.response.body.accessToken}}
+
+### Create medical history (as vet)
+POST {{baseUrl}}/pets/{{petId}}/medical-history
+Authorization: Bearer {{vetToken}}
+Content-Type: application/json
+
+{
+    "allergies": ["Penicillin", "Pollen"],
+    "chronicConditions": ["Arthritis"],
+    "specialNotes": "Requires gentle handling due to arthritis in back legs"
+}
+
+### Create medical history (as owner - should fail with 403)
+POST {{baseUrl}}/pets/{{petId}}/medical-history
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+    "allergies": ["Penicillin"],
+    "specialNotes": "Test note"
+}
+
+### Create medical history for non-existent pet (should fail with 404)
+POST {{baseUrl}}/pets/999/medical-history
+Authorization: Bearer {{vetToken}}
+Content-Type: application/json
+
+{
+    "allergies": ["Penicillin"],
+    "specialNotes": "Test note"
+}
+
+### Get medical history (as owner)
+GET {{baseUrl}}/pets/{{petId}}/medical-history
+Authorization: Bearer {{userToken}}
+
+### Get medical history (as vet)
+GET {{baseUrl}}/pets/{{petId}}/medical-history
+Authorization: Bearer {{vetToken}}
+
+### Update medical history (as vet)
+PATCH {{baseUrl}}/pets/{{petId}}/medical-history
+Authorization: Bearer {{vetToken}}
+Content-Type: application/json
+
+{
+  "allergies": ["Penicillin", "Pollen"],
+  "chronicConditions": ["Arthritis"],
+  "specialNotes": "Needs regular joint supplements",
+  "vaccinations": [
+    {
+      "name": "Rabies",
+      "dateAdministered": "2024-01-01T00:00:00.000Z",
+      "nextDueDate": "2025-01-01T00:00:00.000Z",
+      "batchNumber": "RAB123"
+    }
+  ]
+}
+
+### Try to update medical history (as non-vet, should fail)
+PATCH {{baseUrl}}/pets/{{petId}}/medical-history
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "allergies": ["Penicillin"]
+}
+
+### Get vaccination history (as owner)
+GET {{baseUrl}}/pets/{{petId}}/medical-history/vaccinations
+Authorization: Bearer {{userToken}}
+
+### Get vaccination history (as vet)
+GET {{baseUrl}}/pets/{{petId}}/medical-history/vaccinations
+Authorization: Bearer {{vetToken}}

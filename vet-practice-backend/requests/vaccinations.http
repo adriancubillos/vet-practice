@@ -1,0 +1,114 @@
+### Variables
+@baseUrl = http://localhost:3000
+@petId = 1
+
+### Login as vet to get token
+# @name VetLogin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+    "email": "dr.smith@vetclinic.com",
+    "password": "VetPass123!"
+}
+
+### Store vet token
+@vetToken = {{VetLogin.response.body.accessToken}}
+
+### Login as pet owner to get token
+# @name OwnerLogin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+    "email": "adrian@example.com",
+    "password": "Password123!"
+}
+
+### Store owner token
+@ownerToken = {{OwnerLogin.response.body.accessToken}}
+
+### Get vaccinations for a pet (as vet)
+GET {{baseUrl}}/pets/{{petId}}/vaccinations
+Authorization: Bearer {{vetToken}}
+
+### Get vaccinations for a pet (as owner)
+GET {{baseUrl}}/pets/{{petId}}/vaccinations
+Authorization: Bearer {{ownerToken}}
+
+### Add vaccination record (as vet) - Rabies
+POST {{baseUrl}}/pets/{{petId}}/vaccinations
+Authorization: Bearer {{vetToken}}
+Content-Type: application/json
+
+{
+    "name": "Rabies Vaccine",
+    "dateAdministered": "2024-01-15T10:00:00.000Z",
+    "nextDueDate": "2025-01-15T10:00:00.000Z",
+    "batchNumber": "RAB2024001"
+}
+
+### Add vaccination record (as vet) - DHPP
+POST {{baseUrl}}/pets/{{petId}}/vaccinations
+Authorization: Bearer {{vetToken}}
+Content-Type: application/json
+
+{
+    "name": "DHPP Vaccine",
+    "dateAdministered": "2024-01-15T11:00:00.000Z",
+    "nextDueDate": "2024-07-15T11:00:00.000Z",
+    "batchNumber": "DHPP2024002"
+}
+
+### Add vaccination record (as owner - should fail with 403)
+POST {{baseUrl}}/pets/{{petId}}/vaccinations
+Authorization: Bearer {{ownerToken}}
+Content-Type: application/json
+
+{
+    "name": "Rabies Vaccine",
+    "dateAdministered": "2024-01-15T10:00:00.000Z",
+    "nextDueDate": "2025-01-15T10:00:00.000Z",
+    "batchNumber": "RAB2024001"
+}
+
+### Get vaccinations for non-existent pet (should fail with 404)
+GET {{baseUrl}}/pets/999/vaccinations
+Authorization: Bearer {{vetToken}}
+
+### Get vaccinations without authentication (should fail with 401)
+GET {{baseUrl}}/pets/{{petId}}/vaccinations
+
+### Add vaccination with invalid date format (should fail with 400)
+POST {{baseUrl}}/pets/{{petId}}/vaccinations
+Authorization: Bearer {{vetToken}}
+Content-Type: application/json
+
+{
+    "name": "Rabies Vaccine",
+    "dateAdministered": "invalid-date",
+    "nextDueDate": "2025-01-15",
+    "batchNumber": "RAB2024001"
+}
+
+### Add vaccination with missing required fields (should fail with 400)
+POST {{baseUrl}}/pets/{{petId}}/vaccinations
+Authorization: Bearer {{vetToken}}
+Content-Type: application/json
+
+{
+    "name": "Rabies Vaccine",
+    "dateAdministered": "2024-01-15T10:00:00.000Z"
+}
+
+### Add vaccination with nextDueDate before dateAdministered (should fail with 400)
+POST {{baseUrl}}/pets/{{petId}}/vaccinations
+Authorization: Bearer {{vetToken}}
+Content-Type: application/json
+
+{
+    "name": "Rabies Vaccine",
+    "dateAdministered": "2024-01-15T10:00:00.000Z",
+    "nextDueDate": "2023-01-15T10:00:00.000Z",
+    "batchNumber": "RAB2024001"
+}

@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { Pet } from './pet.entity';
 import { Appointment } from '../../appointments/entities/appointment.entity';
+import { Vaccination } from './vaccination.entity';
 
 @Entity()
 export class MedicalHistory {
@@ -20,13 +21,11 @@ export class MedicalHistory {
     @Column({ type: 'text', nullable: true })
     specialNotes: string;
 
-    @Column({ type: 'json', nullable: true })
-    vaccinations: {
-        name: string;
-        dateAdministered: Date;
-        nextDueDate: Date;
-        batchNumber: string;
-    }[];
+    @OneToMany(() => Vaccination, vaccination => vaccination.medicalHistory, {
+        cascade: true,
+        eager: true
+    })
+    vaccinations: Vaccination[];
 
     @OneToMany(() => Appointment, appointment => appointment.medicalHistory)
     appointments: Appointment[];
