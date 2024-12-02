@@ -30,13 +30,16 @@ export class PetsService {
   }
 
   async findAll(): Promise<Pet[]> {
-    return this.petsRepository.find();
+    return this.petsRepository.find({
+      relations: ['owner', 'medicalHistory'],
+      order: { createdAt: 'DESC' }
+    });
   }
 
   async findOne(id: number): Promise<Pet> {
     const pet = await this.petsRepository.findOne({
       where: { id },
-      relations: ['owner']
+      relations: ['owner', 'medicalHistory', 'medicalHistory.vaccinations']
     });
     if (!pet) {
       throw new NotFoundException(`Pet with ID ${id} not found`);
@@ -47,6 +50,8 @@ export class PetsService {
   async findByOwner(owner: User): Promise<Pet[]> {
     return this.petsRepository.find({
       where: { owner: { id: owner.id } },
+      relations: ['owner', 'medicalHistory'],
+      order: { createdAt: 'DESC' }
     });
   }
 
@@ -93,7 +98,12 @@ export class PetsService {
 
     return this.petsRepository.findOne({
       where: { id: petId },
-      relations: ['medicalHistory'],
+      relations: ['medicalHistory', 'medicalHistory.vaccinations', 'owner'],
+      order: {
+        medicalHistory: {
+          updatedAt: 'DESC'
+        }
+      }
     });
   }
 

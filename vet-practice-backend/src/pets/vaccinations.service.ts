@@ -25,7 +25,7 @@ export class VaccinationsService {
     return this.vaccinationsRepository.find({
       where: { medicalHistory: { pet: { id: petId } } },
       order: { dateAdministered: 'DESC' },
-      relations: ['administeredBy'],
+      relations: ['administeredBy', 'medicalHistory', 'medicalHistory.pet'],
     });
   }
 
