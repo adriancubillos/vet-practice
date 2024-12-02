@@ -9,6 +9,7 @@ import { RegisterUserDto } from './dto/register-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { User } from './entities/user.entity';
+import { Role } from '../auth/enums/role.enum';
 import { imageChecksUtil } from 'src/utils/common-utils';
 
 @Injectable()
@@ -21,6 +22,12 @@ export class UserService {
 
   async findAll(): Promise<User[]> {
     return this.userRepository.find();
+  }
+
+  async findByRole(role: Role): Promise<User[]> {
+    return this.userRepository.find({
+      where: { role }
+    });
   }
 
   async findOne(id: number | string, includePassword: boolean = false): Promise<User> {

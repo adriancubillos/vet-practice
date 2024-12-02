@@ -3,6 +3,15 @@ import { Type } from 'class-transformer';
 import { AppointmentStatus } from '../entities/appointment.entity';
 
 export class UpdateAppointmentDto {
+    @IsDate()
+    @Type(() => Date)
+    @IsOptional()
+    dateTime?: Date;
+
+    @IsString()
+    @IsOptional()
+    notes?: string;
+
     @IsEnum(AppointmentStatus)
     @IsOptional()
     status?: AppointmentStatus;
@@ -44,8 +53,4 @@ export class UpdateAppointmentDto {
     @IsOptional()
     @Type(() => Date)
     followUpDate?: Date;
-
-    @IsString()
-    @IsOptional()
-    notes?: string;
 }

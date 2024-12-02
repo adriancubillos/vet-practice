@@ -41,6 +41,21 @@ export class UserController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get()
+  async findAll(@Request() req) {
+    if (req.user.role !== Role.ADMIN) {
+      throw new UnauthorizedException('Only admins can access all users');
+    }
+    return this.userService.findAll();
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('vets')
+  async findVets() {
+    return this.userService.findByRole(Role.VET);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get('profile')
   async getProfile(@Request() req) {
     const userId = req.user.id;
@@ -80,12 +95,6 @@ export class UserController {
   async updatePassword(@Request() req, @Body() updatePasswordDto: UpdatePasswordDto) {
     const userId = req.user.id;
     return this.userService.updatePassword(userId, updatePasswordDto);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Get()
-  async findAll(): Promise<User[]> {
-    return this.userService.findAll();
   }
 
   @UseGuards(JwtAuthGuard)

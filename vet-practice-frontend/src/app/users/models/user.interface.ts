@@ -1,3 +1,5 @@
+import { Role } from './role.enum';
+
 export interface User {
     id?: number;
     username: string;
@@ -6,7 +8,7 @@ export interface User {
     email: string;
     phoneNumber: string;
     address: string;
-    role: 'user' | 'vet' | 'admin';
+    role: Role;
     imageUrl?: string;
     password?: string;
     createdAt?: Date;

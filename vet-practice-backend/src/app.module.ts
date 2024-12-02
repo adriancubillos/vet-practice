@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { EmailModule } from './email/email.module';
 import { PetsModule } from './pets/pets.module';
+import { AppointmentsModule } from './appointments/appointments.module';
 
 @Module({
   imports: [
@@ -32,12 +33,13 @@ import { PetsModule } from './pets/pets.module';
       }),
       inject: [ConfigService],
     }),
-    UserModule,
     AuthModule,
+    UserModule,
     EmailModule,
     PetsModule,
+    AppointmentsModule
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

@@ -1,0 +1,121 @@
+### Login as regular user
+# @name loginUser
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "email": "john.doe@example.com",
+  "password": "Password123!"
+}
+
+### Store user token
+@userToken = {{loginUser.response.body.accessToken}}
+
+### Login as vet
+# @name loginVet
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "email": "dr.smith@vetclinic.com",
+  "password": "VetPass123!"
+}
+
+### Store vet token
+@vetToken = {{loginVet.response.body.accessToken}}
+
+### Login as admin
+# @name loginAdmin
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@vetclinic.com",
+  "password": "AdminPass123!"
+}
+
+### Store admin token
+@adminToken = {{loginAdmin.response.body.accessToken}}
+
+### Create new appointment (as user)
+POST http://localhost:3000/appointments
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "petId": 5,
+  "veterinarianId": 16,
+  "dateTime": "2024-02-01T14:00:00.000Z",
+  "notes": "Annual checkup"
+}
+
+### Get all appointments (as admin)
+GET http://localhost:3000/appointments
+Authorization: Bearer {{adminToken}}
+
+### Get all appointments (as vet - will only show vet's appointments)
+GET http://localhost:3000/appointments
+Authorization: Bearer {{vetToken}}
+
+### Get all appointments (as user - will only show user's appointments)
+GET http://localhost:3000/appointments
+Authorization: Bearer {{userToken}}
+
+### Get appointments with filters
+GET http://localhost:3000/appointments?status=SCHEDULED&startDate=2024-02-01&endDate=2024-02-28&veterinarianId=2
+Authorization: Bearer {{adminToken}}
+
+### Get upcoming appointments
+GET http://localhost:3000/appointments/upcoming
+Authorization: Bearer {{userToken}}
+
+### Get vet's upcoming appointments
+GET http://localhost:3000/appointments/upcoming
+Authorization: Bearer {{vetToken}}
+
+### Check vet availability
+GET http://localhost:3000/appointments/availability/2?date=2024-02-01
+Authorization: Bearer {{userToken}}
+
+### Get specific appointment (as owner)
+GET http://localhost:3000/appointments/1
+Authorization: Bearer {{userToken}}
+
+### Get specific appointment (as vet)
+GET http://localhost:3000/appointments/1
+Authorization: Bearer {{vetToken}}
+
+### Update appointment (as owner)
+PATCH http://localhost:3000/appointments/1
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "dateTime": "2024-02-02T15:00:00.000Z",
+  "notes": "Updated reason"
+}
+
+### Try to update someone else's appointment (should fail)
+PATCH http://localhost:3000/appointments/2
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "dateTime": "2024-02-02T15:00:00.000Z"
+}
+
+### Cancel appointment (as owner)
+PATCH http://localhost:3000/appointments/1/cancel
+Authorization: Bearer {{userToken}}
+
+### Try to cancel someone else's appointment (should fail)
+PATCH http://localhost:3000/appointments/2/cancel
+Authorization: Bearer {{userToken}}
+
+### Complete appointment (as vet)
+PATCH http://localhost:3000/appointments/1/complete
+Authorization: Bearer {{vetToken}}
+
+### Try to complete appointment (as user - should fail)
+PATCH http://localhost:3000/appointments/1/complete
+Authorization: Bearer {{userToken}}

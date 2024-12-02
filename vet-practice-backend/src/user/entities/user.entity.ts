@@ -4,7 +4,7 @@ import { Pet } from '../../pets/entities/pet.entity';
 import { Role } from '../../auth/enums/role.enum';
 import { Appointment } from '../../appointments/entities/appointment.entity';
 
-@Entity()
+@Entity('users')
 export class User {
   @PrimaryGeneratedColumn()
   id: number;

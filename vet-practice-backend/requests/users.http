@@ -78,19 +78,41 @@ Authorization: Bearer {{adminToken}}
 GET http://localhost:3000/users/1
 Authorization: Bearer {{userToken}}
 
+### Get all veterinarians
+GET http://localhost:3000/users/vets
+Authorization: Bearer {{adminToken}}
+
 ### new users (Public endpoint)
 POST http://localhost:3000/users/register
 Content-Type: application/json
 
 {
-  "username": "johndoe7",
-  "email": "john.doe7@example.com",
+  "username": "johndoe2",
+  "email": "john.doe2@example.com",
   "password": "Password123!",
   "firstName": "John",
   "lastName": "Doe",
   "address": "123 Main St, City, Country",
   "phoneNumber": "+1234567890",
   "role": "admin"
+}
+
+### Create new veterinarian
+POST http://localhost:3000/users/register
+Content-Type: application/json
+
+{
+  "username": "drsmith",
+  "email": "dr.smith@vetclinic.com",
+  "password": "VetPass123!",
+  "firstName": "John",
+  "lastName": "Smith",
+  "address": "456 Clinic St, City, Country",
+  "phoneNumber": "+1234567891",
+  "role": "vet",
+  "specialization": "General Practice",
+  "licenseNumber": "VET123456",
+  "expertise": ["Dogs", "Cats", "Small Animals"]
 }
 
 ### Create new user (admin only)

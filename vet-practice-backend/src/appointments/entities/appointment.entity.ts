@@ -11,7 +11,7 @@ export enum AppointmentStatus {
     NO_SHOW = 'no_show'
 }
 
-@Entity()
+@Entity('appointment')
 export class Appointment {
     @PrimaryGeneratedColumn()
     id: number;
