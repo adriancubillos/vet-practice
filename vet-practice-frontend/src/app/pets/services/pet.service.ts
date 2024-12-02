@@ -26,7 +26,24 @@ export class PetService {
   }
 
   getPets(): Observable<Pet[]> {
-    return this.http.get<Pet[]>(this.baseUrl, { headers: this.getHeaders() });
+    // Get the user role from the JWT token
+    const token = localStorage.getItem(this.TOKEN_KEY);
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+    
+    try {
+      const tokenPayload = JSON.parse(atob(token.split('.')[1]));
+      const isVetOrAdmin = tokenPayload.role === 'vet' || tokenPayload.role === 'admin';
+      
+      // Use the appropriate endpoint based on user role
+      const endpoint = isVetOrAdmin ? this.baseUrl : `${this.baseUrl}/my-pets`;
+      return this.http.get<Pet[]>(endpoint, { headers: this.getHeaders() });
+    } catch (error) {
+      console.error('Error parsing JWT token:', error);
+      // Default to my-pets endpoint if there's any error parsing the token
+      return this.http.get<Pet[]>(`${this.baseUrl}/my-pets`, { headers: this.getHeaders() });
+    }
   }
 
   getAllPets(): Observable<Pet[]> {
