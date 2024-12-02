@@ -112,9 +112,25 @@ Authorization: Bearer {{userToken}}
 PATCH http://localhost:3000/appointments/2/cancel
 Authorization: Bearer {{userToken}}
 
+### Mark appointment as no-show (as vet)
+PATCH http://localhost:3000/appointments/1/no-show
+Authorization: Bearer {{vetToken}}
+
+### Mark appointment as in-progress (as vet)
+PATCH http://localhost:3000/appointments/1/in-progress
+Authorization: Bearer {{vetToken}}
+
 ### Complete appointment (as vet)
 PATCH http://localhost:3000/appointments/1/complete
 Authorization: Bearer {{vetToken}}
+
+### Try to mark appointment as no-show (as non-vet, should fail)
+PATCH http://localhost:3000/appointments/1/no-show
+Authorization: Bearer {{userToken}}
+
+### Try to mark appointment as in-progress (as non-vet, should fail)
+PATCH http://localhost:3000/appointments/1/in-progress
+Authorization: Bearer {{userToken}}
 
 ### Try to complete appointment (as user - should fail)
 PATCH http://localhost:3000/appointments/1/complete

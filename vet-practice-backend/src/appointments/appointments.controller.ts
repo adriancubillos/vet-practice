@@ -100,7 +100,7 @@ export class AppointmentsController {
         return this.appointmentsService.update(id, updateAppointmentDto, req.user.id);
     }
 
-    @Delete(':id/cancel')
+    @Patch(':id/cancel')
     @ApiOperation({ summary: 'Cancel an appointment' })
     @ApiResponse({ status: 200, description: 'Appointment cancelled successfully', type: AppointmentResponseDto })
     async cancel(@Param('id') id: number, @Request() req) {
@@ -115,6 +115,30 @@ export class AppointmentsController {
         return this.appointmentsService.update(
             id,
             { status: AppointmentStatus.COMPLETED },
+            req.user.id
+        );
+    }
+
+    @Patch(':id/no-show')
+    @Roles(Role.VET)
+    @ApiOperation({ summary: 'Mark an appointment as no-show' })
+    @ApiResponse({ status: 200, description: 'Appointment marked as no-show', type: AppointmentResponseDto })
+    async markNoShow(@Param('id') id: number, @Request() req) {
+        return this.appointmentsService.update(
+            id,
+            { status: AppointmentStatus.NO_SHOW },
+            req.user.id
+        );
+    }
+
+    @Patch(':id/in-progress')
+    @Roles(Role.VET)
+    @ApiOperation({ summary: 'Mark an appointment as in-progress' })
+    @ApiResponse({ status: 200, description: 'Appointment marked as in-progress', type: AppointmentResponseDto })
+    async markInProgress(@Param('id') id: number, @Request() req) {
+        return this.appointmentsService.update(
+            id,
+            { status: AppointmentStatus.IN_PROGRESS },
             req.user.id
         );
     }
