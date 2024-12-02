@@ -4,10 +4,11 @@
     <p class="dialog-message">{{ data.message }}</p>
   </mat-dialog-content>
   <mat-dialog-actions align="end" class="dialog-actions">
-    <button mat-button class="cancel-button" [mat-dialog-close]="false">
+    <button mat-raised-button class="cancel-button" [mat-dialog-close]="false">
       {{ data.cancelText || 'Cancel' }}
     </button>
-    <button mat-raised-button color="warn" class="confirm-button" [mat-dialog-close]="true">
+    <button mat-raised-button color="warn" *ngIf="data.title" class="confirm-button" [mat-dialog-close]="true">
+      <mat-icon>{{ data.title.toLowerCase().includes('delete') ? 'delete' : 'check' }}</mat-icon>
       {{ data.confirmText || 'Confirm' }}
     </button>
   </mat-dialog-actions>

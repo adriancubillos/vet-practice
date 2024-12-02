@@ -39,8 +39,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatDatepickerModule,
     MatNativeDateModule,
     MatFormFieldModule,
-    MatProgressSpinnerModule,
-    PetListComponent // Import standalone component
+    MatProgressSpinnerModule
   ],
   providers: [PetService]
 })

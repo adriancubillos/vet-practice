@@ -211,6 +211,10 @@ export class PetDetailsComponent implements OnInit {
     });
   }
 
+  goBack(): void {
+    this.router.navigate(['/pets']);
+  }
+
   hasActualImage(): boolean {
     return this.imageExists || this.imagePreview !== null;
   }

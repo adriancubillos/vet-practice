@@ -1,16 +1,17 @@
 <div class="pet-details-container" *ngIf="pet">
   <mat-card>
+    <button *ngIf="!isEditing" mat-mini-fab color="basic" class="back-button" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+
     <mat-card-header>
       <mat-card-title>{{ pet.name }}</mat-card-title>
       <mat-card-subtitle>{{ pet.species }} - {{ pet.breed }}</mat-card-subtitle>
     </mat-card-header>
 
     <div class="image-container" *ngIf="!isEditing">
-      <img [src]="pet.imageUrl ? getImageUrl(pet.imageUrl) : placeholderImage" 
-           (error)="onImageError($event)" 
-           alt="{{ pet.name }}" 
-           mat-card-image 
-           class="pet-image">
+      <img [src]="pet.imageUrl ? getImageUrl(pet.imageUrl) : placeholderImage" (error)="onImageError($event)"
+        alt="{{ pet.name }}" mat-card-image class="pet-image">
     </div>
 
     <!-- Image Upload Section (Edit Mode) -->
@@ -19,11 +20,9 @@
         <mat-card-content class="upload-content">
           <!-- Image Preview -->
           <div class="image-preview" *ngIf="imagePreview || (pet.imageUrl && imageExists)">
-            <img [src]="imagePreview || getImageUrl(pet.imageUrl)" 
-                 (error)="onImageError($event)" 
-                 alt="{{ pet.name }}">
+            <img [src]="imagePreview || getImageUrl(pet.imageUrl)" (error)="onImageError($event)" alt="{{ pet.name }}">
             <button mat-mini-fab color="warn" class="remove-button" type="button"
-                    (click)="removeImage(); $event.stopPropagation()">
+              (click)="removeImage(); $event.stopPropagation()">
               <mat-icon>close</mat-icon>
             </button>
           </div>
@@ -96,21 +95,21 @@
     </mat-card-content>
 
     <mat-card-actions align="end">
-      <button mat-button color="primary" (click)="toggleEdit()" *ngIf="!isEditing">
+      <button mat-raised-button color="primary" (click)="toggleEdit()" *ngIf="!isEditing">
         <mat-icon>edit</mat-icon>
         Edit
       </button>
       <ng-container *ngIf="isEditing">
-        <button mat-button color="warn" (click)="toggleEdit()">
+        <button mat-raised-button color="basic" (click)="toggleEdit()">
           <mat-icon>close</mat-icon>
           Cancel
         </button>
-        <button mat-button color="primary" (click)="savePet()" [disabled]="!petForm.valid">
+        <button mat-raised-button color="primary" (click)="savePet()" [disabled]="!petForm.valid">
           <mat-icon>save</mat-icon>
           Save
         </button>
       </ng-container>
-      <button mat-button color="warn" (click)="deletePet()">
+      <button mat-raised-button color="warn" (click)="deletePet()">
         <mat-icon>delete</mat-icon>
         Delete
       </button>

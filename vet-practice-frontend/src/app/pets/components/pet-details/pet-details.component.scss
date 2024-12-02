@@ -1,115 +1,147 @@
 .pet-details-container {
-  padding: 20px;
   max-width: 800px;
-  margin: 0 auto;
+  margin: 2rem auto;
+  padding: 0 1rem;
 
-  .image-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 16px 0;
-    border-radius: 4px;
-    overflow: hidden;
-  }
+  mat-card {
+    position: relative;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
 
-  .pet-image {
-    height: 400px;
-    width: 100%;
-    object-fit: contain;
-  }
-
-  .form-row {
-    margin-bottom: 16px;
-
-    .upload-card {
-      width: auto;
-      cursor: pointer;
-      transition: background-color 0.2s;
-
-      &:hover {
-        background-color: rgba(0, 0, 0, 0.04);
-      }
-
-      .upload-content {
-        min-height: 200px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 20px;
-      }
-
-      .image-preview {
-        position: relative;
-        width: 100%;
-        height: 300px;
-        
-        img {
-          width: 100%;
-          height: 100%;
-          object-fit: contain;
-        }
-
-        .remove-button {
-          position: absolute;
-          top: 8px;
-          right: 8px;
-        }
-      }
-
-      .upload-prompt {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        color: rgba(0, 0, 0, 0.54);
-
-        .upload-icon {
-          font-size: 48px;
-          width: 48px;
-          height: 48px;
-          margin-bottom: 16px;
-        }
-
-        .upload-text {
-          font-size: 16px;
-          margin-bottom: 8px;
-        }
-
-        .upload-hint {
-          font-size: 14px;
-        }
-      }
+    .back-button {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      z-index: 1;
     }
-  }
 
-  .details-view {
-    .detail-item {
-      margin-bottom: 16px;
+    mat-card-header {
+      margin-bottom: 1rem;
+    }
+
+    .image-container {
       display: flex;
-      gap: 1rem;
+      justify-content: center;
+      align-items: center;
+      margin: 16px 0;
+      border-radius: 4px;
+      overflow: hidden;
 
-      strong {
-        display: inline-block;
-        width: 120px;
-        color: rgba(0, 0, 0, 0.54);
+      .pet-image {
+        height: 400px;
+        width: 100%;
+        object-fit: contain;
+      }
+    }
+
+    .pet-info {
+      p {
+        margin-bottom: 8px;
+        
+        strong {
+          display: inline-block;
+          width: 120px;
+          color: rgba(0, 0, 0, 0.54);
+        }
+      }
+    }
+
+    .form-row {
+      margin-bottom: 16px;
+
+      .upload-card {
+        width: auto;
+        cursor: pointer;
+        transition: background-color 0.2s;
+
+        &:hover {
+          background-color: rgba(0, 0, 0, 0.04);
+        }
+
+        .upload-content {
+          min-height: 200px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding: 20px;
+        }
+
+        .image-preview {
+          position: relative;
+          width: 100%;
+          height: 300px;
+          
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+          }
+
+          .remove-button {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+          }
+        }
+
+        .upload-prompt {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          color: rgba(0, 0, 0, 0.54);
+
+          .upload-icon {
+            font-size: 48px;
+            width: 48px;
+            height: 48px;
+            margin-bottom: 16px;
+          }
+
+          .upload-text {
+            font-size: 16px;
+            margin-bottom: 8px;
+          }
+
+          .upload-hint {
+            font-size: 14px;
+          }
+        }
+      }
+    }
+
+    .edit-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: 1rem 0;
+
+      mat-form-field {
+        width: 100%;
+      }
+    }
+
+    mat-card-actions {
+      padding: 16px;
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+
+      .action-buttons-right {
+        display: flex;
+        gap: 8px;
+        margin-left: auto;
       }
     }
   }
 
-  .edit-form {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    padding: 1rem 0;
-
-    mat-form-field {
-      width: 100%;
-    }
+  mat-spinner {
+    margin: 20px auto;
+    display: block;
   }
 
-  mat-card-actions {
-    padding: 16px;
-    display: flex;
-    gap: 8px;
-    justify-content: flex-end;
+  .error-message {
+    color: #f44336;
+    text-align: center;
+    margin-top: 1rem;
   }
 }
