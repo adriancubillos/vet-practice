@@ -36,6 +36,7 @@ export class NavMenuComponent implements OnInit {
   isHandset$: Observable<boolean>;
   user$: Observable<any | null>;
   isAdmin$: Observable<boolean>;
+  isVetOrAdmin$: Observable<boolean>;
 
   constructor(
     private authService: AuthService,
@@ -44,6 +45,9 @@ export class NavMenuComponent implements OnInit {
     this.user$ = this.authService.user$;
     this.isAdmin$ = this.authService.user$.pipe(
       map((user: any | null) => user?.role === 'admin')
+    );
+    this.isVetOrAdmin$ = this.authService.user$.pipe(
+      map((user: any | null) => user?.role === 'vet' || user?.role === 'admin')
     );
     this.isHandset$ = this.breakpointObserver.observe([
       Breakpoints.Handset,

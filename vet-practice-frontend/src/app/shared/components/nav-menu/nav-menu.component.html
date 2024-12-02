@@ -24,7 +24,7 @@
       <h3 matSubheader>Pets</h3>
       <a mat-list-item routerLink="/pets" routerLinkActive="active" (click)="onNavItemClick()">
         <mat-icon matListItemIcon>pets</mat-icon>
-        <span matListItemTitle>My Pets</span>
+        <span matListItemTitle>{{ (isVetOrAdmin$ | async) ? 'All Pets' : 'My Pets' }}</span>
       </a>
 
       <mat-divider></mat-divider>
