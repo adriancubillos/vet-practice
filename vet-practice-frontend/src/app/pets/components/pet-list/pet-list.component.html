@@ -1,39 +1,46 @@
-<div class="pet-list-container">
-  <div class="header">
-    <h1>My Pets</h1>
-    <button mat-raised-button color="primary" routerLink="register">
-      <mat-icon>add</mat-icon>
-      Register New Pet
-    </button>
+<div class="pets-container">
+  <div class="pets-header">
+    <h2>Pets</h2>
+    <div class="header-actions">
+      <button mat-raised-button color="primary" routerLink="/pets/register">
+        <mat-icon>add</mat-icon>
+        Add Pet
+      </button>
+      <div class="view-buttons" *ngIf="isVetOrAdmin$ | async">
+        <button mat-raised-button [class.active]="selectedView === 'all'" (click)="onViewChange('all')">
+          All Pets
+        </button>
+        <button mat-raised-button [class.active]="selectedView === 'my'" (click)="onViewChange('my')">
+          My Pets
+          <span class="badge" *ngIf="myPetsCount > 0">{{myPetsCount}}</span>
+        </button>
+      </div>
+    </div>
   </div>
 
-  <div *ngIf="loading" class="loading-container">
-    <mat-spinner diameter="50"></mat-spinner>
+  <div *ngIf="loading" class="loading-spinner">
+    <mat-spinner></mat-spinner>
   </div>
 
   <div *ngIf="error" class="error-message">
     {{ error }}
   </div>
 
-  <div *ngIf="!loading && !error" class="pet-grid">
+  <div class="pets-grid" *ngIf="!loading && !error">
     <mat-card *ngFor="let pet of pets" class="pet-card" [routerLink]="['/pets', pet.id]">
-      <img [src]="getImageUrl(pet.imageUrl)" 
-           (error)="onImageError($event)" 
-           alt="{{ pet.name }}" 
-           class="pet-image">
+      <img mat-card-image [src]="getImageUrl(pet.imageUrl)" [alt]="pet.name" (error)="onImageError($event)"
+        class="pet-image">
       <mat-card-content>
-        <h2>{{ pet.name }}</h2>
-        <p class="breed">{{ pet.species }} - {{ pet.breed }}</p>
-        <p class="age">{{ getAgeInYears(pet.dateOfBirth) }} years old</p>
+        <h3>{{ pet.name }}</h3>
+        <p>{{ pet.breed }}</p>
+        <p>Age: {{ getAgeInYears(pet.dateOfBirth) }} years</p>
       </mat-card-content>
     </mat-card>
 
-    <div *ngIf="pets.length === 0" class="no-pets">
-      <mat-icon>pets</mat-icon>
-      <p>You haven't registered any pets yet.</p>
-      <button mat-raised-button color="primary" routerLink="register">
-        Register Your First Pet
-      </button>
-    </div>
+    <mat-card *ngIf="pets.length === 0" class="no-pets-card">
+      <mat-card-content>
+        <p>No pets found.</p>
+      </mat-card-content>
+    </mat-card>
   </div>
 </div>
