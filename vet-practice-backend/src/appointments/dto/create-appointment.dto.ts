@@ -1,5 +1,6 @@
-import { IsDate, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsDate, IsNumber, IsOptional, IsString, IsEnum } from 'class-validator';
 import { Type } from 'class-transformer';
+import { AppointmentReason } from '../enums/appointment-reason.enum';
 
 export class CreateAppointmentDto {
     @IsDate()
@@ -11,6 +12,9 @@ export class CreateAppointmentDto {
 
     @IsNumber()
     veterinarianId: number;
+
+    @IsEnum(AppointmentReason)
+    reason: AppointmentReason;
 
     @IsString()
     @IsOptional()

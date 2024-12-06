@@ -1,0 +1,11 @@
+export enum AppointmentReason {
+    CHECKUP = 'CHECKUP',
+    VACCINATION = 'VACCINATION',
+    INJURY = 'INJURY',
+    ILLNESS = 'ILLNESS',
+    SURGERY = 'SURGERY',
+    DENTAL = 'DENTAL',
+    GROOMING = 'GROOMING',
+    FOLLOW_UP = 'FOLLOW_UP',
+    EMERGENCY = 'EMERGENCY'
+}

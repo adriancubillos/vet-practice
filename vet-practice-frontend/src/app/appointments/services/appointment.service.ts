@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Appointment } from '../models/appointment.interface';
+import { CreateAppointmentDto } from '../models/create-appointment.dto';
 
 @Injectable({
   providedIn: 'root'
@@ -20,11 +21,11 @@ export class AppointmentService {
     return this.http.get<Appointment>(`${this.apiUrl}/${id}`);
   }
 
-  createAppointment(appointment: Omit<Appointment, 'id'>): Observable<Appointment> {
+  createAppointment(appointment: CreateAppointmentDto): Observable<Appointment> {
     return this.http.post<Appointment>(this.apiUrl, appointment);
   }
 
-  updateAppointment(id: number, appointment: Omit<Appointment, 'id'>): Observable<Appointment> {
+  updateAppointment(id: number, appointment: CreateAppointmentDto): Observable<Appointment> {
     return this.http.put<Appointment>(`${this.apiUrl}/${id}`, appointment);
   }
 
