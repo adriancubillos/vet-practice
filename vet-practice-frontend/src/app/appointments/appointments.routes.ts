@@ -1,24 +1,10 @@
 import { Routes } from '@angular/router';
-// import { AppointmentListComponent } from './components/appointment-list/appointment-list.component';
-import { AppointmentListComponent } from '../appointments/components/appointment-list/appointment-list.component';
-// import { AppointmentDetailsComponent } from './components/appointment-details/appointment-details.component';
-// import { AppointmentFormComponent } from './components/appointment-form/appointment-form.component';
+import { AppointmentsComponent } from './appointments.component';
 
 export const appointmentsRoutes: Routes = [
   {
     path: '',
-    component: AppointmentListComponent
-  },
-  // {
-  //   path: 'new',
-  //   component: AppointmentFormComponent
-  // },
-  // {
-  //   path: ':id',
-  //   component: AppointmentDetailsComponent
-  // },
-  // {
-  //   path: ':id/edit',
-  //   component: AppointmentFormComponent
-  // }
+    component: AppointmentsComponent
+  }
+  // TODO: Add routes for new/edit/details components when implemented
 ];
