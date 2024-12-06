@@ -39,4 +39,30 @@ export class AppointmentService {
   getAppointmentsByVeterinarian(veterinarianId: number): Observable<Appointment[]> {
     return this.http.get<Appointment[]>(`${this.apiUrl}/veterinarian/${veterinarianId}`);
   }
+
+  getUpcomingAppointments(): Observable<Appointment[]> {
+    return this.http.get<Appointment[]>(`${this.apiUrl}/upcoming`);
+  }
+
+  completeAppointment(id: number): Observable<Appointment> {
+    return this.http.post<Appointment>(`${this.apiUrl}/${id}/complete`, {});
+  }
+
+  markInProgress(id: number): Observable<Appointment> {
+    return this.http.post<Appointment>(`${this.apiUrl}/${id}/in-progress`, {});
+  }
+
+  markNoShow(id: number): Observable<Appointment> {
+    return this.http.post<Appointment>(`${this.apiUrl}/${id}/no-show`, {});
+  }
+
+  cancelAppointment(id: number): Observable<Appointment> {
+    return this.http.post<Appointment>(`${this.apiUrl}/${id}/cancel`, {});
+  }
+
+  checkVeterinarianAvailability(veterinarianId: number, date: Date): Observable<any> {
+    return this.http.get(`${this.apiUrl}/veterinarian/${veterinarianId}/availability`, {
+      params: { date: date.toISOString() }
+    });
+  }
 }
