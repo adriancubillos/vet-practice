@@ -9,6 +9,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatButtonModule } from '@angular/material/button';
 import { MatNativeDateModule } from '@angular/material/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { AppointmentService } from '../../services/appointment.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Appointment } from '../../models/appointment.interface';
@@ -167,7 +168,8 @@ export class AppointmentFormComponent implements OnInit {
     private petService: PetService,
     private userService: UserService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private snackBar: MatSnackBar
   ) {
     this.appointmentForm = this.fb.group({
       petId: ['', Validators.required],
@@ -244,11 +246,21 @@ export class AppointmentFormComponent implements OnInit {
 
       request.subscribe({
         next: () => {
+          this.snackBar.open('Appointment saved successfully', 'Close', {
+            duration: 3000,
+            horizontalPosition: 'end',
+            verticalPosition: 'top'
+          });
           this.router.navigate(['/appointments']);
         },
         error: (error) => {
           console.error('Error saving appointment:', error);
-          // TODO: Add proper error handling
+          this.snackBar.open(error.error.message || 'Error saving appointment', 'Close', {
+            duration: 5000,
+            horizontalPosition: 'end',
+            verticalPosition: 'top',
+            panelClass: ['error-snackbar']
+          });
         }
       });
     }
