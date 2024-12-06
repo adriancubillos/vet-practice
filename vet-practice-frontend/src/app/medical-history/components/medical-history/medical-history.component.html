@@ -1,0 +1,101 @@
+<div class="medical-history-container">
+  <mat-card class="medical-history-section">
+    <mat-card-header>
+      <mat-card-title>Medical History</mat-card-title>
+      <button mat-icon-button (click)="toggleEdit()" *ngIf="!isEditing">
+        <mat-icon>edit</mat-icon>
+      </button>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="medicalHistoryForm" (ngSubmit)="saveMedicalHistory()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Medical Conditions</mat-label>
+          <input matInput formControlName="conditions" [readonly]="!isEditing"
+                 placeholder="Enter conditions separated by commas">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Allergies</mat-label>
+          <input matInput formControlName="allergies" [readonly]="!isEditing"
+                 placeholder="Enter allergies separated by commas">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Surgeries</mat-label>
+          <input matInput formControlName="surgeries" [readonly]="!isEditing"
+                 placeholder="Enter surgeries separated by commas">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Medications</mat-label>
+          <input matInput formControlName="medications" [readonly]="!isEditing"
+                 placeholder="Enter medications separated by commas">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Notes</mat-label>
+          <textarea matInput formControlName="notes" [readonly]="!isEditing"
+                    placeholder="Additional notes"></textarea>
+        </mat-form-field>
+
+        <div class="button-row" *ngIf="isEditing">
+          <button mat-button type="button" (click)="toggleEdit()">Cancel</button>
+          <button mat-raised-button color="primary" type="submit">Save</button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="vaccinations-section">
+    <mat-card-header>
+      <mat-card-title>Vaccinations</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="vaccinationForm" (ngSubmit)="addVaccination()" class="vaccination-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Vaccine Name</mat-label>
+          <input matInput formControlName="name" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Date Administered</mat-label>
+          <input matInput [matDatepicker]="adminPicker" formControlName="dateAdministered" required>
+          <mat-datepicker-toggle matSuffix [for]="adminPicker"></mat-datepicker-toggle>
+          <mat-datepicker #adminPicker></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Next Due Date</mat-label>
+          <input matInput [matDatepicker]="duePicker" formControlName="nextDueDate">
+          <mat-datepicker-toggle matSuffix [for]="duePicker"></mat-datepicker-toggle>
+          <mat-datepicker #duePicker></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Notes</mat-label>
+          <textarea matInput formControlName="notes"></textarea>
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" type="submit">Add Vaccination</button>
+      </form>
+
+      <mat-divider class="margin-top"></mat-divider>
+
+      <div class="vaccination-list">
+        <mat-list>
+          <mat-list-item *ngFor="let vaccination of vaccinations">
+            <mat-icon matListItemIcon>vaccines</mat-icon>
+            <div matListItemTitle>{{vaccination.name}}</div>
+            <div matListItemLine>
+              Administered: {{vaccination.dateAdministered | date}}
+              <span *ngIf="vaccination.nextDueDate"> | Next due: {{vaccination.nextDueDate | date}}</span>
+            </div>
+            <div matListItemLine>By: {{vaccination.administeredBy.firstName}} {{vaccination.administeredBy.lastName}}</div>
+          </mat-list-item>
+        </mat-list>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
