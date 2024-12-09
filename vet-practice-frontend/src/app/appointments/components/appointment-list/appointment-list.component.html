@@ -23,12 +23,13 @@
           <span [style.color]="getStatusColor(appointment.status)" class="status-badge">
             {{ appointment.status }}
           </span>
-          <!-- {{ appointment.dateTime | date:'medium' }} -->
+          {{ appointment.dateTime | date:'medium' }}
         </mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>
         <p><strong>Duration:</strong> {{ appointment.duration }} minutes</p>
+        <p><strong>Date and Time:</strong> {{ appointment.dateTime | date:'medium' }}</p>
         <p *ngIf="appointment.notes"><strong>Notes:</strong> {{ appointment.notes }}</p>
       </mat-card-content>
 

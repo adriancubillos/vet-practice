@@ -33,16 +33,17 @@ export class AppointmentsController {
         @Query('startDate') startDate?: Date,
         @Query('endDate') endDate?: Date,
         @Query('veterinarianId') veterinarianId?: number,
-        @Query('petId') petId?: number,
-        @Query('userId') userId?: number,
+        @Query('petId') petId?: number
     ) {
+        let userId = req.user.id;
+
         // If user is not an admin, restrict to their own appointments
         if (req.user.role !== Role.ADMIN) {
             if (req.user.role === Role.VET) {
+                userId = undefined; // Don't filter by userId for vets
                 veterinarianId = req.user.id;
-            } else {
-                userId = req.user.id;
             }
+            // For regular users, keep userId as req.user.id
         }
 
         return this.appointmentsService.findAll({

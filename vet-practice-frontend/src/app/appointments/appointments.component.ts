@@ -25,167 +25,17 @@ import { Appointment } from './models/appointment.interface';
     MatSortModule,
     MatChipsModule
   ],
-  template: `
-    <div class="appointments-container">
-      <div class="header-actions">
-        <h1>Appointments</h1>
-        <button mat-raised-button color="primary" routerLink="new">
-          <mat-icon>add</mat-icon>
-          New Appointment
-        </button>
-      </div>
-
-      <mat-card>
-        <mat-card-content>
-          <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z2">
-            <!-- Date Column -->
-            <ng-container matColumnDef="date">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
-              <td mat-cell *matCellDef="let appointment">
-                {{ appointment.date | date:'MMM d, y h:mm a' }}
-              </td>
-            </ng-container>
-
-            <!-- Pet Name Column -->
-            <ng-container matColumnDef="petName">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>Pet Name</th>
-              <td mat-cell *matCellDef="let appointment">{{ appointment.pet?.name }}</td>
-            </ng-container>
-
-            <!-- Owner Column -->
-            <ng-container matColumnDef="owner">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>Owner</th>
-              <td mat-cell *matCellDef="let appointment">
-                {{ appointment.user?.firstName }} {{ appointment.user?.lastName }}
-              </td>
-            </ng-container>
-
-            <!-- Type Column -->
-            <ng-container matColumnDef="type">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>Type</th>
-              <td mat-cell *matCellDef="let appointment">
-                <mat-chip-set>
-                  <mat-chip [ngClass]="getAppointmentTypeClass(appointment.type)" selected>
-                    {{ appointment.type }}
-                  </mat-chip>
-                </mat-chip-set>
-              </td>
-            </ng-container>
-
-            <!-- Status Column -->
-            <ng-container matColumnDef="status">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
-              <td mat-cell *matCellDef="let appointment">
-                <mat-chip-set>
-                  <mat-chip [ngClass]="getStatusClass(appointment.status)" selected>
-                    {{ appointment.status }}
-                  </mat-chip>
-                </mat-chip-set>
-              </td>
-            </ng-container>
-
-            <!-- Actions Column -->
-            <ng-container matColumnDef="actions">
-              <th mat-header-cell *matHeaderCellDef>Actions</th>
-              <td mat-cell *matCellDef="let appointment">
-                <button mat-icon-button color="primary" (click)="viewAppointment(appointment)">
-                  <mat-icon>visibility</mat-icon>
-                </button>
-                <button mat-icon-button color="accent" (click)="editAppointment(appointment)">
-                  <mat-icon>edit</mat-icon>
-                </button>
-                <button mat-icon-button color="warn" (click)="deleteAppointment(appointment)">
-                  <mat-icon>delete</mat-icon>
-                </button>
-              </td>
-            </ng-container>
-
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-          </table>
-
-          <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" 
-                        aria-label="Select page of appointments">
-          </mat-paginator>
-        </mat-card-content>
-      </mat-card>
-    </div>
-  `,
-  styles: [`
-    .appointments-container {
-      padding: 20px;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .header-actions {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .header-actions h1 {
-      margin: 0;
-      font-size: 24px;
-      color: #333;
-    }
-
-    table {
-      width: 100%;
-    }
-
-    .mat-column-actions {
-      width: 120px;
-      text-align: center;
-    }
-
-    .mat-column-type, .mat-column-status {
-      width: 120px;
-    }
-
-    mat-chip {
-      min-height: 24px;
-      font-size: 12px;
-    }
-
-    .chip-primary {
-      background-color: #3f51b5 !important;
-      color: white !important;
-    }
-
-    .chip-accent {
-      background-color: #ff4081 !important;
-      color: white !important;
-    }
-
-    .chip-warn {
-      background-color: #f44336 !important;
-      color: white !important;
-    }
-
-    .chip-default {
-      background-color: #757575 !important;
-      color: white !important;
-    }
-
-    .mat-mdc-card {
-      margin-bottom: 20px;
-    }
-
-    .mat-mdc-table {
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-  `]
+  templateUrl: './appointments.component.html',
+  styleUrls: ['./appointments.component.css']
 })
 export class AppointmentsComponent implements OnInit {
-  displayedColumns: string[] = ['date', 'petName', 'owner', 'type', 'status', 'actions'];
+  displayedColumns: string[] = ['dateTime', 'petName', 'ownerName', 'veterinarian', 'status', 'actions'];
   dataSource!: MatTableDataSource<Appointment>;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private appointmentService: AppointmentService) {}
+  constructor(private appointmentService: AppointmentService) { }
 
   ngOnInit() {
     this.loadAppointments();
@@ -199,33 +49,20 @@ export class AppointmentsComponent implements OnInit {
     });
   }
 
-  getAppointmentTypeClass(type: string): string {
-    switch (type?.toLowerCase()) {
-      case 'checkup':
-        return 'chip-primary';
-      case 'vaccination':
-        return 'chip-accent';
-      case 'surgery':
-        return 'chip-warn';
-      default:
-        return 'chip-default';
-    }
-  }
-
-  getStatusClass(status: string): string {
+  getStatusColor(status: string): string {
     switch (status?.toLowerCase()) {
       case 'scheduled':
-        return 'chip-primary';
+        return 'primary';
       case 'completed':
-        return 'chip-accent';
+        return 'accent';
       case 'in_progress':
-        return 'chip-warn';
+        return 'warn';
       case 'cancelled':
-        return 'chip-default';
+        return 'default';
       case 'no_show':
-        return 'chip-default';
+        return 'default';
       default:
-        return 'chip-default';
+        return 'default';
     }
   }
 

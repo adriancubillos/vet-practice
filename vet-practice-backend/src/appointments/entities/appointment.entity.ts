@@ -42,6 +42,9 @@ export class Appointment {
     @Column({ type: 'decimal', precision: 5, scale: 2, nullable: true })
     weight: number;
 
+    @Column({ type: 'integer', default: 30 })
+    duration: number;
+
     @Column({ type: 'json', nullable: true })
     vitals: {
         temperature?: number;

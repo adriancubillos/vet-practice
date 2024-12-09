@@ -29,6 +29,10 @@ export class PetService {
     return this.http.get<Pet[]>(this.baseUrl, { headers: this.getHeaders() });
   }
 
+  getAllPetsAdmin(): Observable<Pet[]> {
+    return this.http.get<Pet[]>(this.baseUrl, { headers: this.getHeaders() });
+  }
+
   getMyPets(): Observable<Pet[]> {
     return this.http.get<Pet[]>(`${this.baseUrl}/my-pets`, { headers: this.getHeaders() });
   }

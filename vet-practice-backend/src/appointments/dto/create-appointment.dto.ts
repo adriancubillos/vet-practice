@@ -8,13 +8,19 @@ export class CreateAppointmentDto {
     dateTime: Date;
 
     @IsNumber()
+    @Type(() => Number)
     petId: number;
 
     @IsNumber()
+    @Type(() => Number)
     veterinarianId: number;
 
     @IsEnum(AppointmentReason)
     reason: AppointmentReason;
+
+    @IsNumber()
+    @Type(() => Number)
+    duration: number;
 
     @IsString()
     @IsOptional()

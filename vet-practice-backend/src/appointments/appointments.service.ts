@@ -7,6 +7,7 @@ import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 import { User } from '../user/entities/user.entity';
 import { Pet } from '../pets/entities/pet.entity';
 import { MedicalHistory } from '../pets/entities/medical-history.entity';
+import { Role } from '../auth/enums/role.enum';
 
 @Injectable()
 export class AppointmentsService {
@@ -19,12 +20,20 @@ export class AppointmentsService {
         private userRepository: Repository<User>,
         @InjectRepository(MedicalHistory)
         private medicalHistoryRepository: Repository<MedicalHistory>,
-    ) {}
+    ) { }
 
     async create(createAppointmentDto: CreateAppointmentDto, userId: number): Promise<Appointment> {
-        const { petId, veterinarianId, dateTime, notes } = createAppointmentDto;
+        const { petId, veterinarianId, dateTime, notes, duration } = createAppointmentDto;
 
-        // Find the pet and verify ownership
+        // Find the current user to check role
+        const currentUser = await this.userRepository.findOne({
+            where: { id: userId }
+        });
+        if (!currentUser) {
+            throw new NotFoundException('User not found');
+        }
+
+        // Find the pet
         const pet = await this.petRepository.findOne({
             where: { id: petId },
             relations: ['owner']
@@ -32,7 +41,9 @@ export class AppointmentsService {
         if (!pet) {
             throw new NotFoundException('Pet not found');
         }
-        if (pet.owner.id !== userId) {
+
+        // Only check pet ownership if user is not admin or vet
+        if (currentUser.role !== Role.ADMIN && currentUser.role !== Role.VET && pet.owner.id !== userId) {
             throw new BadRequestException('You can only create appointments for your own pets');
         }
 
@@ -63,48 +74,64 @@ export class AppointmentsService {
             user: pet.owner,
             dateTime,
             notes,
+            duration: duration || 30, // Set default duration to 30 minutes if not provided
             status: AppointmentStatus.SCHEDULED
         });
 
         return this.appointmentRepository.save(appointment);
     }
 
-    async findAll(filters?: {
+    async findAll(filters: {
+        userId?: number,
         status?: AppointmentStatus,
         startDate?: Date,
         endDate?: Date,
         veterinarianId?: number,
-        petId?: number,
-        userId?: number
+        petId?: number
     }): Promise<Appointment[]> {
-        const query = this.appointmentRepository.createQueryBuilder('appointment')
-            .leftJoinAndSelect('appointment.pet', 'pet')
-            .leftJoinAndSelect('appointment.veterinarian', 'veterinarian')
-            .leftJoinAndSelect('appointment.user', 'user')
-            .leftJoinAndSelect('appointment.medicalHistory', 'medicalHistory');
+        const { userId, status, startDate, endDate, veterinarianId, petId } = filters;
 
-        if (filters) {
-            if (filters.status) {
-                query.andWhere('appointment.status = :status', { status: filters.status });
-            }
-            if (filters.startDate && filters.endDate) {
-                query.andWhere('appointment.dateTime BETWEEN :startDate AND :endDate', {
-                    startDate: filters.startDate,
-                    endDate: filters.endDate
-                });
-            }
-            if (filters.veterinarianId) {
-                query.andWhere('veterinarian.id = :veterinarianId', { veterinarianId: filters.veterinarianId });
-            }
-            if (filters.petId) {
-                query.andWhere('pet.id = :petId', { petId: filters.petId });
-            }
-            if (filters.userId) {
-                query.andWhere('user.id = :userId', { userId: filters.userId });
-            }
+        // First get the user to check their role
+        const user = await this.userRepository.findOne({
+            where: { id: userId }
+        });
+
+        if (!user) {
+            throw new NotFoundException('User not found');
         }
 
-        return query.getMany();
+        let whereClause: any = {};
+
+        // Add filters if provided
+        if (status) {
+            whereClause.status = status;
+        }
+        if (startDate && endDate) {
+            whereClause.dateTime = Between(startDate, endDate);
+        } else if (startDate) {
+            whereClause.dateTime = MoreThanOrEqual(startDate);
+        } else if (endDate) {
+            whereClause.dateTime = LessThanOrEqual(endDate);
+        }
+        if (petId) {
+            whereClause.pet = { id: petId };
+        }
+        if (veterinarianId) {
+            whereClause.veterinarian = { id: veterinarianId };
+        }
+
+        // If regular user, only show their appointments
+        if (user.role !== Role.ADMIN && user.role !== Role.VET) {
+            whereClause.user = { id: userId };
+        }
+
+        return this.appointmentRepository.find({
+            where: whereClause,
+            relations: ['pet', 'pet.owner', 'veterinarian'],
+            order: {
+                dateTime: 'DESC'
+            }
+        });
     }
 
     async findOne(id: number): Promise<Appointment> {
@@ -127,8 +154,8 @@ export class AppointmentsService {
         }
 
         // If updating medical details, ensure it's the veterinarian
-        if ((updateAppointmentDto.diagnosis || updateAppointmentDto.treatment || 
-             updateAppointmentDto.prescriptions || updateAppointmentDto.vitals) && 
+        if ((updateAppointmentDto.diagnosis || updateAppointmentDto.treatment ||
+            updateAppointmentDto.prescriptions || updateAppointmentDto.vitals) &&
             appointment.veterinarian.id !== userId) {
             throw new BadRequestException('Only the veterinarian can update medical details');
         }
@@ -141,7 +168,7 @@ export class AppointmentsService {
 
             if (medicalHistory) {
                 // Update the medical history with appointment details
-                if (updateAppointmentDto.diagnosis || updateAppointmentDto.treatment || 
+                if (updateAppointmentDto.diagnosis || updateAppointmentDto.treatment ||
                     updateAppointmentDto.prescriptions || updateAppointmentDto.vitals) {
                     medicalHistory.specialNotes = [
                         medicalHistory.specialNotes || '',
@@ -192,7 +219,7 @@ export class AppointmentsService {
     async findVeterinarianAvailability(veterinarianId: number, date: Date): Promise<boolean[]> {
         const startOfDay = new Date(date);
         startOfDay.setHours(0, 0, 0, 0);
-        
+
         const endOfDay = new Date(date);
         endOfDay.setHours(23, 59, 59, 999);
 

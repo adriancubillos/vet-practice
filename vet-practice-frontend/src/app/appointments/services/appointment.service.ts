@@ -11,7 +11,7 @@ import { CreateAppointmentDto } from '../models/create-appointment.dto';
 export class AppointmentService {
   private apiUrl = `${environment.apiUrl}/appointments`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getAppointments(): Observable<Appointment[]> {
     return this.http.get<Appointment[]>(this.apiUrl);

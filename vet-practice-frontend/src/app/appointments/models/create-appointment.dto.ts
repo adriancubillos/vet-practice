@@ -5,5 +5,6 @@ export interface CreateAppointmentDto {
     petId: number;
     veterinarianId: number;
     reason: AppointmentReason;
+    duration: number;
     notes?: string;
 }
